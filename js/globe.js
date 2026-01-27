@@ -168,7 +168,7 @@ function initGlobe(containerId, options) {
     var tooltipStem = document.createElement('div');
     tooltipStem.style.cssText = 'position:absolute;left:0;right:0;bottom:-18px;height:18px;';
     var tooltipArrow = document.createElement('div');
-    tooltipArrow.style.cssText = 'position:absolute;top:0;left:50%;transform:translateX(-50%);' +
+    tooltipArrow.style.cssText = 'position:absolute;top:-1px;left:50%;transform:translateX(-50%);' +
         'width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;' +
         'border-top:7px solid rgba(17,17,17,0.92);';
     tooltipStem.appendChild(tooltipArrow);
