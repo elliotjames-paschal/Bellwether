@@ -157,7 +157,22 @@ function initGlobe(containerId, options) {
         'background:rgba(17,17,17,0.92);color:#fff;padding:8px 12px;border-radius:8px;' +
         'font-size:12px;line-height:1.5;z-index:10000;' +
         'transition:opacity 0.15s;transform:translate(-50%,-100%);margin-top:-14px;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,0.25);max-width:260px;overflow:hidden;';
+        'box-shadow:0 4px 16px rgba(0,0,0,0.25);max-width:260px;overflow:visible;';
+
+    // Content wrapper (so innerHTML updates don't destroy the stem)
+    var tooltipContent = document.createElement('div');
+    tooltipContent.style.cssText = 'overflow:hidden;';
+    tooltip.appendChild(tooltipContent);
+
+    // Tooltip stem: visible arrow + invisible bridge to the dot (prevents losing hover on dense dots)
+    var tooltipStem = document.createElement('div');
+    tooltipStem.style.cssText = 'position:absolute;left:0;right:0;bottom:-18px;height:18px;';
+    var tooltipArrow = document.createElement('div');
+    tooltipArrow.style.cssText = 'position:absolute;top:0;left:50%;transform:translateX(-50%);' +
+        'width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;' +
+        'border-top:7px solid rgba(17,17,17,0.92);';
+    tooltipStem.appendChild(tooltipArrow);
+    tooltip.appendChild(tooltipStem);
 
     // Add marquee keyframes once
     if (!document.getElementById('globe-marquee-style')) {
@@ -242,6 +257,28 @@ function initGlobe(containerId, options) {
         svg.attr('width', fsSize).attr('height', fsSize);
         projection.scale(fsSize * 0.485).translate([fsSize / 2, fsSize / 2]);
         size = fsSize;
+
+        // Drag-to-explore hint
+        var hint = document.createElement('div');
+        hint.style.cssText = 'position:absolute;bottom:32px;left:50%;transform:translateX(-50%);' +
+            'display:flex;align-items:center;gap:6px;color:#888;font-size:13px;' +
+            'opacity:0.8;transition:opacity 0.5s;pointer-events:none;';
+        hint.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.6;">' +
+            '<path d="M3 8h10M10 5l3 3-3 3M6 5L3 8l3 3"/></svg>Drag to explore';
+        overlay.appendChild(hint);
+
+        // Fade out hint after first drag
+        var hintDismissed = false;
+        var hintDragHandler = function() {
+            if (!hintDismissed) {
+                hintDismissed = true;
+                hint.style.opacity = '0';
+                setTimeout(function() { hint.remove(); }, 600);
+                document.removeEventListener('mousedown', hintDragHandler);
+            }
+        };
+        // Listen on overlay so it catches globe drags
+        overlay.addEventListener('mousedown', hintDragHandler);
 
         overlay.appendChild(container);
         document.body.appendChild(overlay);
@@ -547,14 +584,14 @@ function initGlobe(containerId, options) {
             if (e.search_query) {
                 var q = encodeURIComponent(e.search_query);
                 lines.push('<span style="font-size:11px;margin-top:2px;display:inline-flex;gap:8px;">' +
-                    '<a href="https://polymarket.com/search?query=' + q + '" target="_blank" rel="noopener" ' +
+                    '<a href="https://polymarket.com/search?_q=' + q + '" target="_blank" rel="noopener" ' +
                     'style="color:#60a5fa;text-decoration:none;">Polymarket &nearr;</a>' +
-                    '<a href="https://kalshi.com/search?query=' + q + '" target="_blank" rel="noopener" ' +
+                    '<a href="https://kalshi.com/browse?search=' + q + '" target="_blank" rel="noopener" ' +
                     'style="color:#34d399;text-decoration:none;">Kalshi &nearr;</a>' +
                     '</span>');
             }
 
-            tooltip.innerHTML = lines.join('<br>');
+            tooltipContent.innerHTML = lines.join('<br>');
             clearTimeout(tooltipHideTimer);
             tooltip.style.pointerEvents = 'auto';
             tooltip.style.opacity = '1';
