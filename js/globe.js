@@ -163,21 +163,35 @@ function initGlobe(containerId, options) {
     if (!document.getElementById('globe-marquee-style')) {
         var marqStyle = document.createElement('style');
         marqStyle.id = 'globe-marquee-style';
-        marqStyle.textContent = '@keyframes globe-marquee-single{0%,10%{transform:translateX(0)}90%,100%{transform:translateX(calc(-100% + 236px))}}' +
-            '.globe-marquee-single{display:inline-block;white-space:nowrap;animation:globe-marquee-single 5s ease-in-out infinite alternate;}';
+        marqStyle.textContent = '@keyframes globe-marquee-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}' +
+            '.globe-marquee-track{display:inline-block;white-space:nowrap;animation:globe-marquee-scroll var(--marquee-dur,10s) linear infinite;}';
         document.head.appendChild(marqStyle);
     }
     document.body.appendChild(tooltip);
 
-    // Keep tooltip visible when hovering over it (for clickable links in fullscreen)
+    // Keep tooltip visible when hovering over it (for clickable links)
     var tooltipHovered = false;
-    tooltip.addEventListener('mouseenter', function() { tooltipHovered = true; });
+    var tooltipHideTimer = null;
+
+    function delayedHideTooltip() {
+        clearTimeout(tooltipHideTimer);
+        tooltipHideTimer = setTimeout(function() {
+            if (!tooltipHovered) {
+                hoveredMarker = null;
+                tooltip.style.opacity = '0';
+                tooltip.style.pointerEvents = 'none';
+                scheduleResume();
+            }
+        }, 150);
+    }
+
+    tooltip.addEventListener('mouseenter', function() {
+        tooltipHovered = true;
+        clearTimeout(tooltipHideTimer);
+    });
     tooltip.addEventListener('mouseleave', function() {
         tooltipHovered = false;
-        tooltip.style.opacity = '0';
-        tooltip.style.pointerEvents = 'none';
-        hoveredMarker = null;
-        scheduleResume();
+        delayedHideTooltip();
     });
 
     // Fullscreen button
@@ -200,13 +214,13 @@ function initGlobe(containerId, options) {
         // Create overlay backdrop
         var overlay = document.createElement('div');
         overlay.id = 'globe-fullscreen-overlay';
-        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0c1a2e 0%,#0f1729 50%,#111827 100%);' +
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);' +
             'display:flex;align-items:center;justify-content:center;cursor:default;';
 
         // Close button
         var closeBtn = document.createElement('button');
         closeBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l12 12M16 4L4 16"/></svg>';
-        closeBtn.style.cssText = 'position:absolute;top:24px;right:24px;background:none;border:none;color:#fff;' +
+        closeBtn.style.cssText = 'position:absolute;top:24px;right:24px;background:none;border:none;color:#333;' +
             'cursor:pointer;padding:8px;opacity:0.7;transition:opacity 0.15s;';
         closeBtn.addEventListener('mouseenter', function() { closeBtn.style.opacity = '1'; });
         closeBtn.addEventListener('mouseleave', function() { closeBtn.style.opacity = '0.7'; });
@@ -274,6 +288,7 @@ function initGlobe(containerId, options) {
     var tilt = -25;
     var DEFAULT_TILT = -25;
     var pulse = 0;
+    var livePulse = 0;
     var animationId = null;
     var landFeature = null;
     var borderMesh = null;
@@ -310,7 +325,7 @@ function initGlobe(containerId, options) {
     function scheduleResume() {
         clearTimeout(resumeTimer);
         resumeTimer = setTimeout(function() {
-            if (!isDragging && !hoveredMarker) {
+            if (!isDragging && !hoveredMarker && !tooltipHovered) {
                 autoRotate = true;
             }
         }, RESUME_DELAY);
@@ -406,7 +421,7 @@ function initGlobe(containerId, options) {
 
             liveProjected.push({ x: coords[0], y: coords[1], idx: idx, data: e });
 
-            var phase = pulse * 0.6 + (e.lat * 0.7 + e.lng * 0.3);
+            var phase = livePulse + (e.lat * 0.7 + e.lng * 0.3);
             var ringPulse = 0.3 + Math.sin(phase) * 0.25;
             var ringSize = 10 + Math.sin(phase) * 3;
 
@@ -431,12 +446,13 @@ function initGlobe(containerId, options) {
     }
 
     function animate() {
-        if (autoRotate && !isDragging && !hoveredMarker) {
+        if (autoRotate && !isDragging && !hoveredMarker && !tooltipHovered) {
             rotation = (rotation + rotationSpeed) % 360;
             // Smoothly ease tilt back to default
             tilt += (DEFAULT_TILT - tilt) * 0.04;
         }
         pulse += 0.008;
+        livePulse += 0.04;
         render();
         animationId = requestAnimationFrame(animate);
     }
@@ -506,9 +522,13 @@ function initGlobe(containerId, options) {
             var labelText = e.label;
             var labelHtml;
             if (labelText.length > 28) {
-                // Single copy that scrolls, then resets — no doubling
+                var dur = Math.max(6, labelText.length * 0.22).toFixed(1);
+                var gap = '\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0';
                 labelHtml = '<div style="overflow:hidden;max-width:236px;">' +
-                    '<strong style="font-size:13px;" class="globe-marquee-single">' + labelText + '</strong></div>';
+                    '<span class="globe-marquee-track" style="--marquee-dur:' + dur + 's;">' +
+                    '<strong style="font-size:13px;">' + labelText + '</strong>' + gap +
+                    '<strong style="font-size:13px;">' + labelText + '</strong>' + gap +
+                    '</span></div>';
             } else {
                 labelHtml = '<strong style="font-size:13px;white-space:nowrap;">' + labelText + '</strong>';
             }
@@ -523,8 +543,8 @@ function initGlobe(containerId, options) {
                 lines.push('<span style="font-size:11px;opacity:0.7;">' + detail + '</span>');
             }
 
-            // In fullscreen, add Polymarket/Kalshi search links
-            if (isFullscreen && e.search_query) {
+            // Add Polymarket/Kalshi search links
+            if (e.search_query) {
                 var q = encodeURIComponent(e.search_query);
                 lines.push('<span style="font-size:11px;margin-top:2px;display:inline-flex;gap:8px;">' +
                     '<a href="https://polymarket.com/search?query=' + q + '" target="_blank" rel="noopener" ' +
@@ -535,8 +555,8 @@ function initGlobe(containerId, options) {
             }
 
             tooltip.innerHTML = lines.join('<br>');
-            // Allow clicking links in fullscreen tooltip
-            tooltip.style.pointerEvents = isFullscreen ? 'auto' : 'none';
+            clearTimeout(tooltipHideTimer);
+            tooltip.style.pointerEvents = 'auto';
             tooltip.style.opacity = '1';
             // Position in viewport coords (tooltip is position:fixed on body)
             var vp = svgToViewport(hit.x, hit.y);
@@ -544,10 +564,7 @@ function initGlobe(containerId, options) {
             tooltip.style.top = vp.y + 'px';
         } else {
             if (hoveredMarker && !tooltipHovered) {
-                hoveredMarker = null;
-                tooltip.style.opacity = '0';
-                tooltip.style.pointerEvents = 'none';
-                scheduleResume();
+                delayedHideTooltip();
             }
         }
         updateCursor();
@@ -555,9 +572,7 @@ function initGlobe(containerId, options) {
 
     svgNode.addEventListener('mouseleave', function() {
         if (!isDragging) {
-            hoveredMarker = null;
-            tooltip.style.opacity = '0';
-            scheduleResume();
+            delayedHideTooltip();
             updateCursor();
         }
     });
@@ -584,6 +599,7 @@ function initGlobe(containerId, options) {
         rotation = (dragStartRotation + dx * 0.3) % 360;
         tilt = Math.max(-90, Math.min(90, dragStartTilt - dy * 0.3));
         tooltip.style.opacity = '0';
+        tooltip.style.pointerEvents = 'none';
         hoveredMarker = null;
     });
 
