@@ -132,7 +132,7 @@ function topoMesh(topology, o, filter) {
 function initGlobe(containerId, options) {
     options = options || {};
     var size = options.size || 640;
-    var rotationSpeed = options.rotationSpeed || 0.15;
+    var rotationSpeed = options.rotationSpeed || 0.08;
     var RESUME_DELAY = 800; // ms before auto-rotate resumes
 
     var container = document.getElementById(containerId);
@@ -155,10 +155,108 @@ function initGlobe(containerId, options) {
     tooltip.className = 'globe-tooltip';
     tooltip.style.cssText = 'position:fixed;pointer-events:none;opacity:0;' +
         'background:rgba(17,17,17,0.92);color:#fff;padding:8px 12px;border-radius:8px;' +
-        'font-size:12px;line-height:1.5;white-space:nowrap;z-index:10000;' +
+        'font-size:12px;line-height:1.5;z-index:10000;' +
         'transition:opacity 0.15s;transform:translate(-50%,-100%);margin-top:-14px;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,0.25);max-width:280px;';
+        'box-shadow:0 4px 16px rgba(0,0,0,0.25);max-width:260px;overflow:hidden;';
+
+    // Add marquee keyframes once
+    if (!document.getElementById('globe-marquee-style')) {
+        var marqStyle = document.createElement('style');
+        marqStyle.id = 'globe-marquee-style';
+        marqStyle.textContent = '@keyframes globe-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}' +
+            '.globe-marquee{display:inline-block;white-space:nowrap;animation:globe-marquee 6s linear infinite;padding-right:32px;}';
+        document.head.appendChild(marqStyle);
+    }
     document.body.appendChild(tooltip);
+
+    // Fullscreen button
+    var fsBtn = document.createElement('button');
+    fsBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg>';
+    fsBtn.style.cssText = 'position:absolute;bottom:12px;right:12px;z-index:10;background:rgba(255,255,255,0.9);' +
+        'border:1px solid #d1d1d1;border-radius:6px;padding:6px;cursor:pointer;display:flex;align-items:center;' +
+        'justify-content:center;color:#666;transition:color 0.15s,border-color 0.15s;backdrop-filter:blur(4px);';
+    fsBtn.title = 'Fullscreen globe';
+    fsBtn.addEventListener('mouseenter', function() { fsBtn.style.color = '#2563eb'; fsBtn.style.borderColor = '#2563eb'; });
+    fsBtn.addEventListener('mouseleave', function() { fsBtn.style.color = '#666'; fsBtn.style.borderColor = '#d1d1d1'; });
+    container.appendChild(fsBtn);
+
+    // Fullscreen overlay
+    var isFullscreen = false;
+    var origStyles = {};
+
+    function enterFullscreen() {
+        isFullscreen = true;
+        // Create overlay backdrop
+        var overlay = document.createElement('div');
+        overlay.id = 'globe-fullscreen-overlay';
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);' +
+            'display:flex;align-items:center;justify-content:center;cursor:default;';
+
+        // Close button
+        var closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l12 12M16 4L4 16"/></svg>';
+        closeBtn.style.cssText = 'position:absolute;top:24px;right:24px;background:none;border:none;color:#fff;' +
+            'cursor:pointer;padding:8px;opacity:0.7;transition:opacity 0.15s;';
+        closeBtn.addEventListener('mouseenter', function() { closeBtn.style.opacity = '1'; });
+        closeBtn.addEventListener('mouseleave', function() { closeBtn.style.opacity = '0.7'; });
+        closeBtn.addEventListener('click', exitFullscreen);
+        overlay.appendChild(closeBtn);
+
+        // Move globe into overlay
+        origStyles.width = container.style.width;
+        origStyles.height = container.style.height;
+        origStyles.parent = container.parentNode;
+        origStyles.nextSibling = container.nextSibling;
+
+        var fsSize = Math.min(window.innerWidth, window.innerHeight) * 0.85;
+        container.style.width = fsSize + 'px';
+        container.style.height = fsSize + 'px';
+        container.style.opacity = '1';
+
+        // Resize SVG and projection
+        svg.attr('width', fsSize).attr('height', fsSize);
+        projection.scale(fsSize * 0.485).translate([fsSize / 2, fsSize / 2]);
+        size = fsSize;
+
+        overlay.appendChild(container);
+        document.body.appendChild(overlay);
+        fsBtn.style.display = 'none';
+
+        // ESC to close
+        document.addEventListener('keydown', fsEscHandler);
+    }
+
+    function exitFullscreen() {
+        isFullscreen = false;
+        var overlay = document.getElementById('globe-fullscreen-overlay');
+
+        // Restore globe
+        size = options.size || 640;
+        container.style.width = size + 'px';
+        container.style.height = size + 'px';
+        svg.attr('width', size).attr('height', size);
+        projection.scale(size * 0.485).translate([size / 2, size / 2]);
+
+        if (origStyles.nextSibling) {
+            origStyles.parent.insertBefore(container, origStyles.nextSibling);
+        } else {
+            origStyles.parent.appendChild(container);
+        }
+
+        if (overlay) overlay.remove();
+        fsBtn.style.display = 'flex';
+        document.removeEventListener('keydown', fsEscHandler);
+    }
+
+    function fsEscHandler(evt) {
+        if (evt.key === 'Escape') exitFullscreen();
+    }
+
+    fsBtn.addEventListener('click', function(evt) {
+        evt.stopPropagation();
+        if (isFullscreen) exitFullscreen();
+        else enterFullscreen();
+    });
 
     // State
     var rotation = 0;
@@ -215,7 +313,7 @@ function initGlobe(containerId, options) {
         projection.rotate([rotation, tilt, -15]);
 
         // Heartbeat pulse
-        var pulseScale = 1 + Math.sin(pulse) * 0.012;
+        var pulseScale = 1 + Math.sin(pulse) * 0.006;
         container.style.transform = 'scale(' + pulseScale + ')';
 
         // Gradient
@@ -297,7 +395,7 @@ function initGlobe(containerId, options) {
 
             liveProjected.push({ x: coords[0], y: coords[1], idx: idx, data: e });
 
-            var phase = pulse * 1.5 + (e.lat * 0.7 + e.lng * 0.3);
+            var phase = pulse * 0.6 + (e.lat * 0.7 + e.lng * 0.3);
             var ringPulse = 0.3 + Math.sin(phase) * 0.25;
             var ringSize = 10 + Math.sin(phase) * 3;
 
@@ -327,7 +425,7 @@ function initGlobe(containerId, options) {
             // Smoothly ease tilt back to default
             tilt += (DEFAULT_TILT - tilt) * 0.04;
         }
-        pulse += 0.02;
+        pulse += 0.008;
         render();
         animationId = requestAnimationFrame(animate);
     }
@@ -393,8 +491,18 @@ function initGlobe(containerId, options) {
             var statusLabel = hit.type === 'completed' ? 'Completed' : 'Live';
             var statusDot = '<span style="color:' + statusColor + ';">\u25CF</span> ';
 
+            // Build label — use marquee if text is long
+            var labelText = e.label;
+            var labelHtml;
+            if (labelText.length > 30) {
+                labelHtml = '<div style="overflow:hidden;max-width:236px;"><span class="globe-marquee">' +
+                    labelText + '</span><span class="globe-marquee">' + labelText + '</span></div>';
+            } else {
+                labelHtml = '<strong style="font-size:13px;white-space:nowrap;">' + labelText + '</strong>';
+            }
+
             var lines = [];
-            lines.push('<strong style="font-size:13px;">' + e.label + '</strong>');
+            lines.push(labelHtml);
             lines.push('<span style="font-size:11px;color:' + statusColor + ';">' + statusDot + statusLabel + '</span>');
 
             if (e.markets) {
@@ -494,6 +602,6 @@ function initGlobe(containerId, options) {
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('globe-container')) {
-        initGlobe('globe-container', { size: 640, rotationSpeed: 0.15 });
+        initGlobe('globe-container', { size: 640, rotationSpeed: 0.08 });
     }
 });
