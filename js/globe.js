@@ -166,7 +166,7 @@ function initGlobe(containerId, options) {
 
     // Tooltip stem: visible arrow + invisible bridge to the dot (prevents losing hover on dense dots)
     var tooltipStem = document.createElement('div');
-    tooltipStem.style.cssText = 'position:absolute;left:0;right:0;bottom:-18px;height:18px;';
+    tooltipStem.style.cssText = 'position:absolute;left:50%;transform:translateX(-50%);width:24px;bottom:-18px;height:18px;';
     var tooltipArrow = document.createElement('div');
     tooltipArrow.style.cssText = 'position:absolute;top:-1px;left:50%;transform:translateX(-50%);' +
         'width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;' +
