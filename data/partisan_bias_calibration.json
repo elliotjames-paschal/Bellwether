@@ -2,57 +2,57 @@
   "polymarket": {
     "bins": [
       {
-        "predicted": 0.0033,
+        "predicted": 0.0031,
         "actual": 0.0,
         "count": 5
       },
       {
-        "predicted": 0.0138,
+        "predicted": 0.0121,
         "actual": 0.0,
         "count": 5
       },
       {
-        "predicted": 0.0271,
+        "predicted": 0.0212,
         "actual": 0.0,
         "count": 5
       },
       {
-        "predicted": 0.0562,
+        "predicted": 0.0416,
         "actual": 0.0,
         "count": 5
       },
       {
-        "predicted": 0.1119,
+        "predicted": 0.0772,
+        "actual": 0.0,
+        "count": 5
+      },
+      {
+        "predicted": 0.1914,
         "actual": 0.2,
         "count": 5
       },
       {
-        "predicted": 0.2587,
-        "actual": 0.4,
+        "predicted": 0.4261,
+        "actual": 0.6,
         "count": 5
       },
       {
-        "predicted": 0.5664,
-        "actual": 0.8,
-        "count": 5
-      },
-      {
-        "predicted": 0.8569,
+        "predicted": 0.7569,
         "actual": 1.0,
         "count": 5
       },
       {
-        "predicted": 0.9698,
+        "predicted": 0.938,
         "actual": 1.0,
         "count": 5
       },
       {
-        "predicted": 0.9884,
+        "predicted": 0.9859,
         "actual": 1.0,
-        "count": 7
+        "count": 9
       }
     ],
-    "n_elections": 52
+    "n_elections": 54
   },
   "kalshi": {
     "bins": [

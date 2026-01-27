@@ -305,7 +305,7 @@ async function loadElectionTypes() {
 
             html += `
                 <tr>
-                    <td>${data.election_types[i]}</td>
+                    <td${data.election_types[i] === 'Other' ? ' title="Markets that could not be cleanly categorized into a specific election type by automated classification"' : ''}>${data.election_types[i]}</td>
                     <td>
                         <div class="bar-cell">
                             <div class="bar-bg" style="width: ${(pm / maxTotal) * 100}%; background: rgba(37, 99, 235, 0.2);"></div>
