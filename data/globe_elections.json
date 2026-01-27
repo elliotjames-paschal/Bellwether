@@ -6,7 +6,8 @@
       "label": "2028 \u2014 United States \u2014 President (+22 more)",
       "elections": 23,
       "markets": 420,
-      "volume": 168619053.0
+      "volume": 168619053.0,
+      "search_query": "2028 United States President"
     },
     {
       "lat": 52.37,
@@ -14,7 +15,8 @@
       "label": "Netherlands \u2014 Other",
       "elections": 1,
       "markets": 33,
-      "volume": 27882636.0
+      "volume": 27882636.0,
+      "search_query": "Netherlands Other"
     },
     {
       "lat": 39.02,
@@ -22,7 +24,8 @@
       "label": "North Korea",
       "elections": 1,
       "markets": 2,
-      "volume": 10922415.0
+      "volume": 10922415.0,
+      "search_query": "North Korea"
     },
     {
       "lat": 38.72,
@@ -30,7 +33,8 @@
       "label": "2026 \u2014 Portugal \u2014 President (+1 more)",
       "elections": 2,
       "markets": 9,
-      "volume": 6494889.0
+      "volume": 6494889.0,
+      "search_query": "2026 Portugal President"
     },
     {
       "lat": 21.03,
@@ -38,7 +42,8 @@
       "label": "Vietnam \u2014 President (+1 more)",
       "elections": 2,
       "markets": 13,
-      "volume": 4575417.0
+      "volume": 4575417.0,
+      "search_query": "Vietnam President"
     },
     {
       "lat": 48.86,
@@ -46,7 +51,8 @@
       "label": "2027 \u2014 France \u2014 President (+3 more)",
       "elections": 4,
       "markets": 46,
-      "volume": 4494702.0
+      "volume": 4494702.0,
+      "search_query": "2027 France President"
     },
     {
       "lat": -15.79,
@@ -54,7 +60,8 @@
       "label": "2026 \u2014 Brazil \u2014 President",
       "elections": 1,
       "markets": 3,
-      "volume": 4143834.0
+      "volume": 4143834.0,
+      "search_query": "2026 Brazil President"
     },
     {
       "lat": 9.93,
@@ -62,7 +69,8 @@
       "label": "2026 \u2014 Costa Rica \u2014 President (+3 more)",
       "elections": 4,
       "markets": 73,
-      "volume": 2419009.0
+      "volume": 2419009.0,
+      "search_query": "2026 Costa Rica President"
     },
     {
       "lat": 20.0,
@@ -70,7 +78,8 @@
       "label": "Global",
       "elections": 1,
       "markets": 1,
-      "volume": 2181638.0
+      "volume": 2181638.0,
+      "search_query": "Global"
     },
     {
       "lat": 39.9,
@@ -78,7 +87,8 @@
       "label": "China",
       "elections": 1,
       "markets": 1,
-      "volume": 1833966.0
+      "volume": 1833966.0,
+      "search_query": "China"
     },
     {
       "lat": -4.68,
@@ -86,7 +96,8 @@
       "label": "Seychelles",
       "elections": 1,
       "markets": 10,
-      "volume": 1597870.0
+      "volume": 1597870.0,
+      "search_query": "Seychelles"
     },
     {
       "lat": 13.76,
@@ -94,7 +105,8 @@
       "label": "2026 \u2014 Thailand \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 17,
-      "volume": 1414678.0
+      "volume": 1414678.0,
+      "search_query": "2026 Thailand Parliament"
     },
     {
       "lat": 55.76,
@@ -102,7 +114,8 @@
       "label": "Russia \u2014 Parliament",
       "elections": 1,
       "markets": 17,
-      "volume": 1194642.0
+      "volume": 1194642.0,
+      "search_query": "Russia Parliament"
     },
     {
       "lat": 3.87,
@@ -110,7 +123,8 @@
       "label": "Cameroon",
       "elections": 1,
       "markets": 21,
-      "volume": 1165203.0
+      "volume": 1165203.0,
+      "search_query": "Cameroon"
     },
     {
       "lat": 36.78,
@@ -118,7 +132,8 @@
       "label": "2026 \u2014 California \u2014 United States (+10 more)",
       "elections": 11,
       "markets": 103,
-      "volume": 968043.0
+      "volume": 968043.0,
+      "search_query": "2026 California United States"
     },
     {
       "lat": 35.68,
@@ -126,7 +141,8 @@
       "label": "2026 \u2014 Japan \u2014 Parliament (+2 more)",
       "elections": 3,
       "markets": 57,
-      "volume": 853329.0
+      "volume": 853329.0,
+      "search_query": "2026 Japan Parliament"
     },
     {
       "lat": 37.57,
@@ -134,7 +150,8 @@
       "label": "2026 \u2014 Seoul \u2014 South Korea (+1 more)",
       "elections": 2,
       "markets": 19,
-      "volume": 852182.0
+      "volume": 852182.0,
+      "search_query": "2026 Seoul South Korea"
     },
     {
       "lat": 31.97,
@@ -142,7 +159,8 @@
       "label": "2026 \u2014 Texas \u2014 United States (+14 more)",
       "elections": 15,
       "markets": 61,
-      "volume": 823955.0
+      "volume": 823955.0,
+      "search_query": "2026 Texas United States"
     },
     {
       "lat": 31.77,
@@ -150,7 +168,8 @@
       "label": "Israel \u2014 Prime Minister",
       "elections": 1,
       "markets": 12,
-      "volume": 759008.0
+      "volume": 759008.0,
+      "search_query": "Israel Prime Minister"
     },
     {
       "lat": 50.45,
@@ -158,7 +177,8 @@
       "label": "2026 \u2014 Ukraine \u2014 Other (+2 more)",
       "elections": 3,
       "markets": 8,
-      "volume": 720311.0
+      "volume": 720311.0,
+      "search_query": "2026 Ukraine Other"
     },
     {
       "lat": 64.2,
@@ -166,7 +186,8 @@
       "label": "2026 \u2014 Alaska \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 47,
-      "volume": 672384.0
+      "volume": 672384.0,
+      "search_query": "2026 Alaska United States"
     },
     {
       "lat": 6.85,
@@ -174,7 +195,8 @@
       "label": "Ivory Coast",
       "elections": 1,
       "markets": 12,
-      "volume": 572832.0
+      "volume": 572832.0,
+      "search_query": "Ivory Coast"
     },
     {
       "lat": -21.21,
@@ -182,7 +204,8 @@
       "label": "Tonga",
       "elections": 1,
       "markets": 10,
-      "volume": 519714.0
+      "volume": 519714.0,
+      "search_query": "Tonga"
     },
     {
       "lat": 10.49,
@@ -190,7 +213,8 @@
       "label": "2026 \u2014 Venezuela \u2014 Other (+1 more)",
       "elections": 2,
       "markets": 3,
-      "volume": 431627.0
+      "volume": 431627.0,
+      "search_query": "2026 Venezuela Other"
     },
     {
       "lat": 4.71,
@@ -198,7 +222,8 @@
       "label": "2026 \u2014 Colombia \u2014 President (+1 more)",
       "elections": 2,
       "markets": 24,
-      "volume": 404899.0
+      "volume": 404899.0,
+      "search_query": "2026 Colombia President"
     },
     {
       "lat": 40.42,
@@ -206,7 +231,8 @@
       "label": "2026 \u2014 Ohio \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 39,
-      "volume": 388772.0
+      "volume": 388772.0,
+      "search_query": "2026 Ohio United States"
     },
     {
       "lat": -12.05,
@@ -214,7 +240,8 @@
       "label": "2026 \u2014 Peru \u2014 President (+3 more)",
       "elections": 4,
       "markets": 55,
-      "volume": 370749.0
+      "volume": 370749.0,
+      "search_query": "2026 Peru President"
     },
     {
       "lat": 44.31,
@@ -222,7 +249,8 @@
       "label": "2026 \u2014 Michigan \u2014 United States (+10 more)",
       "elections": 11,
       "markets": 71,
-      "volume": 360408.0
+      "volume": 360408.0,
+      "search_query": "2026 Michigan United States"
     },
     {
       "lat": 47.5,
@@ -230,7 +258,8 @@
       "label": "Hungary \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 11,
-      "volume": 337519.0
+      "volume": 337519.0,
+      "search_query": "Hungary Parliament"
     },
     {
       "lat": 32.68,
@@ -238,7 +267,8 @@
       "label": "2026 \u2014 Georgia \u2014 United States (+6 more)",
       "elections": 7,
       "markets": 48,
-      "volume": 327824.0
+      "volume": 327824.0,
+      "search_query": "2026 Georgia United States"
     },
     {
       "lat": 23.81,
@@ -246,7 +276,8 @@
       "label": "Bangladesh \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 9,
-      "volume": 290405.0
+      "volume": 290405.0,
+      "search_query": "Bangladesh Parliament"
     },
     {
       "lat": 35.76,
@@ -254,7 +285,8 @@
       "label": "2026 \u2014 North Carolina \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 15,
-      "volume": 267493.0
+      "volume": 267493.0,
+      "search_query": "2026 North Carolina United States"
     },
     {
       "lat": 27.99,
@@ -262,7 +294,8 @@
       "label": "2026 \u2014 Florida \u2014 United States (+9 more)",
       "elections": 10,
       "markets": 48,
-      "volume": 240700.0
+      "volume": 240700.0,
+      "search_query": "2026 Florida United States"
     },
     {
       "lat": 46.73,
@@ -270,7 +303,8 @@
       "label": "2026 \u2014 Minnesota \u2014 United States (+8 more)",
       "elections": 9,
       "markets": 37,
-      "volume": 238842.0
+      "volume": 238842.0,
+      "search_query": "2026 Minnesota United States"
     },
     {
       "lat": 35.47,
@@ -278,7 +312,8 @@
       "label": "2026 \u2014 Oklahoma \u2014 United States (+4 more)",
       "elections": 5,
       "markets": 26,
-      "volume": 210053.0
+      "volume": 210053.0,
+      "search_query": "2026 Oklahoma United States"
     },
     {
       "lat": 49.91,
@@ -286,7 +321,8 @@
       "label": "2026 \u2014 Rhineland-Palatinate \u2014 Germany",
       "elections": 1,
       "markets": 8,
-      "volume": 175779.0
+      "volume": 175779.0,
+      "search_query": "2026 Rhineland-Palatinate Germany"
     },
     {
       "lat": 40.71,
@@ -294,7 +330,8 @@
       "label": "2026 \u2014 New York City \u2014 United States",
       "elections": 1,
       "markets": 20,
-      "volume": 171019.0
+      "volume": 171019.0,
+      "search_query": "2026 New York City United States"
     },
     {
       "lat": 37.67,
@@ -302,7 +339,8 @@
       "label": "Kentucky \u2014 United States \u2014 Senate (+5 more)",
       "elections": 6,
       "markets": 21,
-      "volume": 158331.0
+      "volume": 158331.0,
+      "search_query": "Kentucky United States Senate"
     },
     {
       "lat": 45.37,
@@ -310,7 +348,8 @@
       "label": "2026 \u2014 Maine \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 37,
-      "volume": 153954.0
+      "volume": 153954.0,
+      "search_query": "2026 Maine United States"
     },
     {
       "lat": 37.46,
@@ -318,7 +357,8 @@
       "label": "2026 \u2014 Incheon \u2014 South Korea",
       "elections": 1,
       "markets": 9,
-      "volume": 149626.0
+      "volume": 149626.0,
+      "search_query": "2026 Incheon South Korea"
     },
     {
       "lat": -6.79,
@@ -326,7 +366,8 @@
       "label": "Tanzania",
       "elections": 1,
       "markets": 3,
-      "volume": 148076.0
+      "volume": 148076.0,
+      "search_query": "Tanzania"
     },
     {
       "lat": 42.17,
@@ -334,7 +375,8 @@
       "label": "2026 \u2014 New York \u2014 United States (+13 more)",
       "elections": 14,
       "markets": 41,
-      "volume": 141571.0
+      "volume": 141571.0,
+      "search_query": "2026 New York United States"
     },
     {
       "lat": 41.88,
@@ -342,7 +384,8 @@
       "label": "2026 \u2014 Iowa \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 29,
-      "volume": 129309.0
+      "volume": 129309.0,
+      "search_query": "2026 Iowa United States"
     },
     {
       "lat": 39.01,
@@ -350,7 +393,8 @@
       "label": "2026 \u2014 Kansas \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 32,
-      "volume": 123495.0
+      "volume": 123495.0,
+      "search_query": "2026 Kansas United States"
     },
     {
       "lat": 45.42,
@@ -358,7 +402,8 @@
       "label": "2027 \u2014 Canada \u2014 Other (+3 more)",
       "elections": 4,
       "markets": 9,
-      "volume": 102216.0
+      "volume": 102216.0,
+      "search_query": "2027 Canada Other"
     },
     {
       "lat": 34.05,
@@ -366,7 +411,8 @@
       "label": "2026 \u2014 Arizona \u2014 United States (+6 more)",
       "elections": 7,
       "markets": 20,
-      "volume": 102054.0
+      "volume": 102054.0,
+      "search_query": "2026 Arizona United States"
     },
     {
       "lat": 41.49,
@@ -374,7 +420,8 @@
       "label": "2026 \u2014 Nebraska \u2014 United States (+6 more)",
       "elections": 7,
       "markets": 23,
-      "volume": 96785.0
+      "volume": 96785.0,
+      "search_query": "2026 Nebraska United States"
     },
     {
       "lat": 46.81,
@@ -382,7 +429,8 @@
       "label": "2026 \u2014 Quebec \u2014 Canada",
       "elections": 1,
       "markets": 6,
-      "volume": 89624.0
+      "volume": 89624.0,
+      "search_query": "2026 Quebec Canada"
     },
     {
       "lat": 34.8,
@@ -390,7 +438,8 @@
       "label": "2026 \u2014 Arkansas \u2014 United States (+4 more)",
       "elections": 5,
       "markets": 14,
-      "volume": 86016.0
+      "volume": 86016.0,
+      "search_query": "2026 Arkansas United States"
     },
     {
       "lat": 43.19,
@@ -398,7 +447,8 @@
       "label": "2026 \u2014 New Hampshire \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 20,
-      "volume": 83787.0
+      "volume": 83787.0,
+      "search_query": "2026 New Hampshire United States"
     },
     {
       "lat": 19.43,
@@ -406,7 +456,8 @@
       "label": "Mexico \u2014 President",
       "elections": 1,
       "markets": 2,
-      "volume": 83308.0
+      "volume": 83308.0,
+      "search_query": "Mexico President"
     },
     {
       "lat": 44.07,
@@ -414,7 +465,8 @@
       "label": "2026 \u2014 Idaho \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 14,
-      "volume": 82125.0
+      "volume": 82125.0,
+      "search_query": "2026 Idaho United States"
     },
     {
       "lat": 34.52,
@@ -422,7 +474,8 @@
       "label": "2026 \u2014 New Mexico \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 36,
-      "volume": 77152.0
+      "volume": 77152.0,
+      "search_query": "2026 New Mexico United States"
     },
     {
       "lat": 37.27,
@@ -430,7 +483,8 @@
       "label": "2026 \u2014 Gyeonggi Province \u2014 South Korea",
       "elections": 1,
       "markets": 15,
-      "volume": 75686.0
+      "volume": 75686.0,
+      "search_query": "2026 Gyeonggi Province South Korea"
     },
     {
       "lat": 43.78,
@@ -438,7 +492,8 @@
       "label": "2026 \u2014 Wisconsin \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 37,
-      "volume": 72469.0
+      "volume": 72469.0,
+      "search_query": "2026 Wisconsin United States"
     },
     {
       "lat": 46.06,
@@ -446,7 +501,8 @@
       "label": "2026 \u2014 Slovenia \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 24,
-      "volume": 68868.0
+      "volume": 68868.0,
+      "search_query": "2026 Slovenia Parliament"
     },
     {
       "lat": 40.63,
@@ -454,7 +510,8 @@
       "label": "2026 \u2014 Illinois \u2014 United States (+6 more)",
       "elections": 7,
       "markets": 38,
-      "volume": 59629.0
+      "volume": 59629.0,
+      "search_query": "2026 Illinois United States"
     },
     {
       "lat": 48.66,
@@ -462,7 +519,8 @@
       "label": "2026 \u2014 Baden-W\u00fcrttemberg \u2014 Germany",
       "elections": 1,
       "markets": 7,
-      "volume": 56346.0
+      "volume": 56346.0,
+      "search_query": "2026 Baden-W\u00fcrttemberg Germany"
     },
     {
       "lat": 23.11,
@@ -470,7 +528,8 @@
       "label": "Cuba \u2014 Other",
       "elections": 1,
       "markets": 2,
-      "volume": 56223.0
+      "volume": 56223.0,
+      "search_query": "Cuba Other"
     },
     {
       "lat": 43.71,
@@ -478,7 +537,8 @@
       "label": "2026 \u2014 Nice \u2014 France",
       "elections": 1,
       "markets": 5,
-      "volume": 55608.0
+      "volume": 55608.0,
+      "search_query": "2026 Nice France"
     },
     {
       "lat": 41.58,
@@ -486,7 +546,8 @@
       "label": "2026 \u2014 Rhode Island \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 25,
-      "volume": 55565.0
+      "volume": 55565.0,
+      "search_query": "2026 Rhode Island United States"
     },
     {
       "lat": 37.43,
@@ -494,7 +555,8 @@
       "label": "2026 \u2014 Virginia \u2014 United States (+7 more)",
       "elections": 8,
       "markets": 25,
-      "volume": 54728.0
+      "volume": 54728.0,
+      "search_query": "2026 Virginia United States"
     },
     {
       "lat": 52.52,
@@ -502,7 +564,8 @@
       "label": "Germany \u2014 Chancellor (+1 more)",
       "elections": 2,
       "markets": 10,
-      "volume": 50484.0
+      "volume": 50484.0,
+      "search_query": "Germany Chancellor"
     },
     {
       "lat": 30.98,
@@ -510,7 +573,8 @@
       "label": "2026 \u2014 Louisiana \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 13,
-      "volume": 49779.0
+      "volume": 49779.0,
+      "search_query": "2026 Louisiana United States"
     },
     {
       "lat": 59.33,
@@ -518,7 +582,8 @@
       "label": "2026 \u2014 Sweden \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 10,
-      "volume": 44563.0
+      "volume": 44563.0,
+      "search_query": "2026 Sweden Parliament"
     },
     {
       "lat": 39.55,
@@ -526,7 +591,8 @@
       "label": "2026 \u2014 Colorado \u2014 United States (+8 more)",
       "elections": 9,
       "markets": 41,
-      "volume": 42943.0
+      "volume": 42943.0,
+      "search_query": "2026 Colorado United States"
     },
     {
       "lat": 38.8,
@@ -534,7 +600,8 @@
       "label": "2026 \u2014 Nevada \u2014 United States (+4 more)",
       "elections": 5,
       "markets": 12,
-      "volume": 42323.0
+      "volume": 42323.0,
+      "search_query": "2026 Nevada United States"
     },
     {
       "lat": 40.42,
@@ -542,7 +609,8 @@
       "label": "2026 \u2014 Spain \u2014 Prime Minister (+1 more)",
       "elections": 2,
       "markets": 2,
-      "volume": 38188.0
+      "volume": 38188.0,
+      "search_query": "2026 Spain Prime Minister"
     },
     {
       "lat": 32.36,
@@ -550,7 +618,8 @@
       "label": "2026 \u2014 Alabama \u2014 United States (+4 more)",
       "elections": 5,
       "markets": 31,
-      "volume": 36298.0
+      "volume": 36298.0,
+      "search_query": "2026 Alabama United States"
     },
     {
       "lat": 38.91,
@@ -558,7 +627,8 @@
       "label": "2026 \u2014 Washington D.C. \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 12,
-      "volume": 36115.0
+      "volume": 36115.0,
+      "search_query": "2026 Washington D.C. United States"
     },
     {
       "lat": 43.32,
@@ -566,7 +636,8 @@
       "label": "2026 \u2014 Chechen Republic \u2014 Russia",
       "elections": 1,
       "markets": 2,
-      "volume": 35406.0
+      "volume": 35406.0,
+      "search_query": "2026 Chechen Republic Russia"
     },
     {
       "lat": 44.56,
@@ -574,7 +645,8 @@
       "label": "2026 \u2014 Vermont \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 8,
-      "volume": 34819.0
+      "volume": 34819.0,
+      "search_query": "2026 Vermont United States"
     },
     {
       "lat": 41.65,
@@ -582,7 +654,8 @@
       "label": "2026 \u2014 Aragon \u2014 Spain",
       "elections": 1,
       "markets": 10,
-      "volume": 33887.0
+      "volume": 33887.0,
+      "search_query": "2026 Aragon Spain"
     },
     {
       "lat": 40.18,
@@ -590,7 +663,8 @@
       "label": "2026 \u2014 Armenia \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 12,
-      "volume": 33804.0
+      "volume": 33804.0,
+      "search_query": "2026 Armenia Parliament"
     },
     {
       "lat": 43.8,
@@ -598,7 +672,8 @@
       "label": "2026 \u2014 Oregon \u2014 United States (+4 more)",
       "elections": 5,
       "markets": 18,
-      "volume": 32795.0
+      "volume": 32795.0,
+      "search_query": "2026 Oregon United States"
     },
     {
       "lat": 8.48,
@@ -606,7 +681,8 @@
       "label": "Sierra Leone",
       "elections": 1,
       "markets": 1,
-      "volume": 32546.0
+      "volume": 32546.0,
+      "search_query": "Sierra Leone"
     },
     {
       "lat": 45.76,
@@ -614,7 +690,8 @@
       "label": "2026 \u2014 Lyon \u2014 France",
       "elections": 1,
       "markets": 6,
-      "volume": 32178.0
+      "volume": 32178.0,
+      "search_query": "2026 Lyon France"
     },
     {
       "lat": 40.06,
@@ -622,7 +699,8 @@
       "label": "2026 \u2014 New Jersey \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 26,
-      "volume": 29812.0
+      "volume": 29812.0,
+      "search_query": "2026 New Jersey United States"
     },
     {
       "lat": 34.05,
@@ -630,7 +708,8 @@
       "label": "2026 \u2014 Los Angeles \u2014 United States",
       "elections": 1,
       "markets": 5,
-      "volume": 25828.0
+      "volume": 25828.0,
+      "search_query": "2026 Los Angeles United States"
     },
     {
       "lat": 35.18,
@@ -638,7 +717,8 @@
       "label": "2026 \u2014 Busan \u2014 South Korea",
       "elections": 1,
       "markets": 12,
-      "volume": 21959.0
+      "volume": 21959.0,
+      "search_query": "2026 Busan South Korea"
     },
     {
       "lat": 25.03,
@@ -646,7 +726,8 @@
       "label": "2026 \u2014 Taiwan \u2014 Regional (+3 more)",
       "elections": 4,
       "markets": 6,
-      "volume": 21465.0
+      "volume": 21465.0,
+      "search_query": "2026 Taiwan Regional"
     },
     {
       "lat": 42.41,
@@ -654,7 +735,8 @@
       "label": "2027 \u2014 Massachusetts \u2014 United States (+7 more)",
       "elections": 8,
       "markets": 17,
-      "volume": 21169.0
+      "volume": 21169.0,
+      "search_query": "2027 Massachusetts United States"
     },
     {
       "lat": 41.6,
@@ -662,7 +744,8 @@
       "label": "2026 \u2014 Connecticut \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 17,
-      "volume": 20693.0
+      "volume": 20693.0,
+      "search_query": "2026 Connecticut United States"
     },
     {
       "lat": 41.2,
@@ -670,7 +753,8 @@
       "label": "2026 \u2014 Pennsylvania \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 19,
-      "volume": 20140.0
+      "volume": 20140.0,
+      "search_query": "2026 Pennsylvania United States"
     },
     {
       "lat": 46.8,
@@ -678,7 +762,8 @@
       "label": "2026 \u2014 Montana \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 8,
-      "volume": 18936.0
+      "volume": 18936.0,
+      "search_query": "2026 Montana United States"
     },
     {
       "lat": 27.72,
@@ -686,7 +771,8 @@
       "label": "Nepal \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 7,
-      "volume": 17495.0
+      "volume": 17495.0,
+      "search_query": "Nepal Parliament"
     },
     {
       "lat": 33.84,
@@ -694,7 +780,8 @@
       "label": "2026 \u2014 South Carolina \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 31,
-      "volume": 17467.0
+      "volume": 17467.0,
+      "search_query": "2026 South Carolina United States"
     },
     {
       "lat": 11.13,
@@ -702,7 +789,8 @@
       "label": "2026 \u2014 Tamil Nadu \u2014 India",
       "elections": 1,
       "markets": 12,
-      "volume": 17255.0
+      "volume": 17255.0,
+      "search_query": "2026 Tamil Nadu India"
     },
     {
       "lat": 42.7,
@@ -710,7 +798,8 @@
       "label": "Bulgaria \u2014 President (+1 more)",
       "elections": 2,
       "markets": 13,
-      "volume": 16543.0
+      "volume": 16543.0,
+      "search_query": "Bulgaria President"
     },
     {
       "lat": 37.88,
@@ -718,7 +807,8 @@
       "label": "2026 \u2014 Gangwon Province \u2014 South Korea",
       "elections": 1,
       "markets": 9,
-      "volume": 15922.0
+      "volume": 15922.0,
+      "search_query": "2026 Gangwon Province South Korea"
     },
     {
       "lat": 9.08,
@@ -726,7 +816,8 @@
       "label": "Nigeria",
       "elections": 1,
       "markets": 11,
-      "volume": 15876.0
+      "volume": 15876.0,
+      "search_query": "Nigeria"
     },
     {
       "lat": 39.05,
@@ -734,7 +825,8 @@
       "label": "2026 \u2014 Maryland \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 13,
-      "volume": 15193.0
+      "volume": 15193.0,
+      "search_query": "2026 Maryland United States"
     },
     {
       "lat": 10.85,
@@ -742,7 +834,8 @@
       "label": "2026 \u2014 Kerala \u2014 India",
       "elections": 1,
       "markets": 14,
-      "volume": 13911.0
+      "volume": 13911.0,
+      "search_query": "2026 Kerala India"
     },
     {
       "lat": 43.3,
@@ -750,7 +843,8 @@
       "label": "Marseille \u2014 France \u2014 Mayor",
       "elections": 1,
       "markets": 4,
-      "volume": 13388.0
+      "volume": 13388.0,
+      "search_query": "Marseille France Mayor"
     },
     {
       "lat": 35.52,
@@ -758,7 +852,8 @@
       "label": "2026 \u2014 Tennessee \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 19,
-      "volume": 12685.0
+      "volume": 12685.0,
+      "search_query": "2026 Tennessee United States"
     },
     {
       "lat": 64.17,
@@ -766,7 +861,8 @@
       "label": "2026 \u2014 Greenland \u2014 Other",
       "elections": 1,
       "markets": 1,
-      "volume": 12310.0
+      "volume": 12310.0,
+      "search_query": "2026 Greenland Other"
     },
     {
       "lat": 42.66,
@@ -774,7 +870,8 @@
       "label": "Kosovo \u2014 Prime Minister (+1 more)",
       "elections": 2,
       "markets": 4,
-      "volume": 9924.0
+      "volume": 9924.0,
+      "search_query": "Kosovo Prime Minister"
     },
     {
       "lat": 56.49,
@@ -782,7 +879,8 @@
       "label": "2026 \u2014 Scotland \u2014 United Kingdom (+1 more)",
       "elections": 2,
       "markets": 8,
-      "volume": 9345.0
+      "volume": 9345.0,
+      "search_query": "2026 Scotland United Kingdom"
     },
     {
       "lat": 41.65,
@@ -790,7 +888,8 @@
       "label": "2026 \u2014 Castilla y Le\u00f3n \u2014 Spain",
       "elections": 1,
       "markets": 9,
-      "volume": 9254.0
+      "volume": 9254.0,
+      "search_query": "2026 Castilla y Le\u00f3n Spain"
     },
     {
       "lat": 33.89,
@@ -798,7 +897,8 @@
       "label": "2026 \u2014 Lebanon \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 32,
-      "volume": 9096.0
+      "volume": 9096.0,
+      "search_query": "2026 Lebanon Parliament"
     },
     {
       "lat": -17.78,
@@ -806,7 +906,8 @@
       "label": "2026 \u2014 Santa Cruz de la Sierra \u2014 Bolivia (+2 more)",
       "elections": 3,
       "markets": 21,
-      "volume": 8445.0
+      "volume": 8445.0,
+      "search_query": "2026 Santa Cruz de la Sierra Bolivia"
     },
     {
       "lat": -16.5,
@@ -814,7 +915,8 @@
       "label": "2026 \u2014 La Paz \u2014 Bolivia (+3 more)",
       "elections": 4,
       "markets": 33,
-      "volume": 8368.0
+      "volume": 8368.0,
+      "search_query": "2026 La Paz Bolivia"
     },
     {
       "lat": 43.08,
@@ -822,7 +924,8 @@
       "label": "2026 \u2014 Wyoming \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 23,
-      "volume": 8222.0
+      "volume": 8222.0,
+      "search_query": "2026 Wyoming United States"
     },
     {
       "lat": -4.44,
@@ -830,7 +933,8 @@
       "label": "2026 \u2014 Democratic Republic of the Congo \u2014 President",
       "elections": 1,
       "markets": 1,
-      "volume": 8111.0
+      "volume": 8111.0,
+      "search_query": "2026 Democratic Republic of the Congo President"
     },
     {
       "lat": 11.93,
@@ -838,7 +942,8 @@
       "label": "2026 \u2014 Puducherry \u2014 India",
       "elections": 1,
       "markets": 8,
-      "volume": 7825.0
+      "volume": 7825.0,
+      "search_query": "2026 Puducherry India"
     },
     {
       "lat": 50.84,
@@ -846,7 +951,8 @@
       "label": "2026 \u2014 European Union \u2014 Other",
       "elections": 1,
       "markets": 1,
-      "volume": 7073.0
+      "volume": 7073.0,
+      "search_query": "2026 European Union Other"
     },
     {
       "lat": 43.97,
@@ -854,7 +960,8 @@
       "label": "2026 \u2014 South Dakota \u2014 United States (+4 more)",
       "elections": 5,
       "markets": 16,
-      "volume": 6617.0
+      "volume": 6617.0,
+      "search_query": "2026 South Dakota United States"
     },
     {
       "lat": 26.2,
@@ -862,7 +969,8 @@
       "label": "2026 \u2014 Assam \u2014 India",
       "elections": 1,
       "markets": 10,
-      "volume": 5534.0
+      "volume": 5534.0,
+      "search_query": "2026 Assam India"
     },
     {
       "lat": 28.61,
@@ -870,7 +978,8 @@
       "label": "2027 \u2014 India \u2014 Prime Minister",
       "elections": 1,
       "markets": 1,
-      "volume": 4150.0
+      "volume": 4150.0,
+      "search_query": "2027 India Prime Minister"
     },
     {
       "lat": 38.91,
@@ -878,7 +987,8 @@
       "label": "2026 \u2014 Delaware \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 6,
-      "volume": 4053.0
+      "volume": 4053.0,
+      "search_query": "2026 Delaware United States"
     },
     {
       "lat": 9.01,
@@ -886,7 +996,8 @@
       "label": "2026 \u2014 Ethiopia \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 6,
-      "volume": 4039.0
+      "volume": 4039.0,
+      "search_query": "2026 Ethiopia Parliament"
     },
     {
       "lat": 38.6,
@@ -894,7 +1005,8 @@
       "label": "2026 \u2014 West Virginia \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 7,
-      "volume": 3635.0
+      "volume": 3635.0,
+      "search_query": "2026 West Virginia United States"
     },
     {
       "lat": 19.9,
@@ -902,7 +1014,8 @@
       "label": "2026 \u2014 Hawaii \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 4,
-      "volume": 2975.0
+      "volume": 2975.0,
+      "search_query": "2026 Hawaii United States"
     },
     {
       "lat": 35.17,
@@ -910,7 +1023,8 @@
       "label": "Cyprus \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 8,
-      "volume": 2774.0
+      "volume": 2774.0,
+      "search_query": "Cyprus Parliament"
     },
     {
       "lat": 52.13,
@@ -918,7 +1032,8 @@
       "label": "2026 \u2014 Wales \u2014 United Kingdom",
       "elections": 1,
       "markets": 6,
-      "volume": 2751.0
+      "volume": 2751.0,
+      "search_query": "2026 Wales United Kingdom"
     },
     {
       "lat": 36.64,
@@ -926,7 +1041,8 @@
       "label": "2026 \u2014 Chungcheongbuk Province \u2014 South Korea",
       "elections": 1,
       "markets": 8,
-      "volume": 2573.0
+      "volume": 2573.0,
+      "search_query": "2026 Chungcheongbuk Province South Korea"
     },
     {
       "lat": 9.56,
@@ -934,7 +1050,8 @@
       "label": "Somaliland \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 4,
-      "volume": 2398.0
+      "volume": 2398.0,
+      "search_query": "Somaliland Parliament"
     },
     {
       "lat": -34.6,
@@ -942,7 +1059,8 @@
       "label": "Argentina \u2014 President",
       "elections": 1,
       "markets": 1,
-      "volume": 2304.0
+      "volume": 2304.0,
+      "search_query": "Argentina President"
     },
     {
       "lat": 32.35,
@@ -950,7 +1068,8 @@
       "label": "2026 \u2014 Mississippi \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 8,
-      "volume": 2182.0
+      "volume": 2182.0,
+      "search_query": "2026 Mississippi United States"
     },
     {
       "lat": -35.28,
@@ -958,7 +1077,8 @@
       "label": "2026 \u2014 Australia \u2014 Prime Minister",
       "elections": 1,
       "markets": 2,
-      "volume": 2181.0
+      "volume": 2181.0,
+      "search_query": "2026 Australia Prime Minister"
     },
     {
       "lat": -17.39,
@@ -966,7 +1086,8 @@
       "label": "2026 \u2014 Cochabamba \u2014 Bolivia (+1 more)",
       "elections": 2,
       "markets": 19,
-      "volume": 2157.0
+      "volume": 2157.0,
+      "search_query": "2026 Cochabamba Bolivia"
     },
     {
       "lat": 46.95,
@@ -974,7 +1095,8 @@
       "label": "Switzerland",
       "elections": 1,
       "markets": 2,
-      "volume": 1932.0
+      "volume": 1932.0,
+      "search_query": "Switzerland"
     },
     {
       "lat": 9.65,
@@ -982,7 +1104,8 @@
       "label": "Guinea",
       "elections": 1,
       "markets": 1,
-      "volume": 1919.0
+      "volume": 1919.0,
+      "search_query": "Guinea"
     },
     {
       "lat": 56.95,
@@ -990,7 +1113,8 @@
       "label": "2026 \u2014 Latvia \u2014 Parliament",
       "elections": 1,
       "markets": 9,
-      "volume": 1658.0
+      "volume": 1658.0,
+      "search_query": "2026 Latvia Parliament"
     },
     {
       "lat": 22.99,
@@ -998,7 +1122,8 @@
       "label": "2026 \u2014 West Bengal \u2014 India",
       "elections": 1,
       "markets": 6,
-      "volume": 1637.0
+      "volume": 1637.0,
+      "search_query": "2026 West Bengal India"
     },
     {
       "lat": -4.27,
@@ -1006,7 +1131,8 @@
       "label": "2026 \u2014 Republic of the Congo \u2014 President",
       "elections": 1,
       "markets": 1,
-      "volume": 1620.0
+      "volume": 1620.0,
+      "search_query": "2026 Republic of the Congo President"
     },
     {
       "lat": 42.26,
@@ -1014,7 +1140,8 @@
       "label": "2026 \u2014 Worcester \u2014 United States",
       "elections": 1,
       "markets": 2,
-      "volume": 1396.0
+      "volume": 1396.0,
+      "search_query": "2026 Worcester United States"
     },
     {
       "lat": 36.66,
@@ -1022,7 +1149,8 @@
       "label": "2026 \u2014 Chungcheongnam Province \u2014 South Korea",
       "elections": 1,
       "markets": 9,
-      "volume": 1322.0
+      "volume": 1322.0,
+      "search_query": "2026 Chungcheongnam Province South Korea"
     },
     {
       "lat": 14.07,
@@ -1030,7 +1158,8 @@
       "label": "Honduras",
       "elections": 1,
       "markets": 9,
-      "volume": 1038.0
+      "volume": 1038.0,
+      "search_query": "Honduras"
     },
     {
       "lat": 44.79,
@@ -1038,7 +1167,8 @@
       "label": "2027 \u2014 Serbia \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 2,
-      "volume": 502.0
+      "volume": 502.0,
+      "search_query": "2027 Serbia Parliament"
     },
     {
       "lat": 12.37,
@@ -1046,7 +1176,8 @@
       "label": "Burkina Faso",
       "elections": 1,
       "markets": 1,
-      "volume": 431.0
+      "volume": 431.0,
+      "search_query": "Burkina Faso"
     },
     {
       "lat": 13.44,
@@ -1054,7 +1185,8 @@
       "label": "2026 \u2014 Guam \u2014 United States",
       "elections": 1,
       "markets": 5,
-      "volume": 424.0
+      "volume": 424.0,
+      "search_query": "2026 Guam United States"
     },
     {
       "lat": -19.03,
@@ -1062,7 +1194,8 @@
       "label": "2026 \u2014 Sucre \u2014 Bolivia",
       "elections": 1,
       "markets": 11,
-      "volume": 279.0
+      "volume": 279.0,
+      "search_query": "2026 Sucre Bolivia"
     },
     {
       "lat": 51.51,
@@ -1070,7 +1203,8 @@
       "label": "United Kingdom \u2014 Other \u2014 Primary",
       "elections": 1,
       "markets": 1,
-      "volume": 239.0
+      "volume": 239.0,
+      "search_query": "United Kingdom Other Primary"
     },
     {
       "lat": 39.32,
@@ -1078,7 +1212,8 @@
       "label": "2026 \u2014 UT-01 \u2014 United States",
       "elections": 1,
       "markets": 1,
-      "volume": 209.0
+      "volume": 209.0,
+      "search_query": "2026 UT-01 United States"
     },
     {
       "lat": 47.75,
@@ -1086,7 +1221,8 @@
       "label": "2027 \u2014 WA-4 \u2014 United States",
       "elections": 1,
       "markets": 2,
-      "volume": 150.0
+      "volume": 150.0,
+      "search_query": "2027 WA-4 United States"
     },
     {
       "lat": 10.46,
@@ -1094,7 +1230,8 @@
       "label": "2026 \u2014 Sucre \u2014 Venezuela",
       "elections": 1,
       "markets": 1,
-      "volume": 20.0
+      "volume": 20.0,
+      "search_query": "2026 Sucre Venezuela"
     },
     {
       "lat": 47.55,
@@ -1102,7 +1239,8 @@
       "label": "2027 \u2014 North Dakota \u2014 United States",
       "elections": 1,
       "markets": 2,
-      "volume": 15.0
+      "volume": 15.0,
+      "search_query": "2027 North Dakota United States"
     },
     {
       "lat": 3.14,
@@ -1110,7 +1248,8 @@
       "label": "Malaysia",
       "elections": 1,
       "markets": 3,
-      "volume": 5.0
+      "volume": 5.0,
+      "search_query": "Malaysia"
     },
     {
       "lat": 55.68,
@@ -1118,7 +1257,8 @@
       "label": "Denmark",
       "elections": 1,
       "markets": 4,
-      "volume": 3.0
+      "volume": 3.0,
+      "search_query": "Denmark"
     },
     {
       "lat": 36.75,
@@ -1126,7 +1266,8 @@
       "label": "Algeria",
       "elections": 1,
       "markets": 1,
-      "volume": 2.0
+      "volume": 2.0,
+      "search_query": "Algeria"
     },
     {
       "lat": -1.94,
@@ -1134,7 +1275,8 @@
       "label": "Rwanda",
       "elections": 1,
       "markets": 1,
-      "volume": 1.0
+      "volume": 1.0,
+      "search_query": "Rwanda"
     },
     {
       "lat": 13.45,
@@ -1142,7 +1284,8 @@
       "label": "Gambia",
       "elections": 1,
       "markets": 4,
-      "volume": 0.0
+      "volume": 0.0,
+      "search_query": "Gambia"
     },
     {
       "lat": 47.89,
@@ -1150,7 +1293,8 @@
       "label": "Mongolia",
       "elections": 1,
       "markets": 2,
-      "volume": 0.0
+      "volume": 0.0,
+      "search_query": "Mongolia"
     },
     {
       "lat": -25.26,
@@ -1158,7 +1302,8 @@
       "label": "Paraguay",
       "elections": 1,
       "markets": 12,
-      "volume": 0.0
+      "volume": 0.0,
+      "search_query": "Paraguay"
     },
     {
       "lat": -15.39,
@@ -1166,7 +1311,8 @@
       "label": "Zambia",
       "elections": 1,
       "markets": 6,
-      "volume": 0.0
+      "volume": 0.0,
+      "search_query": "Zambia"
     }
   ],
   "completed": [
@@ -1176,7 +1322,8 @@
       "label": "2024 \u2014 United States \u2014 President (+30 more)",
       "elections": 31,
       "markets": 1755,
-      "volume": 8581517030.0
+      "volume": 8581517030.0,
+      "search_query": "2024 United States President"
     },
     {
       "lat": 44.43,
@@ -1184,7 +1331,8 @@
       "label": "Romania",
       "elections": 1,
       "markets": 161,
-      "volume": 676646606.0
+      "volume": 676646606.0,
+      "search_query": "Romania"
     },
     {
       "lat": 37.57,
@@ -1192,7 +1340,8 @@
       "label": "South Korea",
       "elections": 1,
       "markets": 169,
-      "volume": 506713169.0
+      "volume": 506713169.0,
+      "search_query": "South Korea"
     },
     {
       "lat": 40.71,
@@ -1200,7 +1349,8 @@
       "label": "2025 \u2014 New York City \u2014 United States (+6 more)",
       "elections": 7,
       "markets": 280,
-      "volume": 441680952.0
+      "volume": 441680952.0,
+      "search_query": "2025 New York City United States"
     },
     {
       "lat": 52.52,
@@ -1208,7 +1358,8 @@
       "label": "Germany",
       "elections": 1,
       "markets": 125,
-      "volume": 286476198.0
+      "volume": 286476198.0,
+      "search_query": "Germany"
     },
     {
       "lat": 45.42,
@@ -1216,7 +1367,8 @@
       "label": "Canada",
       "elections": 1,
       "markets": 362,
-      "volume": 252517280.0
+      "volume": 252517280.0,
+      "search_query": "Canada"
     },
     {
       "lat": 53.35,
@@ -1224,7 +1376,8 @@
       "label": "Ireland",
       "elections": 1,
       "markets": 63,
-      "volume": 167263164.0
+      "volume": 167263164.0,
+      "search_query": "Ireland"
     },
     {
       "lat": 52.23,
@@ -1232,7 +1385,8 @@
       "label": "Poland",
       "elections": 1,
       "markets": 84,
-      "volume": 152782175.0
+      "volume": 152782175.0,
+      "search_query": "Poland"
     },
     {
       "lat": -33.45,
@@ -1240,7 +1394,8 @@
       "label": "Chile",
       "elections": 1,
       "markets": 49,
-      "volume": 89986285.0
+      "volume": 89986285.0,
+      "search_query": "Chile"
     },
     {
       "lat": 34.05,
@@ -1248,7 +1403,8 @@
       "label": "2024 \u2014 Arizona \u2014 United States (+14 more)",
       "elections": 15,
       "markets": 60,
-      "volume": 66068760.0
+      "volume": 66068760.0,
+      "search_query": "2024 Arizona United States"
     },
     {
       "lat": -15.79,
@@ -1256,7 +1412,8 @@
       "label": "Brazil",
       "elections": 1,
       "markets": 45,
-      "volume": 53488276.0
+      "volume": 53488276.0,
+      "search_query": "Brazil"
     },
     {
       "lat": 52.37,
@@ -1264,7 +1421,8 @@
       "label": "Netherlands",
       "elections": 1,
       "markets": 149,
-      "volume": 45544981.0
+      "volume": 45544981.0,
+      "search_query": "Netherlands"
     },
     {
       "lat": 10.49,
@@ -1272,7 +1430,8 @@
       "label": "Venezuela",
       "elections": 1,
       "markets": 10,
-      "volume": 43533133.0
+      "volume": 43533133.0,
+      "search_query": "Venezuela"
     },
     {
       "lat": -35.28,
@@ -1280,7 +1439,8 @@
       "label": "Australia",
       "elections": 1,
       "markets": 101,
-      "volume": 42753519.0
+      "volume": 42753519.0,
+      "search_query": "Australia"
     },
     {
       "lat": 41.9,
@@ -1288,7 +1448,8 @@
       "label": "Vatican City",
       "elections": 1,
       "markets": 85,
-      "volume": 39798548.0
+      "volume": 39798548.0,
+      "search_query": "Vatican City"
     },
     {
       "lat": -34.6,
@@ -1296,7 +1457,8 @@
       "label": "Argentina",
       "elections": 1,
       "markets": 45,
-      "volume": 37979495.0
+      "volume": 37979495.0,
+      "search_query": "Argentina"
     },
     {
       "lat": 59.91,
@@ -1304,7 +1466,8 @@
       "label": "Norway",
       "elections": 1,
       "markets": 134,
-      "volume": 36356768.0
+      "volume": 36356768.0,
+      "search_query": "Norway"
     },
     {
       "lat": -16.5,
@@ -1312,7 +1475,8 @@
       "label": "Bolivia",
       "elections": 1,
       "markets": 106,
-      "volume": 34768895.0
+      "volume": 34768895.0,
+      "search_query": "Bolivia"
     },
     {
       "lat": 40.42,
@@ -1320,7 +1484,8 @@
       "label": "2024 \u2014 Ohio \u2014 United States (+13 more)",
       "elections": 14,
       "markets": 49,
-      "volume": 19273429.0
+      "volume": 19273429.0,
+      "search_query": "2024 Ohio United States"
     },
     {
       "lat": 40.06,
@@ -1328,7 +1493,8 @@
       "label": "2025 \u2014 New Jersey \u2014 United States (+10 more)",
       "elections": 11,
       "markets": 100,
-      "volume": 18140790.0
+      "volume": 18140790.0,
+      "search_query": "2025 New Jersey United States"
     },
     {
       "lat": 36.78,
@@ -1336,7 +1502,8 @@
       "label": "2024 \u2014 CA-13 \u2014 United States (+15 more)",
       "elections": 16,
       "markets": 70,
-      "volume": 16034598.0
+      "volume": 16034598.0,
+      "search_query": "2024 CA-13 United States"
     },
     {
       "lat": 51.51,
@@ -1344,7 +1511,8 @@
       "label": "United Kingdom (+1 more)",
       "elections": 2,
       "markets": 109,
-      "volume": 12449832.0
+      "volume": 12449832.0,
+      "search_query": "United Kingdom"
     },
     {
       "lat": 50.08,
@@ -1352,7 +1520,8 @@
       "label": "Czech Republic",
       "elections": 1,
       "markets": 120,
-      "volume": 12146569.0
+      "volume": 12146569.0,
+      "search_query": "Czech Republic"
     },
     {
       "lat": 43.78,
@@ -1360,7 +1529,8 @@
       "label": "2025 \u2014 Wisconsin \u2014 United States (+10 more)",
       "elections": 11,
       "markets": 29,
-      "volume": 10088837.0
+      "volume": 10088837.0,
+      "search_query": "2025 Wisconsin United States"
     },
     {
       "lat": 41.2,
@@ -1368,7 +1538,8 @@
       "label": "2024 \u2014 Pennsylvania \u2014 United States (+16 more)",
       "elections": 17,
       "markets": 40,
-      "volume": 10019812.0
+      "volume": 10019812.0,
+      "search_query": "2024 Pennsylvania United States"
     },
     {
       "lat": 38.72,
@@ -1376,7 +1547,8 @@
       "label": "Portugal",
       "elections": 1,
       "markets": 59,
-      "volume": 9516496.0
+      "volume": 9516496.0,
+      "search_query": "Portugal"
     },
     {
       "lat": 38.8,
@@ -1384,7 +1556,8 @@
       "label": "2024 \u2014 Nevada \u2014 United States (+8 more)",
       "elections": 9,
       "markets": 22,
-      "volume": 8686382.0
+      "volume": 8686382.0,
+      "search_query": "2024 Nevada United States"
     },
     {
       "lat": 50.45,
@@ -1392,7 +1565,8 @@
       "label": "Ukraine (+1 more)",
       "elections": 2,
       "markets": 10,
-      "volume": 7686422.0
+      "volume": 7686422.0,
+      "search_query": "Ukraine"
     },
     {
       "lat": 53.9,
@@ -1400,7 +1574,8 @@
       "label": "Belarus",
       "elections": 1,
       "markets": 9,
-      "volume": 7483780.0
+      "volume": 7483780.0,
+      "search_query": "Belarus"
     },
     {
       "lat": 48.86,
@@ -1408,7 +1583,8 @@
       "label": "France",
       "elections": 1,
       "markets": 63,
-      "volume": 7455834.0
+      "volume": 7455834.0,
+      "search_query": "France"
     },
     {
       "lat": 37.43,
@@ -1416,7 +1592,8 @@
       "label": "2025 \u2014 Virginia \u2014 United States (+19 more)",
       "elections": 20,
       "markets": 78,
-      "volume": 7225264.0
+      "volume": 7225264.0,
+      "search_query": "2025 Virginia United States"
     },
     {
       "lat": 31.97,
@@ -1424,7 +1601,8 @@
       "label": "2024 \u2014 Texas \u2014 United States (+16 more)",
       "elections": 17,
       "markets": 68,
-      "volume": 6118023.0
+      "volume": 6118023.0,
+      "search_query": "2024 Texas United States"
     },
     {
       "lat": 39.93,
@@ -1432,7 +1610,8 @@
       "label": "Turkey",
       "elections": 1,
       "markets": 29,
-      "volume": 6017923.0
+      "volume": 6017923.0,
+      "search_query": "Turkey"
     },
     {
       "lat": 5.82,
@@ -1440,7 +1619,8 @@
       "label": "Suriname",
       "elections": 1,
       "markets": 28,
-      "volume": 5743754.0
+      "volume": 5743754.0,
+      "search_query": "Suriname"
     },
     {
       "lat": 36.81,
@@ -1448,7 +1628,8 @@
       "label": "Tunisia",
       "elections": 1,
       "markets": 4,
-      "volume": 5637149.0
+      "volume": 5637149.0,
+      "search_query": "Tunisia"
     },
     {
       "lat": 41.49,
@@ -1456,7 +1637,8 @@
       "label": "2024 \u2014 Nebraska \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 25,
-      "volume": 5286016.0
+      "volume": 5286016.0,
+      "search_query": "2024 Nebraska United States"
     },
     {
       "lat": -0.18,
@@ -1464,7 +1646,8 @@
       "label": "Ecuador",
       "elections": 1,
       "markets": 29,
-      "volume": 5236895.0
+      "volume": 5236895.0,
+      "search_query": "Ecuador"
     },
     {
       "lat": 35.68,
@@ -1472,7 +1655,8 @@
       "label": "Japan (+1 more)",
       "elections": 2,
       "markets": 43,
-      "volume": 5224060.0
+      "volume": 5224060.0,
+      "search_query": "Japan"
     },
     {
       "lat": 45.81,
@@ -1480,7 +1664,8 @@
       "label": "Croatia",
       "elections": 1,
       "markets": 11,
-      "volume": 5115525.0
+      "volume": 5115525.0,
+      "search_query": "Croatia"
     },
     {
       "lat": 25.03,
@@ -1488,7 +1673,8 @@
       "label": "Taiwan",
       "elections": 1,
       "markets": 11,
-      "volume": 5069124.0
+      "volume": 5069124.0,
+      "search_query": "Taiwan"
     },
     {
       "lat": 44.98,
@@ -1496,7 +1682,8 @@
       "label": "2025 \u2014 Minneapolis \u2014 United States",
       "elections": 1,
       "markets": 10,
-      "volume": 5007660.0
+      "volume": 5007660.0,
+      "search_query": "2025 Minneapolis United States"
     },
     {
       "lat": 46.8,
@@ -1504,7 +1691,8 @@
       "label": "2024 \u2014 Montana \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 14,
-      "volume": 5006464.0
+      "volume": 5006464.0,
+      "search_query": "2024 Montana United States"
     },
     {
       "lat": 27.99,
@@ -1512,7 +1700,8 @@
       "label": "2024 \u2014 Florida \u2014 United States (+13 more)",
       "elections": 14,
       "markets": 64,
-      "volume": 4267266.0
+      "volume": 4267266.0,
+      "search_query": "2024 Florida United States"
     },
     {
       "lat": 47.61,
@@ -1520,7 +1709,8 @@
       "label": "2025 \u2014 Seattle \u2014 United States",
       "elections": 1,
       "markets": 12,
-      "volume": 3884679.0
+      "volume": 3884679.0,
+      "search_query": "2025 Seattle United States"
     },
     {
       "lat": 44.31,
@@ -1528,7 +1718,8 @@
       "label": "2024 \u2014 Michigan \u2014 United States (+9 more)",
       "elections": 10,
       "markets": 36,
-      "volume": 3126092.0
+      "volume": 3126092.0,
+      "search_query": "2024 Michigan United States"
     },
     {
       "lat": 55.76,
@@ -1536,7 +1727,8 @@
       "label": "Russia (+1 more)",
       "elections": 2,
       "markets": 9,
-      "volume": 2850422.0
+      "volume": 2850422.0,
+      "search_query": "Russia"
     },
     {
       "lat": 64.17,
@@ -1544,7 +1736,8 @@
       "label": "Greenland",
       "elections": 1,
       "markets": 12,
-      "volume": 2086615.0
+      "volume": 2086615.0,
+      "search_query": "Greenland"
     },
     {
       "lat": 19.43,
@@ -1552,7 +1745,8 @@
       "label": "Mexico",
       "elections": 1,
       "markets": 11,
-      "volume": 2082860.0
+      "volume": 2082860.0,
+      "search_query": "Mexico"
     },
     {
       "lat": -22.56,
@@ -1560,7 +1754,8 @@
       "label": "Namibia",
       "elections": 1,
       "markets": 7,
-      "volume": 2007218.0
+      "volume": 2007218.0,
+      "search_query": "Namibia"
     },
     {
       "lat": 35.69,
@@ -1568,7 +1763,8 @@
       "label": "Iran",
       "elections": 1,
       "markets": 15,
-      "volume": 1987127.0
+      "volume": 1987127.0,
+      "search_query": "Iran"
     },
     {
       "lat": 46.73,
@@ -1576,7 +1772,8 @@
       "label": "2024 \u2014 MN-5 \u2014 United States (+8 more)",
       "elections": 9,
       "markets": 31,
-      "volume": 1828117.0
+      "volume": 1828117.0,
+      "search_query": "2024 MN-5 United States"
     },
     {
       "lat": 33.51,
@@ -1584,7 +1781,8 @@
       "label": "Syria",
       "elections": 1,
       "markets": 4,
-      "volume": 1816358.0
+      "volume": 1816358.0,
+      "search_query": "Syria"
     },
     {
       "lat": 47.01,
@@ -1592,7 +1790,8 @@
       "label": "Moldova",
       "elections": 1,
       "markets": 29,
-      "volume": 1813290.0
+      "volume": 1813290.0,
+      "search_query": "Moldova"
     },
     {
       "lat": 31.77,
@@ -1600,7 +1799,8 @@
       "label": "Israel (+1 more)",
       "elections": 2,
       "markets": 8,
-      "volume": 1729028.0
+      "volume": 1729028.0,
+      "search_query": "Israel"
     },
     {
       "lat": 41.15,
@@ -1608,7 +1808,8 @@
       "label": "Albania",
       "elections": 1,
       "markets": 23,
-      "volume": 1722758.0
+      "volume": 1722758.0,
+      "search_query": "Albania"
     },
     {
       "lat": 37.77,
@@ -1616,7 +1817,8 @@
       "label": "2024 \u2014 San Francisco \u2014 United States",
       "elections": 1,
       "markets": 10,
-      "volume": 1711910.0
+      "volume": 1711910.0,
+      "search_query": "2024 San Francisco United States"
     },
     {
       "lat": 35.76,
@@ -1624,7 +1826,8 @@
       "label": "2024 \u2014 North Carolina \u2014 United States (+7 more)",
       "elections": 8,
       "markets": 26,
-      "volume": 1496507.0
+      "volume": 1496507.0,
+      "search_query": "2024 North Carolina United States"
     },
     {
       "lat": 35.52,
@@ -1632,7 +1835,8 @@
       "label": "2025 \u2014 TN-7 \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 42,
-      "volume": 1494047.0
+      "volume": 1494047.0,
+      "search_query": "2025 TN-7 United States"
     },
     {
       "lat": 39.05,
@@ -1640,7 +1844,8 @@
       "label": "2024 \u2014 Maryland \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 8,
-      "volume": 1452147.0
+      "volume": 1452147.0,
+      "search_query": "2024 Maryland United States"
     },
     {
       "lat": 42.17,
@@ -1648,7 +1853,8 @@
       "label": "2024 \u2014 NY-3 \u2014 United States (+22 more)",
       "elections": 23,
       "markets": 91,
-      "volume": 1429607.0
+      "volume": 1429607.0,
+      "search_query": "2024 NY-3 United States"
     },
     {
       "lat": 14.07,
@@ -1656,7 +1862,8 @@
       "label": "2025 \u2014 Honduras \u2014 President (+2 more)",
       "elections": 3,
       "markets": 15,
-      "volume": 1353806.0
+      "volume": 1353806.0,
+      "search_query": "2025 Honduras President"
     },
     {
       "lat": 28.61,
@@ -1664,7 +1871,8 @@
       "label": "India",
       "elections": 1,
       "markets": 12,
-      "volume": 1256891.0
+      "volume": 1256891.0,
+      "search_query": "India"
     },
     {
       "lat": 41.9,
@@ -1672,7 +1880,8 @@
       "label": "Italy (+1 more)",
       "elections": 2,
       "markets": 31,
-      "volume": 1251594.0
+      "volume": 1251594.0,
+      "search_query": "Italy"
     },
     {
       "lat": -34.88,
@@ -1680,7 +1889,8 @@
       "label": "Uruguay",
       "elections": 1,
       "markets": 5,
-      "volume": 1043470.0
+      "volume": 1043470.0,
+      "search_query": "Uruguay"
     },
     {
       "lat": 37.98,
@@ -1688,7 +1898,8 @@
       "label": "Greece",
       "elections": 1,
       "markets": 26,
-      "volume": 914352.0
+      "volume": 914352.0,
+      "search_query": "Greece"
     },
     {
       "lat": 1.35,
@@ -1696,7 +1907,8 @@
       "label": "Singapore",
       "elections": 1,
       "markets": 13,
-      "volume": 907729.0
+      "volume": 907729.0,
+      "search_query": "Singapore"
     },
     {
       "lat": 32.68,
@@ -1704,7 +1916,8 @@
       "label": "2020 \u2014 Georgia \u2014 United States (+7 more)",
       "elections": 8,
       "markets": 38,
-      "volume": 851451.0
+      "volume": 851451.0,
+      "search_query": "2020 Georgia United States"
     },
     {
       "lat": 4.71,
@@ -1712,7 +1925,8 @@
       "label": "Colombia",
       "elections": 1,
       "markets": 55,
-      "volume": 816341.0
+      "volume": 816341.0,
+      "search_query": "Colombia"
     },
     {
       "lat": 30.04,
@@ -1720,7 +1934,8 @@
       "label": "Egypt",
       "elections": 1,
       "markets": 3,
-      "volume": 795240.0
+      "volume": 795240.0,
+      "search_query": "Egypt"
     },
     {
       "lat": 64.2,
@@ -1728,7 +1943,8 @@
       "label": "2024 \u2014 AK-1 \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 7,
-      "volume": 783143.0
+      "volume": 783143.0,
+      "search_query": "2024 AK-1 United States"
     },
     {
       "lat": 50.85,
@@ -1736,7 +1952,8 @@
       "label": "Belgium",
       "elections": 1,
       "markets": 11,
-      "volume": 766090.0
+      "volume": 766090.0,
+      "search_query": "Belgium"
     },
     {
       "lat": 14.6,
@@ -1744,7 +1961,8 @@
       "label": "Philippines",
       "elections": 1,
       "markets": 17,
-      "volume": 761726.0
+      "volume": 761726.0,
+      "search_query": "Philippines"
     },
     {
       "lat": 42.41,
@@ -1752,7 +1970,8 @@
       "label": "2024 \u2014 Massachusetts \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 10,
-      "volume": 731767.0
+      "volume": 731767.0,
+      "search_query": "2024 Massachusetts United States"
     },
     {
       "lat": 60.17,
@@ -1760,7 +1979,8 @@
       "label": "Finland",
       "elections": 1,
       "markets": 16,
-      "volume": 698070.0
+      "volume": 698070.0,
+      "search_query": "Finland"
     },
     {
       "lat": 47.5,
@@ -1768,7 +1988,8 @@
       "label": "Hungary (+1 more)",
       "elections": 2,
       "markets": 11,
-      "volume": 646655.0
+      "volume": 646655.0,
+      "search_query": "Hungary"
     },
     {
       "lat": 38.46,
@@ -1776,7 +1997,8 @@
       "label": "2024 \u2014 Missouri \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 20,
-      "volume": 623232.0
+      "volume": 623232.0,
+      "search_query": "2024 Missouri United States"
     },
     {
       "lat": 6.8,
@@ -1784,7 +2006,8 @@
       "label": "Guyana",
       "elections": 1,
       "markets": 13,
-      "volume": 592186.0
+      "volume": 592186.0,
+      "search_query": "Guyana"
     },
     {
       "lat": 43.19,
@@ -1792,7 +2015,8 @@
       "label": "2024 \u2014 New Hampshire \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 20,
-      "volume": 572688.0
+      "volume": 572688.0,
+      "search_query": "2024 New Hampshire United States"
     },
     {
       "lat": 54.69,
@@ -1800,7 +2024,8 @@
       "label": "Lithuania",
       "elections": 1,
       "markets": 12,
-      "volume": 513162.0
+      "volume": 513162.0,
+      "search_query": "Lithuania"
     },
     {
       "lat": 38.91,
@@ -1808,7 +2033,8 @@
       "label": "2024 \u2014 Delaware \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 17,
-      "volume": 506178.0
+      "volume": 506178.0,
+      "search_query": "2024 Delaware United States"
     },
     {
       "lat": 19.9,
@@ -1816,7 +2042,8 @@
       "label": "2024 \u2014 Hawaii \u2014 United States",
       "elections": 1,
       "markets": 3,
-      "volume": 492183.0
+      "volume": 492183.0,
+      "search_query": "2024 Hawaii United States"
     },
     {
       "lat": 5.56,
@@ -1824,7 +2051,8 @@
       "label": "Ghana",
       "elections": 1,
       "markets": 23,
-      "volume": 487393.0
+      "volume": 487393.0,
+      "search_query": "Ghana"
     },
     {
       "lat": 40.73,
@@ -1832,7 +2060,8 @@
       "label": "2025 \u2014 Jersey City \u2014 United States",
       "elections": 1,
       "markets": 12,
-      "volume": 447332.0
+      "volume": 447332.0,
+      "search_query": "2025 Jersey City United States"
     },
     {
       "lat": 47.14,
@@ -1840,7 +2069,8 @@
       "label": "Liechtenstein",
       "elections": 1,
       "markets": 4,
-      "volume": 442810.0
+      "volume": 442810.0,
+      "search_query": "Liechtenstein"
     },
     {
       "lat": 47.75,
@@ -1848,7 +2078,8 @@
       "label": "2024 \u2014 WA-3 \u2014 United States (+6 more)",
       "elections": 7,
       "markets": 14,
-      "volume": 441717.0
+      "volume": 441717.0,
+      "search_query": "2024 WA-3 United States"
     },
     {
       "lat": -13.97,
@@ -1856,7 +2087,8 @@
       "label": "Malawi",
       "elections": 1,
       "markets": 12,
-      "volume": 434889.0
+      "volume": 434889.0,
+      "search_query": "Malawi"
     },
     {
       "lat": 40.27,
@@ -1864,7 +2096,8 @@
       "label": "2024 \u2014 Indiana \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 12,
-      "volume": 425417.0
+      "volume": 425417.0,
+      "search_query": "2024 Indiana United States"
     },
     {
       "lat": 41.72,
@@ -1872,7 +2105,8 @@
       "label": "Georgia",
       "elections": 1,
       "markets": 4,
-      "volume": 405162.0
+      "volume": 405162.0,
+      "search_query": "Georgia"
     },
     {
       "lat": 41.88,
@@ -1880,7 +2114,8 @@
       "label": "2024 \u2014 IA-1 \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 18,
-      "volume": 391711.0
+      "volume": 391711.0,
+      "search_query": "2024 IA-1 United States"
     },
     {
       "lat": 37.8,
@@ -1888,7 +2123,8 @@
       "label": "2025 \u2014 Oakland \u2014 United States",
       "elections": 1,
       "markets": 13,
-      "volume": 386567.0
+      "volume": 386567.0,
+      "search_query": "2025 Oakland United States"
     },
     {
       "lat": 64.15,
@@ -1896,7 +2132,8 @@
       "label": "Iceland",
       "elections": 1,
       "markets": 13,
-      "volume": 363436.0
+      "volume": 363436.0,
+      "search_query": "Iceland"
     },
     {
       "lat": 32.35,
@@ -1904,7 +2141,8 @@
       "label": "2024 \u2014 Mississippi \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 14,
-      "volume": 360629.0
+      "volume": 360629.0,
+      "search_query": "2024 Mississippi United States"
     },
     {
       "lat": 45.37,
@@ -1912,7 +2150,8 @@
       "label": "2024 \u2014 Maine \u2014 United States (+4 more)",
       "elections": 5,
       "markets": 12,
-      "volume": 346805.0
+      "volume": 346805.0,
+      "search_query": "2024 Maine United States"
     },
     {
       "lat": 39.55,
@@ -1920,7 +2159,8 @@
       "label": "2024 \u2014 CO-8 \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 21,
-      "volume": 345388.0
+      "volume": 345388.0,
+      "search_query": "2024 CO-8 United States"
     },
     {
       "lat": 11.86,
@@ -1928,7 +2168,8 @@
       "label": "2025 \u2014 Guinea-Bissau \u2014 President (+1 more)",
       "elections": 2,
       "markets": 18,
-      "volume": 337300.0
+      "volume": 337300.0,
+      "search_query": "2025 Guinea-Bissau President"
     },
     {
       "lat": 39.32,
@@ -1936,7 +2177,8 @@
       "label": "2024 \u2014 Utah \u2014 United States (+8 more)",
       "elections": 9,
       "markets": 25,
-      "volume": 321418.0
+      "volume": 321418.0,
+      "search_query": "2024 Utah United States"
     },
     {
       "lat": 18.11,
@@ -1944,7 +2186,8 @@
       "label": "Jamaica",
       "elections": 1,
       "markets": 16,
-      "volume": 304216.0
+      "volume": 304216.0,
+      "search_query": "Jamaica"
     },
     {
       "lat": 40.0,
@@ -1952,7 +2195,8 @@
       "label": "North America",
       "elections": 1,
       "markets": 1,
-      "volume": 300653.0
+      "volume": 300653.0,
+      "search_query": "North America"
     },
     {
       "lat": 48.21,
@@ -1960,7 +2204,8 @@
       "label": "Austria",
       "elections": 1,
       "markets": 6,
-      "volume": 299892.0
+      "volume": 299892.0,
+      "search_query": "Austria"
     },
     {
       "lat": 42.33,
@@ -1968,7 +2213,8 @@
       "label": "2025 \u2014 Detroit \u2014 United States",
       "elections": 1,
       "markets": 22,
-      "volume": 293409.0
+      "volume": 293409.0,
+      "search_query": "2025 Detroit United States"
     },
     {
       "lat": -6.21,
@@ -1976,7 +2222,8 @@
       "label": "Indonesia",
       "elections": 1,
       "markets": 2,
-      "volume": 270568.0
+      "volume": 270568.0,
+      "search_query": "Indonesia"
     },
     {
       "lat": -15.0,
@@ -1984,7 +2231,8 @@
       "label": "South America",
       "elections": 1,
       "markets": 1,
-      "volume": 267857.0
+      "volume": 267857.0,
+      "search_query": "South America"
     },
     {
       "lat": -25.0,
@@ -1992,7 +2240,8 @@
       "label": "Oceania",
       "elections": 1,
       "markets": 1,
-      "volume": 265453.0
+      "volume": 265453.0,
+      "search_query": "Oceania"
     },
     {
       "lat": -25.75,
@@ -2000,7 +2249,8 @@
       "label": "South Africa",
       "elections": 1,
       "markets": 10,
-      "volume": 231386.0
+      "volume": 231386.0,
+      "search_query": "South Africa"
     },
     {
       "lat": -25.97,
@@ -2008,7 +2258,8 @@
       "label": "Mozambique",
       "elections": 1,
       "markets": 4,
-      "volume": 219509.0
+      "volume": 219509.0,
+      "search_query": "Mozambique"
     },
     {
       "lat": 13.76,
@@ -2016,7 +2267,8 @@
       "label": "Thailand",
       "elections": 1,
       "markets": 1,
-      "volume": 211300.0
+      "volume": 211300.0,
+      "search_query": "Thailand"
     },
     {
       "lat": 13.69,
@@ -2024,7 +2276,8 @@
       "label": "El Salvador",
       "elections": 1,
       "markets": 6,
-      "volume": 194856.0
+      "volume": 194856.0,
+      "search_query": "El Salvador"
     },
     {
       "lat": 35.08,
@@ -2032,7 +2285,8 @@
       "label": "2025 \u2014 Albuquerque \u2014 United States",
       "elections": 1,
       "markets": 14,
-      "volume": 193878.0
+      "volume": 193878.0,
+      "search_query": "2025 Albuquerque United States"
     },
     {
       "lat": 6.93,
@@ -2040,7 +2294,8 @@
       "label": "Sri Lanka",
       "elections": 1,
       "markets": 9,
-      "volume": 189820.0
+      "volume": 189820.0,
+      "search_query": "Sri Lanka"
     },
     {
       "lat": 41.6,
@@ -2048,7 +2303,8 @@
       "label": "2024 \u2014 Connecticut \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 5,
-      "volume": 175546.0
+      "volume": 175546.0,
+      "search_query": "2024 Connecticut United States"
     },
     {
       "lat": 42.36,
@@ -2056,7 +2312,8 @@
       "label": "2025 \u2014 Boston \u2014 United States",
       "elections": 1,
       "markets": 7,
-      "volume": 172705.0
+      "volume": 172705.0,
+      "search_query": "2025 Boston United States"
     },
     {
       "lat": 44.56,
@@ -2064,7 +2321,8 @@
       "label": "2024 \u2014 Vermont \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 6,
-      "volume": 167973.0
+      "volume": 167973.0,
+      "search_query": "2024 Vermont United States"
     },
     {
       "lat": 38.6,
@@ -2072,7 +2330,8 @@
       "label": "2024 \u2014 West Virginia \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 10,
-      "volume": 163906.0
+      "volume": 163906.0,
+      "search_query": "2024 West Virginia United States"
     },
     {
       "lat": 47.55,
@@ -2080,7 +2339,8 @@
       "label": "2024 \u2014 North Dakota \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 10,
-      "volume": 163620.0
+      "volume": 163620.0,
+      "search_query": "2024 North Dakota United States"
     },
     {
       "lat": -3.38,
@@ -2088,7 +2348,8 @@
       "label": "Burundi",
       "elections": 1,
       "markets": 4,
-      "volume": 162986.0
+      "volume": 162986.0,
+      "search_query": "Burundi"
     },
     {
       "lat": -13.83,
@@ -2096,7 +2357,8 @@
       "label": "Samoa",
       "elections": 1,
       "markets": 6,
-      "volume": 148399.0
+      "volume": 148399.0,
+      "search_query": "Samoa"
     },
     {
       "lat": 37.67,
@@ -2104,7 +2366,8 @@
       "label": "2023 \u2014 Kentucky \u2014 United States (+5 more)",
       "elections": 6,
       "markets": 21,
-      "volume": 147160.0
+      "volume": 147160.0,
+      "search_query": "2023 Kentucky United States"
     },
     {
       "lat": 14.63,
@@ -2112,7 +2375,8 @@
       "label": "Guatemala",
       "elections": 1,
       "markets": 12,
-      "volume": 141756.0
+      "volume": 141756.0,
+      "search_query": "Guatemala"
     },
     {
       "lat": 43.8,
@@ -2120,7 +2384,8 @@
       "label": "2024 \u2014 OR-5 \u2014 United States (+2 more)",
       "elections": 3,
       "markets": 8,
-      "volume": 127520.0
+      "volume": 127520.0,
+      "search_query": "2024 OR-5 United States"
     },
     {
       "lat": 34.52,
@@ -2128,7 +2393,8 @@
       "label": "2024 \u2014 New Mexico \u2014 United States (+3 more)",
       "elections": 4,
       "markets": 6,
-      "volume": 124326.0
+      "volume": 124326.0,
+      "search_query": "2024 New Mexico United States"
     },
     {
       "lat": 8.98,
@@ -2136,7 +2402,8 @@
       "label": "Panama",
       "elections": 1,
       "markets": 9,
-      "volume": 114659.0
+      "volume": 114659.0,
+      "search_query": "Panama"
     },
     {
       "lat": 48.15,
@@ -2144,7 +2411,8 @@
       "label": "Slovakia",
       "elections": 1,
       "markets": 12,
-      "volume": 112864.0
+      "volume": 112864.0,
+      "search_query": "Slovakia"
     },
     {
       "lat": 41.58,
@@ -2152,7 +2420,8 @@
       "label": "2024 \u2014 Rhode Island \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 7,
-      "volume": 111988.0
+      "volume": 111988.0,
+      "search_query": "2024 Rhode Island United States"
     },
     {
       "lat": 42.89,
@@ -2160,7 +2429,8 @@
       "label": "2021 \u2014 Buffalo \u2014 United States",
       "elections": 1,
       "markets": 1,
-      "volume": 111593.0
+      "volume": 111593.0,
+      "search_query": "2021 Buffalo United States"
     },
     {
       "lat": 25.76,
@@ -2168,7 +2438,8 @@
       "label": "2025 \u2014 Miami \u2014 United States",
       "elections": 1,
       "markets": 6,
-      "volume": 106919.0
+      "volume": 106919.0,
+      "search_query": "2025 Miami United States"
     },
     {
       "lat": 40.42,
@@ -2176,7 +2447,8 @@
       "label": "Spain (+1 more)",
       "elections": 2,
       "markets": 14,
-      "volume": 105062.0
+      "volume": 105062.0,
+      "search_query": "Spain"
     },
     {
       "lat": 4.36,
@@ -2184,7 +2456,8 @@
       "label": "2025 \u2014 Central African Republic \u2014 Parliament",
       "elections": 1,
       "markets": 7,
-      "volume": 97300.0
+      "volume": 97300.0,
+      "search_query": "2025 Central African Republic Parliament"
     },
     {
       "lat": 29.95,
@@ -2192,7 +2465,8 @@
       "label": "2025 \u2014 New Orleans \u2014 United States",
       "elections": 1,
       "markets": 4,
-      "volume": 93547.0
+      "volume": 93547.0,
+      "search_query": "2025 New Orleans United States"
     },
     {
       "lat": 43.08,
@@ -2200,7 +2474,8 @@
       "label": "2024 \u2014 Wyoming \u2014 United States",
       "elections": 1,
       "markets": 5,
-      "volume": 91290.0
+      "volume": 91290.0,
+      "search_query": "2024 Wyoming United States"
     },
     {
       "lat": 39.01,
@@ -2208,7 +2483,8 @@
       "label": "2024 \u2014 Kansas \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 4,
-      "volume": 89869.0
+      "volume": 89869.0,
+      "search_query": "2024 Kansas United States"
     },
     {
       "lat": 14.72,
@@ -2216,7 +2492,8 @@
       "label": "Senegal",
       "elections": 1,
       "markets": 8,
-      "volume": 77420.0
+      "volume": 77420.0,
+      "search_query": "Senegal"
     },
     {
       "lat": 0.39,
@@ -2224,7 +2501,8 @@
       "label": "Gabon",
       "elections": 1,
       "markets": 9,
-      "volume": 63226.0
+      "volume": 63226.0,
+      "search_query": "Gabon"
     },
     {
       "lat": 32.36,
@@ -2232,7 +2510,8 @@
       "label": "2022 \u2014 Alabama \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 5,
-      "volume": 49290.0
+      "volume": 49290.0,
+      "search_query": "2022 Alabama United States"
     },
     {
       "lat": 33.75,
@@ -2240,7 +2519,8 @@
       "label": "2025 \u2014 Atlanta \u2014 United States",
       "elections": 1,
       "markets": 10,
-      "volume": 47741.0
+      "volume": 47741.0,
+      "search_query": "2025 Atlanta United States"
     },
     {
       "lat": 30.98,
@@ -2248,7 +2528,8 @@
       "label": "2024 \u2014 Louisiana \u2014 United States",
       "elections": 1,
       "markets": 8,
-      "volume": 47234.0
+      "volume": 47234.0,
+      "search_query": "2024 Louisiana United States"
     },
     {
       "lat": 50.84,
@@ -2256,7 +2537,8 @@
       "label": "European Union",
       "elections": 1,
       "markets": 13,
-      "volume": 45384.0
+      "volume": 45384.0,
+      "search_query": "European Union"
     },
     {
       "lat": 18.47,
@@ -2264,7 +2546,8 @@
       "label": "Dominican Republic",
       "elections": 1,
       "markets": 11,
-      "volume": 36470.0
+      "volume": 36470.0,
+      "search_query": "Dominican Republic"
     },
     {
       "lat": 44.79,
@@ -2272,7 +2555,8 @@
       "label": "Serbia",
       "elections": 1,
       "markets": 1,
-      "volume": 31925.0
+      "volume": 31925.0,
+      "search_query": "Serbia"
     },
     {
       "lat": 39.95,
@@ -2280,7 +2564,8 @@
       "label": "2023 \u2014 Philadelphia \u2014 United States",
       "elections": 1,
       "markets": 6,
-      "volume": 31010.0
+      "volume": 31010.0,
+      "search_query": "2023 Philadelphia United States"
     },
     {
       "lat": 47.49,
@@ -2288,7 +2573,8 @@
       "label": "2025 \u2014 King County, WA \u2014 United States",
       "elections": 1,
       "markets": 2,
-      "volume": 29447.0
+      "volume": 29447.0,
+      "search_query": "2025 King County, WA United States"
     },
     {
       "lat": 59.33,
@@ -2296,7 +2582,8 @@
       "label": "2024 \u2014 Sweden \u2014 Prime Minister (+1 more)",
       "elections": 2,
       "markets": 15,
-      "volume": 24060.0
+      "volume": 24060.0,
+      "search_query": "2024 Sweden Prime Minister"
     },
     {
       "lat": 12.13,
@@ -2304,7 +2591,8 @@
       "label": "Chad",
       "elections": 1,
       "markets": 1,
-      "volume": 23981.0
+      "volume": 23981.0,
+      "search_query": "Chad"
     },
     {
       "lat": 41.26,
@@ -2312,7 +2600,8 @@
       "label": "2025 \u2014 Omaha \u2014 United States",
       "elections": 1,
       "markets": 4,
-      "volume": 23276.0
+      "volume": 23276.0,
+      "search_query": "2025 Omaha United States"
     },
     {
       "lat": -4.44,
@@ -2320,7 +2609,8 @@
       "label": "Democratic Republic of the Congo",
       "elections": 1,
       "markets": 2,
-      "volume": 22540.0
+      "volume": 22540.0,
+      "search_query": "Democratic Republic of the Congo"
     },
     {
       "lat": 35.23,
@@ -2328,7 +2618,8 @@
       "label": "2025 \u2014 Charlotte \u2014 United States",
       "elections": 1,
       "markets": 6,
-      "volume": 20805.0
+      "volume": 20805.0,
+      "search_query": "2025 Charlotte United States"
     },
     {
       "lat": 40.44,
@@ -2336,7 +2627,8 @@
       "label": "2025 \u2014 Pittsburgh \u2014 United States",
       "elections": 1,
       "markets": 5,
-      "volume": 18409.0
+      "volume": 18409.0,
+      "search_query": "2025 Pittsburgh United States"
     },
     {
       "lat": 41.99,
@@ -2344,7 +2636,8 @@
       "label": "North Macedonia",
       "elections": 1,
       "markets": 1,
-      "volume": 16135.0
+      "volume": 16135.0,
+      "search_query": "North Macedonia"
     },
     {
       "lat": 32.76,
@@ -2352,7 +2645,8 @@
       "label": "2025 \u2014 Fort Worth \u2014 United States",
       "elections": 1,
       "markets": 8,
-      "volume": 15558.0
+      "volume": 15558.0,
+      "search_query": "2025 Fort Worth United States"
     },
     {
       "lat": 41.5,
@@ -2360,7 +2654,8 @@
       "label": "2025 \u2014 Cleveland \u2014 United States",
       "elections": 1,
       "markets": 4,
-      "volume": 13362.0
+      "volume": 13362.0,
+      "search_query": "2025 Cleveland United States"
     },
     {
       "lat": 40.63,
@@ -2368,7 +2663,8 @@
       "label": "2024 \u2014 Illinois \u2014 United States (+6 more)",
       "elections": 7,
       "markets": 62,
-      "volume": 13023.0
+      "volume": 13023.0,
+      "search_query": "2024 Illinois United States"
     },
     {
       "lat": 46.06,
@@ -2376,7 +2672,8 @@
       "label": "2024 \u2014 Slovenia \u2014 Prime Minister",
       "elections": 1,
       "markets": 3,
-      "volume": 12173.0
+      "volume": 12173.0,
+      "search_query": "2024 Slovenia Prime Minister"
     },
     {
       "lat": -17.83,
@@ -2384,7 +2681,8 @@
       "label": "Zimbabwe",
       "elections": 1,
       "markets": 3,
-      "volume": 5458.0
+      "volume": 5458.0,
+      "search_query": "Zimbabwe"
     },
     {
       "lat": 35.47,
@@ -2392,7 +2690,8 @@
       "label": "2022 \u2014 Oklahoma \u2014 United States (+1 more)",
       "elections": 2,
       "markets": 3,
-      "volume": 4495.0
+      "volume": 4495.0,
+      "search_query": "2022 Oklahoma United States"
     },
     {
       "lat": 43.3,
@@ -2400,7 +2699,8 @@
       "label": "2024 \u2014 Marseille \u2014 France",
       "elections": 1,
       "markets": 1,
-      "volume": 4058.0
+      "volume": 4058.0,
+      "search_query": "2024 Marseille France"
     },
     {
       "lat": -1.29,
@@ -2408,7 +2708,8 @@
       "label": "Kenya",
       "elections": 1,
       "markets": 10,
-      "volume": 3580.0
+      "volume": 3580.0,
+      "search_query": "Kenya"
     },
     {
       "lat": 23.81,
@@ -2416,7 +2717,8 @@
       "label": "Bangladesh",
       "elections": 1,
       "markets": 1,
-      "volume": 3413.0
+      "volume": 3413.0,
+      "search_query": "Bangladesh"
     },
     {
       "lat": 42.66,
@@ -2424,7 +2726,8 @@
       "label": "2024 \u2014 Kosovo \u2014 Prime Minister",
       "elections": 1,
       "markets": 2,
-      "volume": 2371.0
+      "volume": 2371.0,
+      "search_query": "2024 Kosovo Prime Minister"
     },
     {
       "lat": 40.84,
@@ -2432,7 +2735,8 @@
       "label": "2025 \u2014 Bronx Borough \u2014 United States",
       "elections": 1,
       "markets": 2,
-      "volume": 1047.0
+      "volume": 1047.0,
+      "search_query": "2025 Bronx Borough United States"
     },
     {
       "lat": 34.8,
@@ -2440,7 +2744,8 @@
       "label": "2024 \u2014 Arkansas \u2014 United States",
       "elections": 1,
       "markets": 2,
-      "volume": 566.0
+      "volume": 566.0,
+      "search_query": "2024 Arkansas United States"
     },
     {
       "lat": 33.84,
@@ -2448,7 +2753,8 @@
       "label": "2024 \u2014 SC-1 \u2014 United States",
       "elections": 1,
       "markets": 9,
-      "volume": 443.0
+      "volume": 443.0,
+      "search_query": "2024 SC-1 United States"
     },
     {
       "lat": 35.17,
@@ -2456,7 +2762,8 @@
       "label": "2024 \u2014 Cyprus \u2014 Parliament",
       "elections": 1,
       "markets": 1,
-      "volume": 274.0
+      "volume": 274.0,
+      "search_query": "2024 Cyprus Parliament"
     },
     {
       "lat": 44.07,
@@ -2464,7 +2771,8 @@
       "label": "2024 \u2014 Idaho \u2014 United States",
       "elections": 1,
       "markets": 2,
-      "volume": 238.0
+      "volume": 238.0,
+      "search_query": "2024 Idaho United States"
     },
     {
       "lat": -41.29,
@@ -2472,7 +2780,8 @@
       "label": "New Zealand",
       "elections": 1,
       "markets": 1,
-      "volume": 0.0
+      "volume": 0.0,
+      "search_query": "New Zealand"
     },
     {
       "lat": 39.1,
@@ -2480,7 +2789,8 @@
       "label": "2025 \u2014 Cincinnati \u2014 United States",
       "elections": 1,
       "markets": 2,
-      "volume": 0.0
+      "volume": 0.0,
+      "search_query": "2025 Cincinnati United States"
     }
   ]
 }

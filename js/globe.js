@@ -163,11 +163,22 @@ function initGlobe(containerId, options) {
     if (!document.getElementById('globe-marquee-style')) {
         var marqStyle = document.createElement('style');
         marqStyle.id = 'globe-marquee-style';
-        marqStyle.textContent = '@keyframes globe-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}' +
-            '.globe-marquee{display:inline-block;white-space:nowrap;animation:globe-marquee 6s linear infinite;padding-right:32px;}';
+        marqStyle.textContent = '@keyframes globe-marquee-single{0%,10%{transform:translateX(0)}90%,100%{transform:translateX(calc(-100% + 236px))}}' +
+            '.globe-marquee-single{display:inline-block;white-space:nowrap;animation:globe-marquee-single 5s ease-in-out infinite alternate;}';
         document.head.appendChild(marqStyle);
     }
     document.body.appendChild(tooltip);
+
+    // Keep tooltip visible when hovering over it (for clickable links in fullscreen)
+    var tooltipHovered = false;
+    tooltip.addEventListener('mouseenter', function() { tooltipHovered = true; });
+    tooltip.addEventListener('mouseleave', function() {
+        tooltipHovered = false;
+        tooltip.style.opacity = '0';
+        tooltip.style.pointerEvents = 'none';
+        hoveredMarker = null;
+        scheduleResume();
+    });
 
     // Fullscreen button
     var fsBtn = document.createElement('button');
@@ -189,7 +200,7 @@ function initGlobe(containerId, options) {
         // Create overlay backdrop
         var overlay = document.createElement('div');
         overlay.id = 'globe-fullscreen-overlay';
-        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);' +
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0c1a2e 0%,#0f1729 50%,#111827 100%);' +
             'display:flex;align-items:center;justify-content:center;cursor:default;';
 
         // Close button
@@ -491,12 +502,13 @@ function initGlobe(containerId, options) {
             var statusLabel = hit.type === 'completed' ? 'Completed' : 'Live';
             var statusDot = '<span style="color:' + statusColor + ';">\u25CF</span> ';
 
-            // Build label — use marquee if text is long
+            // Build label — use marquee scroll for long text
             var labelText = e.label;
             var labelHtml;
-            if (labelText.length > 30) {
-                labelHtml = '<div style="overflow:hidden;max-width:236px;"><span class="globe-marquee">' +
-                    labelText + '</span><span class="globe-marquee">' + labelText + '</span></div>';
+            if (labelText.length > 28) {
+                // Single copy that scrolls, then resets — no doubling
+                labelHtml = '<div style="overflow:hidden;max-width:236px;">' +
+                    '<strong style="font-size:13px;" class="globe-marquee-single">' + labelText + '</strong></div>';
             } else {
                 labelHtml = '<strong style="font-size:13px;white-space:nowrap;">' + labelText + '</strong>';
             }
@@ -511,16 +523,30 @@ function initGlobe(containerId, options) {
                 lines.push('<span style="font-size:11px;opacity:0.7;">' + detail + '</span>');
             }
 
+            // In fullscreen, add Polymarket/Kalshi search links
+            if (isFullscreen && e.search_query) {
+                var q = encodeURIComponent(e.search_query);
+                lines.push('<span style="font-size:11px;margin-top:2px;display:inline-flex;gap:8px;">' +
+                    '<a href="https://polymarket.com/search?query=' + q + '" target="_blank" rel="noopener" ' +
+                    'style="color:#60a5fa;text-decoration:none;">Polymarket &nearr;</a>' +
+                    '<a href="https://kalshi.com/search?query=' + q + '" target="_blank" rel="noopener" ' +
+                    'style="color:#34d399;text-decoration:none;">Kalshi &nearr;</a>' +
+                    '</span>');
+            }
+
             tooltip.innerHTML = lines.join('<br>');
+            // Allow clicking links in fullscreen tooltip
+            tooltip.style.pointerEvents = isFullscreen ? 'auto' : 'none';
             tooltip.style.opacity = '1';
             // Position in viewport coords (tooltip is position:fixed on body)
             var vp = svgToViewport(hit.x, hit.y);
             tooltip.style.left = vp.x + 'px';
             tooltip.style.top = vp.y + 'px';
         } else {
-            if (hoveredMarker) {
+            if (hoveredMarker && !tooltipHovered) {
                 hoveredMarker = null;
                 tooltip.style.opacity = '0';
+                tooltip.style.pointerEvents = 'none';
                 scheduleResume();
             }
         }
