@@ -583,9 +583,11 @@ function initGlobe(containerId, options) {
             // Add platform links (fullscreen only)
             if (isFullscreen) {
                 var linkParts = [];
-                if (e.has_pm && e.search_query) {
-                    var q = encodeURIComponent(e.search_query);
-                    linkParts.push('<a href="https://polymarket.com/search?_q=' + q + '" target="_blank" rel="noopener" ' +
+                if (e.has_pm) {
+                    var pmUrl = e.pm_event
+                        ? 'https://polymarket.com/event/' + e.pm_event
+                        : 'https://polymarket.com/search?_q=' + encodeURIComponent(e.search_query);
+                    linkParts.push('<a href="' + pmUrl + '" target="_blank" rel="noopener" ' +
                         'style="color:#60a5fa;text-decoration:none;">Polymarket &nearr;</a>');
                 }
                 if (e.has_k && e.kalshi_event) {
