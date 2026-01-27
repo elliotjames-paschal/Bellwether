@@ -12,16 +12,15 @@
             gap: 16px;
         }
         .team-card {
-            display: flex;
             background: var(--white);
             border: 1px solid var(--gray-200);
             border-radius: 8px;
             overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .team-card-accent {
-            width: 3px;
-            flex-shrink: 0;
-            background: var(--pm-color);
+        .team-card:hover {
+            border-color: var(--gray-300);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
         .team-card-body {
             padding: 20px 24px;
@@ -151,7 +150,7 @@
                 <h2>Team</h2>
                 <div class="team-grid">
                     <div class="team-card">
-                        <div class="team-card-accent"></div>
+
                         <div class="team-card-body">
                             <h3>Andrew B. Hall</h3>
                             <p class="team-card-title">Davies Family Professor of Political Economy<br>Graduate School of Business, Stanford University<br>Senior Fellow, Hoover Institution</p>
@@ -159,7 +158,7 @@
                         </div>
                     </div>
                     <div class="team-card">
-                        <div class="team-card-accent"></div>
+
                         <div class="team-card-body">
                             <h3>Elliot Paschal</h3>
                             <p class="team-card-title">Research Fellow<br>Graduate School of Business, Stanford University</p>
