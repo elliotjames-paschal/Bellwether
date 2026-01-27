@@ -210,14 +210,14 @@ a:hover {
 .hero-eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
+    gap: 5px;
+    font-size: 0.6875rem;
     font-weight: 600;
     color: var(--pm-color);
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    padding: 5px 12px 5px 8px;
+    padding: 4px 10px 4px 7px;
     background: rgba(37, 99, 235, 0.1);
     border-radius: 4px;
 }
