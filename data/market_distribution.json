@@ -12,12 +12,12 @@
     "Legislative",
     "Government Operations",
     "Judicial",
-    "State Local",
     "Regulatory",
-    "Crisis Emergency"
+    "Crisis Emergency",
+    "State Local"
   ],
   "polymarket": [
-    6441,
+    6520,
     4616,
     566,
     1376,
@@ -29,12 +29,12 @@
     212,
     464,
     351,
-    131,
     120,
-    80
+    80,
+    52
   ],
   "kalshi": [
-    2611,
+    2720,
     1727,
     2151,
     190,
@@ -46,12 +46,12 @@
     595,
     107,
     47,
-    111,
     47,
-    5
+    5,
+    2
   ],
   "total": [
-    9052,
+    9240,
     6343,
     2717,
     1566,
@@ -63,8 +63,8 @@
     807,
     571,
     398,
-    242,
     167,
-    85
+    85,
+    54
   ]
 }

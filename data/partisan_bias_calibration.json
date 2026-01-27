@@ -2,57 +2,57 @@
   "polymarket": {
     "bins": [
       {
-        "predicted": 0.0024,
+        "predicted": 0.0033,
         "actual": 0.0,
-        "count": 4
+        "count": 5
       },
       {
-        "predicted": 0.0113,
+        "predicted": 0.0138,
         "actual": 0.0,
-        "count": 4
+        "count": 5
       },
       {
-        "predicted": 0.0223,
+        "predicted": 0.0271,
         "actual": 0.0,
-        "count": 4
+        "count": 5
       },
       {
-        "predicted": 0.0469,
+        "predicted": 0.0562,
         "actual": 0.0,
-        "count": 4
+        "count": 5
       },
       {
-        "predicted": 0.0982,
-        "actual": 0.25,
-        "count": 4
+        "predicted": 0.1119,
+        "actual": 0.2,
+        "count": 5
       },
       {
-        "predicted": 0.2383,
-        "actual": 0.25,
-        "count": 4
+        "predicted": 0.2587,
+        "actual": 0.4,
+        "count": 5
       },
       {
-        "predicted": 0.4692,
-        "actual": 0.75,
-        "count": 4
+        "predicted": 0.5664,
+        "actual": 0.8,
+        "count": 5
       },
       {
-        "predicted": 0.7891,
+        "predicted": 0.8569,
         "actual": 1.0,
-        "count": 4
+        "count": 5
       },
       {
-        "predicted": 0.95,
+        "predicted": 0.9698,
         "actual": 1.0,
-        "count": 4
+        "count": 5
       },
       {
-        "predicted": 0.9875,
+        "predicted": 0.9884,
         "actual": 1.0,
         "count": 7
       }
     ],
-    "n_elections": 43
+    "n_elections": 52
   },
   "kalshi": {
     "bins": [
@@ -62,51 +62,51 @@
         "count": 6
       },
       {
-        "predicted": 0.1683,
-        "actual": 0.0,
+        "predicted": 0.1533,
+        "actual": 0.1667,
         "count": 6
       },
       {
-        "predicted": 0.2533,
-        "actual": 0.5,
-        "count": 6
-      },
-      {
-        "predicted": 0.345,
+        "predicted": 0.245,
         "actual": 0.3333,
         "count": 6
       },
       {
-        "predicted": 0.43,
+        "predicted": 0.3267,
         "actual": 0.5,
         "count": 6
       },
       {
-        "predicted": 0.535,
+        "predicted": 0.42,
         "actual": 0.5,
         "count": 6
       },
       {
-        "predicted": 0.63,
+        "predicted": 0.515,
+        "actual": 0.5,
+        "count": 6
+      },
+      {
+        "predicted": 0.6017,
+        "actual": 0.8333,
+        "count": 6
+      },
+      {
+        "predicted": 0.855,
         "actual": 1.0,
         "count": 6
       },
       {
-        "predicted": 0.8933,
+        "predicted": 0.9683,
         "actual": 1.0,
         "count": 6
       },
       {
-        "predicted": 0.97,
+        "predicted": 0.98,
         "actual": 1.0,
-        "count": 6
-      },
-      {
-        "predicted": 0.9817,
-        "actual": 1.0,
-        "count": 6
+        "count": 7
       }
     ],
-    "n_elections": 60
+    "n_elections": 61
   }
 }

@@ -2,31 +2,31 @@
   "buckets": [
     {
       "label": "< 5%",
-      "pm_brier": 0.0518,
-      "k_brier": 0.0963,
-      "pm_n": 241,
-      "k_n": 177
+      "pm_brier": 0.0837,
+      "k_brier": 0.1306,
+      "pm_n": 194,
+      "k_n": 137
     },
     {
       "label": "5-10%",
-      "pm_brier": 0.0184,
+      "pm_brier": 0.0252,
       "k_brier": 0.1255,
       "pm_n": 70,
       "k_n": 29
     },
     {
       "label": "10-20%",
-      "pm_brier": 0.044,
-      "k_brier": 0.0452,
+      "pm_brier": 0.0442,
+      "k_brier": 0.047,
       "pm_n": 759,
-      "k_n": 323
+      "k_n": 315
     },
     {
       "label": "> 20%",
-      "pm_brier": 0.0181,
-      "k_brier": 0.0169,
-      "pm_n": 314,
-      "k_n": 175
+      "pm_brier": 0.0153,
+      "k_brier": 0.0129,
+      "pm_n": 309,
+      "k_n": 162
     }
   ]
 }
