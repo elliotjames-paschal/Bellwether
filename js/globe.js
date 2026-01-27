@@ -580,16 +580,22 @@ function initGlobe(containerId, options) {
                 lines.push('<span style="font-size:11px;opacity:0.7;">' + detail + '</span>');
             }
 
-            // Add Polymarket/Kalshi search links
+            // Add Polymarket/Kalshi links
             if (e.search_query) {
                 var q = encodeURIComponent(e.search_query);
-                var gq = encodeURIComponent('site:kalshi.com ' + e.search_query);
+                var pmLink = '<a href="https://polymarket.com/search?_q=' + q + '" target="_blank" rel="noopener" ' +
+                    'style="color:#60a5fa;text-decoration:none;">Polymarket &nearr;</a>';
+                var kalshiLink;
+                if (e.kalshi_event) {
+                    kalshiLink = '<a href="https://kalshi.com/markets/' + e.kalshi_event + '" target="_blank" rel="noopener" ' +
+                        'style="color:#34d399;text-decoration:none;">Kalshi &nearr;</a>';
+                } else {
+                    var gq = encodeURIComponent('site:kalshi.com ' + e.search_query);
+                    kalshiLink = '<a href="https://www.google.com/search?q=' + gq + '" target="_blank" rel="noopener" ' +
+                        'style="color:#34d399;text-decoration:none;">Kalshi &nearr;</a>';
+                }
                 lines.push('<span style="font-size:11px;margin-top:2px;display:inline-flex;gap:8px;">' +
-                    '<a href="https://polymarket.com/search?_q=' + q + '" target="_blank" rel="noopener" ' +
-                    'style="color:#60a5fa;text-decoration:none;">Polymarket &nearr;</a>' +
-                    '<a href="https://www.google.com/search?q=' + gq + '" target="_blank" rel="noopener" ' +
-                    'style="color:#34d399;text-decoration:none;">Kalshi &nearr;</a>' +
-                    '</span>');
+                    pmLink + kalshiLink + '</span>');
             }
 
             tooltipContent.innerHTML = lines.join('<br>');
