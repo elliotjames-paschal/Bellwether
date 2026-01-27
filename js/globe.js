@@ -1,0 +1,499 @@
+/**
+ * InteractiveGlobe - Vanilla JS/D3 rotating globe
+ *
+ * Loads election data from data/globe_elections.json and displays:
+ *   - Live elections: pulsing blue rings (hoverable with tooltip)
+ *   - Completed elections: smaller muted dots
+ *
+ * Auto-rotates until user interacts (hover or drag), then hands off control.
+ * Resumes auto-rotation after 5 seconds of inactivity.
+ * Tooltip renders above the CSS mask gradient at full opacity.
+ */
+
+// ============================================
+// TopoJSON Parser
+// ============================================
+function topoFeature(topology, o) {
+    if (typeof o === "string") o = topology.objects[o];
+    return o.type === "GeometryCollection"
+        ? { type: "FeatureCollection", features: o.geometries.map(function(g) { return topoToFeature(topology, g); }) }
+        : topoToFeature(topology, o);
+}
+
+function topoToFeature(topology, o) {
+    return { type: "Feature", id: o.id, properties: o.properties || {}, geometry: topoToGeometry(topology, o) };
+}
+
+function topoToGeometry(topology, o) {
+    var type = o.type;
+    if (type === "GeometryCollection") return { type: type, geometries: o.geometries.map(function(g) { return topoToGeometry(topology, g); }) };
+    if (type === "Point") return { type: type, coordinates: topoPoint(topology, o.coordinates) };
+    if (type === "MultiPoint") return { type: type, coordinates: o.coordinates.map(function(c) { return topoPoint(topology, c); }) };
+    var arcs = o.arcs;
+    if (type === "LineString") return { type: type, coordinates: topoLine(topology, arcs) };
+    if (type === "MultiLineString") return { type: type, coordinates: arcs.map(function(a) { return topoLine(topology, a); }) };
+    if (type === "Polygon") return { type: type, coordinates: arcs.map(function(a) { return topoRing(topology, a); }) };
+    if (type === "MultiPolygon") return { type: type, coordinates: arcs.map(function(p) { return p.map(function(a) { return topoRing(topology, a); }); }) };
+    return null;
+}
+
+function topoPoint(topology, position) {
+    var t = topology.transform;
+    return t ? [position[0] * t.scale[0] + t.translate[0], position[1] * t.scale[1] + t.translate[1]] : position;
+}
+
+function topoLine(topology, arcs) {
+    var points = [];
+    for (var i = 0; i < arcs.length; i++) {
+        var arc = arcs[i];
+        var arcData = arc < 0 ? topology.arcs[~arc].slice().reverse() : topology.arcs[arc];
+        for (var j = 0; j < arcData.length; j++) {
+            if (j > 0 || i === 0) {
+                var p = arcData[j];
+                if (topology.transform) {
+                    if (j === 0 && i > 0) continue;
+                    p = p.slice();
+                    if (points.length > 0) {
+                        var prev = points[points.length - 1];
+                        p[0] = prev[0] + p[0] * topology.transform.scale[0];
+                        p[1] = prev[1] + p[1] * topology.transform.scale[1];
+                    } else {
+                        p[0] = p[0] * topology.transform.scale[0] + topology.transform.translate[0];
+                        p[1] = p[1] * topology.transform.scale[1] + topology.transform.translate[1];
+                    }
+                }
+                points.push(p);
+            }
+        }
+    }
+    return points;
+}
+
+function topoRing(topology, arcs) {
+    var coords = topoLine(topology, arcs);
+    if (coords.length > 0) {
+        var first = coords[0], last = coords[coords.length - 1];
+        if (first[0] !== last[0] || first[1] !== last[1]) coords.push(first.slice());
+    }
+    return coords;
+}
+
+// Helper: extract shared borders from topology
+function topoMesh(topology, o, filter) {
+    var geom = { type: "MultiLineString", coordinates: [] };
+    if (typeof o === "string") o = topology.objects[o];
+    var geometries = o.geometries;
+    var arcsUsed = {};
+
+    geometries.forEach(function(g, i) {
+        var rings = g.type === "Polygon" ? g.arcs : g.type === "MultiPolygon" ? [].concat.apply([], g.arcs) : [];
+        rings.forEach(function(ring) {
+            ring.forEach(function(arcIdx) {
+                var absIdx = arcIdx < 0 ? ~arcIdx : arcIdx;
+                var key = absIdx;
+                if (!arcsUsed[key]) arcsUsed[key] = [];
+                arcsUsed[key].push(i);
+            });
+        });
+    });
+
+    Object.keys(arcsUsed).forEach(function(key) {
+        var indices = arcsUsed[key];
+        // Only include arcs shared by 2+ geometries (internal borders)
+        if (indices.length >= 2) {
+            var arcData = topology.arcs[parseInt(key)];
+            if (arcData) {
+                var coords = [];
+                arcData.forEach(function(p, j) {
+                    p = p.slice();
+                    if (topology.transform) {
+                        if (j === 0) {
+                            p[0] = p[0] * topology.transform.scale[0] + topology.transform.translate[0];
+                            p[1] = p[1] * topology.transform.scale[1] + topology.transform.translate[1];
+                        } else {
+                            var prev = coords[coords.length - 1];
+                            p[0] = prev[0] + p[0] * topology.transform.scale[0];
+                            p[1] = prev[1] + p[1] * topology.transform.scale[1];
+                        }
+                    }
+                    coords.push(p);
+                });
+                geom.coordinates.push(coords);
+            }
+        }
+    });
+
+    return geom;
+}
+
+// ============================================
+// Globe
+// ============================================
+function initGlobe(containerId, options) {
+    options = options || {};
+    var size = options.size || 640;
+    var rotationSpeed = options.rotationSpeed || 0.15;
+    var RESUME_DELAY = 800; // ms before auto-rotate resumes
+
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.style.width = size + 'px';
+    container.style.height = size + 'px';
+    container.style.transition = 'transform 0.1s ease-out';
+    container.style.transformOrigin = 'center center';
+    container.style.position = 'relative';
+
+    // Create SVG
+    var svg = d3.select(container).append('svg')
+        .attr('width', size)
+        .attr('height', size)
+        .style('overflow', 'visible');
+
+    // Create tooltip on document.body so it escapes the CSS mask-image on .hero-symbol
+    var tooltip = document.createElement('div');
+    tooltip.className = 'globe-tooltip';
+    tooltip.style.cssText = 'position:fixed;pointer-events:none;opacity:0;' +
+        'background:rgba(17,17,17,0.92);color:#fff;padding:8px 12px;border-radius:8px;' +
+        'font-size:12px;line-height:1.5;white-space:nowrap;z-index:10000;' +
+        'transition:opacity 0.15s;transform:translate(-50%,-100%);margin-top:-14px;' +
+        'box-shadow:0 4px 16px rgba(0,0,0,0.25);max-width:280px;';
+    document.body.appendChild(tooltip);
+
+    // State
+    var rotation = 0;
+    var tilt = -25;
+    var DEFAULT_TILT = -25;
+    var pulse = 0;
+    var animationId = null;
+    var landFeature = null;
+    var borderMesh = null;
+    var liveElections = [];
+    var completedElections = [];
+    var hoveredMarker = null;
+
+    // Drag & auto-rotate state
+    var autoRotate = true;
+    var isDragging = false;
+    var dragStartX = 0;
+    var dragStartY = 0;
+    var dragStartRotation = 0;
+    var dragStartTilt = 0;
+    var resumeTimer = null;
+
+    // Track projected positions for hit testing
+    var liveProjected = [];
+    var completedProjected = [];
+
+    // Projection
+    var projection = d3.geoOrthographic()
+        .scale(size * 0.485)
+        .center([0, 0])
+        .translate([size / 2, size / 2]);
+
+    var path = d3.geoPath().projection(projection);
+
+    function isVisible(lng, lat) {
+        var center = projection.invert([size / 2, size / 2]);
+        return center && d3.geoDistance([lng, lat], center) < Math.PI / 2;
+    }
+
+    function scheduleResume() {
+        clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(function() {
+            if (!isDragging && !hoveredMarker) {
+                autoRotate = true;
+            }
+        }, RESUME_DELAY);
+    }
+
+    function render() {
+        svg.selectAll("*").remove();
+        liveProjected = [];
+        completedProjected = [];
+
+        projection.rotate([rotation, tilt, -15]);
+
+        // Heartbeat pulse
+        var pulseScale = 1 + Math.sin(pulse) * 0.012;
+        container.style.transform = 'scale(' + pulseScale + ')';
+
+        // Gradient
+        var defs = svg.append("defs");
+        var gradient = defs.append("radialGradient")
+            .attr("id", "oceanGrad").attr("cx", "30%").attr("cy", "30%");
+        gradient.append("stop").attr("offset", "0%").attr("stop-color", "#f0f5fc");
+        gradient.append("stop").attr("offset", "100%").attr("stop-color", "#d4e4f7");
+
+        // Ocean
+        svg.append("path")
+            .datum({ type: "Sphere" })
+            .attr("d", path)
+            .attr("fill", "url(#oceanGrad)")
+            .attr("stroke", "#c5ddf5")
+            .attr("stroke-width", 1.5);
+
+        // Land
+        if (landFeature) {
+            svg.append("path")
+                .datum(landFeature)
+                .attr("d", path)
+                .attr("fill", "#b5cde2")
+                .attr("stroke", "none");
+        }
+
+        // Country borders (internal borders between countries)
+        if (borderMesh) {
+            svg.append("path")
+                .datum(borderMesh)
+                .attr("d", path)
+                .attr("fill", "none")
+                .attr("stroke", "#92b8d8")
+                .attr("stroke-width", 0.5)
+                .attr("opacity", 0.8);
+        }
+
+        // Coastline
+        if (landFeature) {
+            svg.append("path")
+                .datum(landFeature)
+                .attr("d", path)
+                .attr("fill", "none")
+                .attr("stroke", "#8ab4d6")
+                .attr("stroke-width", 0.7);
+        }
+
+        // Graticule
+        svg.append("path")
+            .datum(d3.geoGraticule().step([30, 30]))
+            .attr("d", path)
+            .attr("fill", "none")
+            .attr("stroke", "#d4e4f7")
+            .attr("stroke-width", 0.3);
+
+        // Completed elections (hoverable dots)
+        completedElections.forEach(function(e, idx) {
+            if (!isVisible(e.lng, e.lat)) return;
+            var coords = projection([e.lng, e.lat]);
+            if (!coords) return;
+
+            completedProjected.push({ x: coords[0], y: coords[1], idx: idx, data: e });
+
+            var isHovered = hoveredMarker && hoveredMarker.type === 'completed' && hoveredMarker.idx === idx;
+            svg.append("circle")
+                .attr("cx", coords[0]).attr("cy", coords[1])
+                .attr("r", isHovered ? 7 : 4)
+                .attr("fill", isHovered ? "#2563eb" : "#3b82f6")
+                .attr("stroke", isHovered ? "#fff" : "none")
+                .attr("stroke-width", isHovered ? 1.5 : 0)
+                .attr("opacity", isHovered ? 1 : 0.82);
+        });
+
+        // Live elections (pulsing rings + solid dots)
+        liveElections.forEach(function(e, idx) {
+            if (!isVisible(e.lng, e.lat)) return;
+            var coords = projection([e.lng, e.lat]);
+            if (!coords) return;
+
+            liveProjected.push({ x: coords[0], y: coords[1], idx: idx, data: e });
+
+            var phase = pulse * 1.5 + (e.lat * 0.7 + e.lng * 0.3);
+            var ringPulse = 0.3 + Math.sin(phase) * 0.25;
+            var ringSize = 10 + Math.sin(phase) * 3;
+
+            // Outer pulsing ring
+            svg.append("circle")
+                .attr("cx", coords[0]).attr("cy", coords[1])
+                .attr("r", ringSize)
+                .attr("fill", "none")
+                .attr("stroke", "#1d6ff2")
+                .attr("stroke-width", 2)
+                .attr("opacity", ringPulse);
+
+            // Solid dot
+            var isHovered = hoveredMarker && hoveredMarker.type === 'live' && hoveredMarker.idx === idx;
+            svg.append("circle")
+                .attr("cx", coords[0]).attr("cy", coords[1])
+                .attr("r", isHovered ? 8 : 5.5)
+                .attr("fill", isHovered ? "#1a56cc" : "#1d6ff2")
+                .attr("stroke", isHovered ? "#fff" : "#e0eaff")
+                .attr("stroke-width", isHovered ? 2 : 1);
+        });
+    }
+
+    function animate() {
+        if (autoRotate && !isDragging && !hoveredMarker) {
+            rotation = (rotation + rotationSpeed) % 360;
+            // Smoothly ease tilt back to default
+            tilt += (DEFAULT_TILT - tilt) * 0.04;
+        }
+        pulse += 0.02;
+        render();
+        animationId = requestAnimationFrame(animate);
+    }
+
+    // Hit testing for hover
+    function findNearestMarker(mx, my) {
+        var best = null;
+        var bestDist = 20;
+        liveProjected.forEach(function(p) {
+            var dist = Math.sqrt((p.x - mx) * (p.x - mx) + (p.y - my) * (p.y - my));
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = { type: 'live', idx: p.idx, data: p.data, x: p.x, y: p.y };
+            }
+        });
+        completedProjected.forEach(function(p) {
+            var dist = Math.sqrt((p.x - mx) * (p.x - mx) + (p.y - my) * (p.y - my));
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = { type: 'completed', idx: p.idx, data: p.data, x: p.x, y: p.y };
+            }
+        });
+        return best;
+    }
+
+    // Convert SVG-space coords to viewport coords for the fixed tooltip
+    function svgToViewport(sx, sy) {
+        var rect = svgNode.getBoundingClientRect();
+        return { x: rect.left + sx, y: rect.top + sy };
+    }
+
+    function updateCursor() {
+        if (isDragging) {
+            svgNode.style.cursor = 'grabbing';
+        } else if (hoveredMarker) {
+            svgNode.style.cursor = 'pointer';
+        } else {
+            svgNode.style.cursor = 'grab';
+        }
+    }
+
+    // Mouse events
+    var svgNode = svg.node();
+    svgNode.style.cursor = 'grab';
+
+    // Hover
+    svgNode.addEventListener('mousemove', function(evt) {
+        if (isDragging) return; // drag handler handles rotation
+
+        var rect = svgNode.getBoundingClientRect();
+        var mx = evt.clientX - rect.left;
+        var my = evt.clientY - rect.top;
+
+        var hit = findNearestMarker(mx, my);
+        if (hit) {
+            hoveredMarker = { type: hit.type, idx: hit.idx };
+            autoRotate = false;
+            clearTimeout(resumeTimer);
+            var e = hit.data;
+
+            // Build rich tooltip
+            var statusColor = hit.type === 'completed' ? '#9ca3af' : '#4285f4';
+            var statusLabel = hit.type === 'completed' ? 'Completed' : 'Live';
+            var statusDot = '<span style="color:' + statusColor + ';">\u25CF</span> ';
+
+            var lines = [];
+            lines.push('<strong style="font-size:13px;">' + e.label + '</strong>');
+            lines.push('<span style="font-size:11px;color:' + statusColor + ';">' + statusDot + statusLabel + '</span>');
+
+            if (e.markets) {
+                var detail = e.markets + ' market' + (e.markets > 1 ? 's' : '');
+                if (e.elections > 1) detail += ' &middot; ' + e.elections + ' elections';
+                lines.push('<span style="font-size:11px;opacity:0.7;">' + detail + '</span>');
+            }
+
+            tooltip.innerHTML = lines.join('<br>');
+            tooltip.style.opacity = '1';
+            // Position in viewport coords (tooltip is position:fixed on body)
+            var vp = svgToViewport(hit.x, hit.y);
+            tooltip.style.left = vp.x + 'px';
+            tooltip.style.top = vp.y + 'px';
+        } else {
+            if (hoveredMarker) {
+                hoveredMarker = null;
+                tooltip.style.opacity = '0';
+                scheduleResume();
+            }
+        }
+        updateCursor();
+    });
+
+    svgNode.addEventListener('mouseleave', function() {
+        if (!isDragging) {
+            hoveredMarker = null;
+            tooltip.style.opacity = '0';
+            scheduleResume();
+            updateCursor();
+        }
+    });
+
+    // Drag to rotate
+    svgNode.addEventListener('mousedown', function(evt) {
+        // Don't initiate drag on marker hover (let clicks pass through)
+        isDragging = true;
+        autoRotate = false;
+        clearTimeout(resumeTimer);
+        dragStartX = evt.clientX;
+        dragStartY = evt.clientY;
+        dragStartRotation = rotation;
+        dragStartTilt = tilt;
+        svgNode.style.cursor = 'grabbing';
+        evt.preventDefault();
+    });
+
+    document.addEventListener('mousemove', function(evt) {
+        if (!isDragging) return;
+        var dx = evt.clientX - dragStartX;
+        var dy = evt.clientY - dragStartY;
+        // Convert px delta to degrees
+        rotation = (dragStartRotation + dx * 0.3) % 360;
+        tilt = Math.max(-90, Math.min(90, dragStartTilt - dy * 0.3));
+        tooltip.style.opacity = '0';
+        hoveredMarker = null;
+    });
+
+    document.addEventListener('mouseup', function() {
+        if (!isDragging) return;
+        isDragging = false;
+        updateCursor();
+        scheduleResume();
+    });
+
+    // Load data — use countries topology for borders
+    Promise.all([
+        fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(function(r) { return r.json(); }),
+        fetch('data/globe_elections.json').then(function(r) { return r.json(); })
+    ]).then(function(results) {
+        var topology = results[0];
+        var electionData = results[1];
+
+        // Land mass (merged) for fill
+        landFeature = topoFeature(topology, topology.objects.land);
+        // Country borders (internal shared edges)
+        borderMesh = topoMesh(topology, topology.objects.countries);
+
+        liveElections = electionData.live || [];
+        completedElections = electionData.completed || [];
+
+        animate();
+    }).catch(function(err) {
+        console.error('Globe error:', err);
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#9ca3af;font-size:13px;">Globe unavailable</div>';
+    });
+
+    return function cleanup() {
+        if (animationId) cancelAnimationFrame(animationId);
+        clearTimeout(resumeTimer);
+        if (tooltip.parentNode) tooltip.parentNode.removeChild(tooltip);
+    };
+}
+
+// ============================================
+// Auto-initialize on page load
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('globe-container')) {
+        initGlobe('globe-container', { size: 640, rotationSpeed: 0.15 });
+    }
+});

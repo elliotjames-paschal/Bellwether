@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandbox - Bellwether</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .password-gate {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .password-form {
+            text-align: center;
+            max-width: 400px;
+        }
+        .password-form h2 {
+            margin-bottom: 8px;
+        }
+        .password-form p {
+            margin-bottom: 24px;
+            color: var(--gray-500);
+        }
+        .password-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+        .password-input:focus {
+            outline: none;
+            border-color: var(--pm-color);
+        }
+        .password-error {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+            display: none;
+        }
+        .sandbox-content {
+            display: none;
+        }
+        .sandbox-content.visible {
+            display: block;
+        }
+
+        /* Sandbox UI */
+        .research-input-container {
+            max-width: 800px;
+            margin: 0 auto 48px;
+        }
+        .research-input {
+            width: 100%;
+            padding: 20px 24px;
+            font-size: 1.125rem;
+            font-family: inherit;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            resize: none;
+            transition: border-color 0.2s;
+        }
+        .research-input:focus {
+            outline: none;
+            border-color: var(--pm-color);
+        }
+        .research-input::placeholder {
+            color: var(--gray-400);
+        }
+        .input-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+        .input-hint {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* Pipeline visualization */
+        .pipeline-section {
+            margin-top: 48px;
+        }
+        .pipeline-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        .pipeline-step {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .pipeline-step.active {
+            border-color: var(--pm-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .pipeline-step.complete {
+            border-color: var(--kalshi-color);
+        }
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: var(--gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 12px;
+        }
+        .pipeline-step.active .step-number {
+            background: var(--pm-color);
+            color: white;
+        }
+        .pipeline-step.complete .step-number {
+            background: var(--kalshi-color);
+            color: white;
+        }
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .step-description {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* Output area */
+        .output-section {
+            margin-top: 48px;
+            padding-top: 48px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .output-header h3 {
+            margin: 0;
+        }
+        .output-container {
+            background: var(--gray-100);
+            border-radius: 8px;
+            padding: 24px;
+            min-height: 200px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .output-container:empty::before,
+        .output-placeholder {
+            color: var(--gray-400);
+            font-size: 0.9375rem;
+        }
+
+        /* Conversation messages */
+        .output-message {
+            margin-bottom: 24px;
+        }
+        .user-message {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+        .assistant-message {
+            padding: 4px 0;
+        }
+        .output-text {
+            line-height: 1.7;
+            color: var(--gray-800);
+        }
+        .output-text h1, .output-text h2, .output-text h3,
+        .output-text h4, .output-text h5 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        .output-text h1:first-child, .output-text h2:first-child,
+        .output-text h3:first-child {
+            margin-top: 0;
+        }
+        .output-text p {
+            margin-bottom: 0.75em;
+        }
+        .output-text ul, .output-text ol {
+            margin-bottom: 0.75em;
+            padding-left: 1.5em;
+        }
+        .output-text li {
+            margin-bottom: 0.25em;
+        }
+        .output-text table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+            font-size: 0.875rem;
+        }
+        .output-text table th,
+        .output-text table td {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-200);
+            text-align: left;
+        }
+        .output-text table th {
+            background: var(--gray-100);
+            font-weight: 600;
+        }
+        .output-text code {
+            background: rgba(0,0,0,0.06);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+        .output-text pre {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1em 0;
+        }
+        .output-text pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Code blocks (collapsible) */
+        .output-code {
+            margin: 12px 0;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            background: var(--white);
+        }
+        .output-code summary {
+            padding: 10px 16px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            user-select: none;
+        }
+        .output-code summary:hover {
+            color: var(--gray-700);
+        }
+        .output-code pre {
+            margin: 0;
+            padding: 16px;
+            background: var(--gray-900);
+            color: var(--gray-100);
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            border-radius: 0 0 6px 6px;
+        }
+
+        /* Inline images */
+        .output-image {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .output-image img {
+            max-width: 100%;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+        }
+        .image-download {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.8125rem;
+            color: var(--pm-color);
+            text-decoration: none;
+        }
+        .image-download:hover {
+            text-decoration: underline;
+        }
+
+        /* Error messages */
+        .output-error {
+            color: #dc2626;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 0.875rem;
+        }
+
+        /* Save button */
+        .save-btn {
+            margin-top: 12px;
+            padding: 8px 16px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .save-btn:hover:not(:disabled) {
+            border-color: var(--pm-color);
+            color: var(--pm-color);
+        }
+        .save-btn:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        /* New conversation button */
+        .new-convo-btn {
+            padding: 8px 16px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .new-convo-btn:hover {
+            border-color: var(--gray-400);
+            color: var(--gray-700);
+        }
+
+        /* Workspace panel */
+        .workspace-section {
+            margin-top: 48px;
+            padding-top: 48px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .workspace-header h3 {
+            margin: 0;
+        }
+        .workspace-list {
+            display: grid;
+            gap: 12px;
+        }
+        .workspace-empty {
+            color: var(--gray-400);
+            font-size: 0.875rem;
+            text-align: center;
+            padding: 32px;
+        }
+        .workspace-item {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .workspace-item-title {
+            font-weight: 500;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .workspace-item-meta {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+            white-space: nowrap;
+        }
+        .workspace-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .workspace-delete {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            background: none;
+            border: 1px solid var(--gray-200);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .workspace-delete:hover {
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        /* Model badge */
+        .model-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+        }
+        .model-name {
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--pm-color);
+        }
+        .model-context {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* Mode tabs */
+        .mode-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+        .mode-tab {
+            padding: 10px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .mode-tab:hover {
+            border-color: var(--gray-300);
+            color: var(--gray-700);
+        }
+        .mode-tab.active {
+            background: var(--gray-900);
+            border-color: var(--gray-900);
+            color: var(--white);
+        }
+
+        /* Mode content */
+        .mode-content {
+            display: none;
+        }
+        .mode-content.active {
+            display: block;
+        }
+
+        /* Write paper section */
+        .paper-config {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .config-group {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .config-group h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .config-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+        .config-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+        .config-option label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        .paper-preview {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            border-radius: 8px;
+            padding: 24px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.8125rem;
+            line-height: 1.7;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .paper-preview .tex-comment {
+            color: var(--gray-500);
+        }
+        .paper-preview .tex-command {
+            color: #60a5fa;
+        }
+        .paper-preview .tex-bracket {
+            color: #f59e0b;
+        }
+
+        /* Vision section */
+        .vision-section {
+            margin-top: 64px;
+            padding: 32px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(16, 185, 129, 0.05));
+            border-radius: 12px;
+        }
+        .vision-section h3 {
+            margin-bottom: 16px;
+        }
+        .vision-list {
+            list-style: none;
+            padding: 0;
+        }
+        .vision-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            gap: 12px;
+        }
+        .vision-list li:last-child {
+            border-bottom: none;
+        }
+        .vision-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .status-planned {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+        .status-building {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--pm-color);
+        }
+        .status-live {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--kalshi-color);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo"><span class="nav-logo-text">Bel<span class="nav-logo-bounce">l</span><span class="nav-logo-rest">wether</span></span></a>
+            <div class="nav-links">
+                <a href="index.html#dashboard">Dashboard</a>
+                <a href="sandbox.html">Sandbox</a>
+                <a href="research.html">Research</a>
+                <a href="data.html">Data</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        var nav = document.querySelector('.nav');
+        var scrolled = false;
+        window.addEventListener('scroll', function() {
+            var s = window.scrollY > 20;
+            if (s !== scrolled) { scrolled = s; nav.classList.toggle('scrolled', s); }
+        }, { passive: true });
+    })();
+    </script>
+
+    <!-- Password Gate -->
+    <div class="password-gate" id="passwordGate">
+        <div class="password-form">
+            <h2>Sandbox Access</h2>
+            <p>This area is for research team members.</p>
+            <input type="password" class="password-input" id="passwordInput" placeholder="Enter password" autofocus>
+            <p class="password-error" id="passwordError">Incorrect password</p>
+            <button class="btn-primary" onclick="checkPassword()" style="width: 100%;">Enter</button>
+        </div>
+    </div>
+
+    <!-- Sandbox Content (hidden until password entered) -->
+    <div class="sandbox-content" id="sandboxContent">
+        <section class="hero">
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <p class="hero-eyebrow">Bell 1.0</p>
+                    <h1>Political Science Research Model</h1>
+                    <p class="hero-description">
+                        Bell 1.0 is an early-stage research model trained to conduct empirical political science.
+                        Ask a research question or generate a paper from existing analysis.
+                    </p>
+                    <div class="model-badge">
+                        <span class="model-name">bell-1.0-preview</span>
+                        <span class="model-context">GPT-4.1 + Code Interpreter · 6 datasets</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <!-- Mode Tabs -->
+                <div class="mode-tabs">
+                    <button class="mode-tab active" data-mode="research">Ask Research Question</button>
+                    <button class="mode-tab" data-mode="paper">Write Paper</button>
+                </div>
+
+                <!-- Research Question Mode -->
+                <div class="mode-content active" id="mode-research">
+                    <div class="research-input-container">
+                        <textarea
+                            class="research-input"
+                            id="researchInput"
+                            rows="4"
+                            placeholder="e.g., Do prediction markets show partisan bias in close races? Are they more accurate for presidential elections than House races?"
+                        ></textarea>
+                        <div class="input-actions">
+                            <span class="input-hint">Ctrl+Enter to submit · Be specific about the outcome you want to measure</span>
+                            <button class="btn-primary" id="runAnalysis" disabled>Run Analysis</button>
+                        </div>
+                    </div>
+
+                <!-- Pipeline Visualization -->
+                <div class="pipeline-section">
+                    <h3>Research Pipeline</h3>
+                    <div class="pipeline-steps">
+                        <div class="pipeline-step" id="step1">
+                            <div class="step-number">1</div>
+                            <div class="step-title">Parse Question</div>
+                            <div class="step-description">Extract hypothesis, variables, and scope</div>
+                        </div>
+                        <div class="pipeline-step" id="step2">
+                            <div class="step-number">2</div>
+                            <div class="step-title">Design Methodology</div>
+                            <div class="step-description">Select statistical approach and controls</div>
+                        </div>
+                        <div class="pipeline-step" id="step3">
+                            <div class="step-number">3</div>
+                            <div class="step-title">Query Data</div>
+                            <div class="step-description">Pull relevant markets from database</div>
+                        </div>
+                        <div class="pipeline-step" id="step4">
+                            <div class="step-number">4</div>
+                            <div class="step-title">Run Analysis</div>
+                            <div class="step-description">Execute statistical tests</div>
+                        </div>
+                        <div class="pipeline-step" id="step5">
+                            <div class="step-number">5</div>
+                            <div class="step-title">Generate Report</div>
+                            <div class="step-description">Synthesize findings with visualizations</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Output Area -->
+                <div class="output-section">
+                    <div class="output-header">
+                        <h3>Output</h3>
+                        <button class="new-convo-btn" id="newConversation">New Conversation</button>
+                    </div>
+                    <div class="output-container" id="outputContainer">
+                        <p class="output-placeholder">Waiting for research question...</p>
+                    </div>
+                </div>
+
+                <!-- Workspace -->
+                <div class="workspace-section" id="workspacePanel">
+                    <div class="workspace-header">
+                        <h3>Workspace</h3>
+                    </div>
+                    <div class="workspace-list"></div>
+                </div>
+
+                </div>
+
+                <!-- Write Paper Mode -->
+                <div class="mode-content" id="mode-paper">
+                    <h3 style="margin-bottom: 24px;">Generate Academic Paper</h3>
+                    <p style="color: var(--gray-600); margin-bottom: 24px;">
+                        Select the analyses to include. Bell will compile the figures, tables, and statistics
+                        into a LaTeX document and draft the paper sections.
+                    </p>
+
+                    <div class="paper-config">
+                        <div class="config-group">
+                            <h4>Include Analyses</h4>
+                            <div class="config-option">
+                                <input type="checkbox" id="inc-brier" checked>
+                                <label for="inc-brier">Brier Score Analysis</label>
+                            </div>
+                            <div class="config-option">
+                                <input type="checkbox" id="inc-calibration" checked>
+                                <label for="inc-calibration">Calibration Curves</label>
+                            </div>
+                            <div class="config-option">
+                                <input type="checkbox" id="inc-platform" checked>
+                                <label for="inc-platform">Platform Comparison</label>
+                            </div>
+                            <div class="config-option">
+                                <input type="checkbox" id="inc-partisan">
+                                <label for="inc-partisan">Partisan Bias Analysis</label>
+                            </div>
+                            <div class="config-option">
+                                <input type="checkbox" id="inc-volume">
+                                <label for="inc-volume">Volume Trends</label>
+                            </div>
+                        </div>
+                        <div class="config-group">
+                            <h4>Paper Options</h4>
+                            <div class="config-option">
+                                <input type="checkbox" id="opt-abstract" checked>
+                                <label for="opt-abstract">Generate Abstract</label>
+                            </div>
+                            <div class="config-option">
+                                <input type="checkbox" id="opt-lit" checked>
+                                <label for="opt-lit">Literature Review</label>
+                            </div>
+                            <div class="config-option">
+                                <input type="checkbox" id="opt-robustness">
+                                <label for="opt-robustness">Robustness Checks</label>
+                            </div>
+                            <div class="config-option">
+                                <input type="checkbox" id="opt-appendix">
+                                <label for="opt-appendix">Appendix with Full Tables</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="generatePaper" style="margin-bottom: 32px;">Generate Paper</button>
+
+                    <h4 style="margin-bottom: 16px;">Preview</h4>
+                    <div class="paper-preview" id="paperPreview">
+<span class="tex-comment">% Generated by Bell 1.0</span>
+<span class="tex-comment">% Waiting for generation...</span>
+
+<span class="tex-command">\documentclass</span><span class="tex-bracket">{article}</span>
+<span class="tex-command">\usepackage</span><span class="tex-bracket">{graphicx, booktabs, amsmath}</span>
+
+<span class="tex-command">\title</span><span class="tex-bracket">{Prediction Market Accuracy in U.S. Elections}</span>
+<span class="tex-command">\author</span><span class="tex-bracket">{Bell 1.0 \and Human Collaborators}</span>
+
+<span class="tex-command">\begin</span><span class="tex-bracket">{document}</span>
+<span class="tex-command">\maketitle</span>
+
+<span class="tex-command">\begin</span><span class="tex-bracket">{abstract}</span>
+[Abstract will be generated based on selected analyses...]
+<span class="tex-command">\end</span><span class="tex-bracket">{abstract}</span>
+
+<span class="tex-command">\section</span><span class="tex-bracket">{Introduction}</span>
+[Introduction will be generated...]
+
+<span class="tex-command">\end</span><span class="tex-bracket">{document}</span>
+                    </div>
+                </div>
+
+                <!-- Vision / Roadmap -->
+                <div class="vision-section">
+                    <h3>Bell Model Roadmap</h3>
+                    <p style="margin-bottom: 20px; color: var(--gray-600);">
+                        The goal: a model that takes a research question and produces publication-quality
+                        empirical analysis—methodology, data, statistical tests, robustness checks,
+                        and written findings.
+                    </p>
+                    <ul class="vision-list">
+                        <li>
+                            <span class="vision-status status-live">Live</span>
+                            <span>Automated data collection from Polymarket & Kalshi</span>
+                        </li>
+                        <li>
+                            <span class="vision-status status-live">Live</span>
+                            <span>Market classification pipeline (15 political categories)</span>
+                        </li>
+                        <li>
+                            <span class="vision-status status-live">Live</span>
+                            <span>Brier score calculation & calibration analysis</span>
+                        </li>
+                        <li>
+                            <span class="vision-status status-building">Building</span>
+                            <span>LaTeX paper generation from pipeline outputs</span>
+                        </li>
+                        <li>
+                            <span class="vision-status status-building">Building</span>
+                            <span>Natural language → research design translation</span>
+                        </li>
+                        <li>
+                            <span class="vision-status status-planned">Planned</span>
+                            <span>Dynamic SQL query generation from research questions</span>
+                        </li>
+                        <li>
+                            <span class="vision-status status-planned">Planned</span>
+                            <span>Automated robustness checking & sensitivity analysis</span>
+                        </li>
+                        <li>
+                            <span class="vision-status status-planned">Planned</span>
+                            <span>Fine-tuned Bell 2.0 on political science methodology</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024–2025 Stanford University</p>
+                <div class="footer-links">
+                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/sandbox.js"></script>
+    <script>
+        // Password gate
+        function checkPassword() {
+            var input = document.getElementById('passwordInput');
+            var error = document.getElementById('passwordError');
+
+            // Send password to worker for validation —
+            // also accept a local gate password for immediate UI unlock
+            var pw = input.value;
+            document.getElementById('passwordGate').style.display = 'none';
+            document.getElementById('sandboxContent').classList.add('visible');
+            sessionStorage.setItem('sandboxAuth', 'true');
+
+            // Store password for API calls and initialize sandbox
+            if (window.bellwetherSandbox) {
+                window.bellwetherSandbox.storePassword(pw);
+                window.bellwetherSandbox.init();
+            }
+        }
+
+        // Check if already authenticated this session
+        if (sessionStorage.getItem('sandboxAuth') === 'true') {
+            document.getElementById('passwordGate').style.display = 'none';
+            document.getElementById('sandboxContent').classList.add('visible');
+        }
+
+        // Enter key to submit password
+        document.getElementById('passwordInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // Mode tabs
+        document.querySelectorAll('.mode-tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.mode-tab').forEach(function (t) { t.classList.remove('active'); });
+                document.querySelectorAll('.mode-content').forEach(function (c) { c.classList.remove('active'); });
+                tab.classList.add('active');
+                var mode = tab.dataset.mode;
+                document.getElementById('mode-' + mode).classList.add('active');
+            });
+        });
+
+        // Generate paper button (Phase 3 — placeholder for now)
+        document.getElementById('generatePaper').addEventListener('click', function () {
+            var btn = document.getElementById('generatePaper');
+            btn.textContent = 'Coming soon...';
+            btn.disabled = true;
+            setTimeout(function () {
+                btn.textContent = 'Generate Paper';
+                btn.disabled = false;
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

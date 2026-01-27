@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data - Bellwether</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .data-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 32px 0;
+        }
+        .data-stat {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .data-stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+        .data-stat-label {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        .glossary-section {
+            margin-top: 48px;
+        }
+        .glossary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        .glossary-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .glossary-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: top;
+        }
+        .glossary-table tr:hover {
+            background: var(--gray-50, #fafafa);
+        }
+        .field-name {
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.8125rem;
+            color: var(--pm-color);
+            background: rgba(37, 99, 235, 0.08);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .field-type {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .field-description {
+            color: var(--gray-600);
+        }
+
+        .download-section {
+            margin-top: 64px;
+            padding: 48px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(16, 185, 129, 0.05));
+            border-radius: 12px;
+        }
+        .download-section h2 {
+            margin-bottom: 8px;
+        }
+        .download-section > p {
+            color: var(--gray-600);
+            margin-bottom: 32px;
+        }
+        .download-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            max-width: 600px;
+        }
+        .download-form input {
+            padding: 12px 16px;
+            font-size: 0.9375rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            background: var(--white);
+        }
+        .download-form input:focus {
+            outline: none;
+            border-color: var(--pm-color);
+        }
+        .download-success {
+            display: none;
+            padding: 16px 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--kalshi-color);
+            border-radius: 8px;
+            color: var(--kalshi-color);
+            margin-top: 16px;
+        }
+        .download-success.visible {
+            display: block;
+        }
+
+        .update-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--kalshi-color);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-left: 12px;
+        }
+        .update-badge::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background: var(--kalshi-color);
+            border-radius: 50%;
+        }
+
+        .file-list {
+            margin-top: 24px;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gray-100);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-500);
+        }
+        .file-name {
+            font-weight: 500;
+        }
+        .file-meta {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        @media (max-width: 768px) {
+            .data-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .download-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo"><span class="nav-logo-text">Bel<span class="nav-logo-bounce">l</span><span class="nav-logo-rest">wether</span></span></a>
+            <div class="nav-links">
+                <a href="index.html#dashboard">Dashboard</a>
+                <a href="research.html">Research</a>
+                <a href="data.html">Data</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        var nav = document.querySelector('.nav');
+        var scrolled = false;
+        window.addEventListener('scroll', function() {
+            var s = window.scrollY > 20;
+            if (s !== scrolled) { scrolled = s; nav.classList.toggle('scrolled', s); }
+        }, { passive: true });
+    })();
+    </script>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <p class="hero-eyebrow">Open Data</p>
+                <h1>Political Prediction Markets Dataset</h1>
+                <p class="hero-description">
+                    Comprehensive data on 23,000+ political prediction markets from Polymarket and Kalshi,
+                    updated daily by Bell.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="data-stats">
+                <div class="data-stat">
+                    <div class="data-stat-value" id="stat-markets">23,430</div>
+                    <div class="data-stat-label">Total Markets</div>
+                </div>
+                <div class="data-stat">
+                    <div class="data-stat-value" id="stat-resolved">18,200+</div>
+                    <div class="data-stat-label">Resolved Markets</div>
+                </div>
+                <div class="data-stat">
+                    <div class="data-stat-value" id="stat-prices">12M+</div>
+                    <div class="data-stat-label">Price Observations</div>
+                </div>
+                <div class="data-stat">
+                    <div class="data-stat-value" id="stat-updated">Daily</div>
+                    <div class="data-stat-label">Update Frequency</div>
+                </div>
+            </div>
+
+            <div class="glossary-section">
+                <h2>Data Glossary <span class="update-badge">Updated Daily</span></h2>
+                <p style="color: var(--gray-600); margin: 16px 0 24px;">
+                    The master dataset contains one row per market outcome (e.g., "Will Trump win?" has Yes/No rows).
+                    All markets are classified into 15 political categories.
+                </p>
+
+                <h3 style="margin: 32px 0 16px;">Market Identifiers</h3>
+                <table class="glossary-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Field</th>
+                            <th style="width: 100px;">Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="field-name">market_id</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Unique identifier for the market (platform-specific)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">platform</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Source platform: "polymarket" or "kalshi"</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">condition_id</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Polymarket condition ID (for price lookups)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">ticker</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Kalshi ticker symbol</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin: 32px 0 16px;">Market Details</h3>
+                <table class="glossary-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Field</th>
+                            <th style="width: 100px;">Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="field-name">question</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Full market question text</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">outcome</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Outcome being priced (e.g., "Yes", "Trump", "Republican")</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">political_category</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">One of 15 categories: Electoral, Monetary Policy, Party Politics, Military Security, International, Appointments, Regulatory, Political Speech, etc.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">volume_usd</span></td>
+                            <td><span class="field-type">float</span></td>
+                            <td class="field-description">Total trading volume in USD</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin: 32px 0 16px;">Electoral Markets (subset)</h3>
+                <table class="glossary-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Field</th>
+                            <th style="width: 100px;">Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="field-name">election_type</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Type of election: Presidential, Senate, House, Governor, Primary, etc.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">country</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Country of election</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">state</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">State/region (for sub-national elections)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">election_date</span></td>
+                            <td><span class="field-type">date</span></td>
+                            <td class="field-description">Date of the election, sourced from our election dates lookup table</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">election_year</span></td>
+                            <td><span class="field-type">float</span></td>
+                            <td class="field-description">Year of the election (e.g., 2024.0)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">is_primary</span></td>
+                            <td><span class="field-type">boolean</span></td>
+                            <td class="field-description">Whether the market is for a primary election (vs. general)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">election_eve_price</span></td>
+                            <td><span class="field-type">float</span></td>
+                            <td class="field-description">Market price at 00:00 UTC on election day. This is our standard forecast evaluation price for electoral markets. See <a href="papers/election-eve-methodology/" style="color: var(--pm-color);">methodology note</a>.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">is_winner_market</span></td>
+                            <td><span class="field-type">boolean</span></td>
+                            <td class="field-description">Whether this is a "Will X win?" market (vs. vote share, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">party</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Political party: "R", "D", or null</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin: 32px 0 16px;">Resolution & Accuracy</h3>
+                <table class="glossary-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Field</th>
+                            <th style="width: 100px;">Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="field-name">is_closed</span></td>
+                            <td><span class="field-type">boolean</span></td>
+                            <td class="field-description">Whether market has stopped trading</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">actual_outcome</span></td>
+                            <td><span class="field-type">float</span></td>
+                            <td class="field-description">Resolution: 1.0 if outcome occurred, 0.0 if not, null if unresolved</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">close_time</span></td>
+                            <td><span class="field-type">datetime</span></td>
+                            <td class="field-description">When trading closed</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">brier_1d</span></td>
+                            <td><span class="field-type">float</span></td>
+                            <td class="field-description">Brier score using price 1 day before resolution</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">brier_7d</span></td>
+                            <td><span class="field-type">float</span></td>
+                            <td class="field-description">Brier score using price 7 days before resolution</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">brier_30d</span></td>
+                            <td><span class="field-type">float</span></td>
+                            <td class="field-description">Brier score using price 30 days before resolution</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin: 32px 0 16px;">Price History (separate file)</h3>
+                <table class="glossary-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Field</th>
+                            <th style="width: 100px;">Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="field-name">token_id</span></td>
+                            <td><span class="field-type">string</span></td>
+                            <td class="field-description">Market identifier (joins to condition_id or ticker)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">timestamp</span></td>
+                            <td><span class="field-type">datetime</span></td>
+                            <td class="field-description">Price observation time (UTC)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="field-name">price</span></td>
+                            <td><span class="field-type">float</span></td>
+                            <td class="field-description">Market price (0-1, interpretable as probability)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="glossary-section" style="margin-top: 64px;">
+                <h2>Methodology</h2>
+                <p style="color: var(--gray-600); margin: 16px 0 24px;">
+                    How we measure prediction accuracy and why the choice of when to sample prices is a first-order decision.
+                </p>
+
+                <h3 style="margin: 32px 0 16px;">Brier Score Calculation</h3>
+                <p style="color: var(--gray-600); margin-bottom: 16px;">
+                    The Brier score measures forecast accuracy: <code style="background: var(--gray-100); padding: 2px 6px; border-radius: 3px;">(prediction &minus; outcome)&sup2;</code>.
+                    A score of 0 is perfect; 0.25 is equivalent to random guessing. We calculate Brier scores at multiple
+                    time horizons (60, 30, 14, 7, 3, 1 days before the event) and, for electoral markets, using the election eve price.
+                </p>
+
+                <h3 style="margin: 32px 0 16px;">Election Eve Price (Electoral Markets)</h3>
+                <p style="color: var(--gray-600); margin-bottom: 16px;">
+                    For electoral markets, we use the market price at <strong>00:00 UTC on election day</strong> as our primary forecast evaluation price.
+                    We call this the <em>election eve price</em>. For U.S. elections on November 5, this corresponds to approximately 7&ndash;8 PM Eastern
+                    on November 4&mdash;before any polls have closed.
+                </p>
+                <p style="color: var(--gray-600); margin-bottom: 16px;">
+                    This is an <strong>event-anchored</strong> truncation rule, not a resolution-anchored one. The distinction matters because
+                    Polymarket and Kalshi settle contracts at different speeds after outcomes are known (24&ndash;48 hours for Polymarket,
+                    3&ndash;12 hours for Kalshi). Any truncation rule defined relative to resolution time mixes genuine forecasts with
+                    post-outcome convergence and introduces a platform-specific bias into cross-platform comparisons.
+                </p>
+                <p style="color: var(--gray-600); margin-bottom: 16px;">
+                    The election eve price avoids this. The same election produces the same measurement timestamp on both platforms.
+                    The price reflects what the market believed before the outcome was known&mdash;which is what forecast accuracy should measure.
+                    For full discussion, see our <a href="papers/election-eve-methodology/" style="color: var(--pm-color);">methodological note</a>.
+                </p>
+
+                <h3 style="margin: 32px 0 16px;">Reference Dates by Market Type</h3>
+                <p style="color: var(--gray-600); margin-bottom: 16px;">
+                    Different market types use different reference dates, reflecting the information available to researchers
+                    and the settlement characteristics of each platform:
+                </p>
+
+                <table class="glossary-table" style="margin-bottom: 24px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 180px;">Market Type</th>
+                            <th style="width: 200px;">Reference Date</th>
+                            <th>Rationale</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Electoral Markets</strong></td>
+                            <td>00:00 UTC on election day</td>
+                            <td class="field-description">Event-anchored. Uses verified election dates from our lookup table. Price is queried at exact UTC midnight via the Dome API. This is pre-outcome for all U.S. elections and unambiguous across platforms.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Non-Electoral (Polymarket)</strong></td>
+                            <td>trading_close_time &minus; 2 days</td>
+                            <td class="field-description">Resolution-anchored with offset. Polymarket markets typically close 24&ndash;48 hours after event outcomes are known. The 2-day offset is a conservative pre-event estimate.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Non-Electoral (Kalshi)</strong></td>
+                            <td>trading_close_time &minus; 1 day</td>
+                            <td class="field-description">Resolution-anchored with offset. Kalshi markets settle within 3&ndash;12 hours. The 1-day offset provides a conservative pre-event window.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p style="color: var(--gray-600); margin-bottom: 16px; font-size: 0.875rem;">
+                    <strong>Note:</strong> For non-electoral markets, we do not have event dates and must rely on resolution-relative offsets.
+                    These offsets are less precise than event-anchored dates and may include some post-outcome trading, particularly on Polymarket.
+                    We document this limitation transparently. Where possible, we use the electoral approach as the benchmark.
+                </p>
+
+                <h3 style="margin: 32px 0 16px;">Platform Settlement Windows</h3>
+                <p style="color: var(--gray-600); margin-bottom: 16px;">
+                    Our methodology accounts for documented platform settlement procedures:
+                </p>
+                <ul style="color: var(--gray-600); margin-bottom: 24px; padding-left: 24px;">
+                    <li style="margin-bottom: 8px;">
+                        <strong>Polymarket:</strong> Per their documentation, "Markets are settled within 24 to 48 hours after the event outcome becomes definitively known."
+                        <a href="https://docs.polymarket.com/#settlement" style="color: var(--pm-color);" target="_blank">[docs]</a>
+                    </li>
+                    <li style="margin-bottom: 8px;">
+                        <strong>Kalshi:</strong> Markets settle via automated processes typically within 3&ndash;12 hours of outcome determination.
+                        <a href="https://kalshi.com/docs/kalshi-settlement-sources.pdf" style="color: var(--pm-color);" target="_blank">[settlement sources]</a>
+                    </li>
+                </ul>
+
+                <h3 style="margin: 32px 0 16px;">Price Data Sources</h3>
+                <p style="color: var(--gray-600); margin-bottom: 16px;">
+                    Election eve prices are queried from the <a href="https://domeapi.io" style="color: var(--pm-color);" target="_blank">Dome API</a>
+                    at exact Unix timestamps (UTC midnight on election day). This provides point-in-time prices rather than daily candle approximations.
+                    For time-horizon Brier scores (1d, 7d, etc.), we use daily price observations at 00:00 UTC intervals.
+                </p>
+            </div>
+
+            <div class="download-section">
+                <h2>Download Dataset</h2>
+                <p>
+                    Free for academic research. Enter your details and we'll send you access to the latest data.
+                </p>
+
+                <form class="download-form" id="downloadForm">
+                    <input type="text" name="name" placeholder="Full name" required>
+                    <input type="email" name="email" placeholder="Email address" required>
+                    <button type="submit" class="btn-primary">Request Access</button>
+                </form>
+
+                <div class="download-success" id="downloadSuccess">
+                    Thanks! Check your email for download instructions.
+                </div>
+
+                <div class="file-list" style="margin-top: 32px;">
+                    <h4 style="margin-bottom: 16px;">Available Files</h4>
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon">CSV</div>
+                            <div>
+                                <div class="file-name">political_markets_master.csv</div>
+                                <div class="file-meta">~45 MB · 23,430 rows · Updated daily</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon">JSON</div>
+                            <div>
+                                <div class="file-name">price_histories.json</div>
+                                <div class="file-meta">~800 MB · 12M+ price observations</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon">CSV</div>
+                            <div>
+                                <div class="file-name">prediction_accuracy.csv</div>
+                                <div class="file-meta">~8 MB · Brier scores at multiple horizons</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024–2025 Stanford University</p>
+                <div class="footer-links">
+                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Load live stats from summary.json
+        (async function() {
+            try {
+                const resp = await fetch('data/summary.json');
+                const data = await resp.json();
+
+                const el = (id) => document.getElementById(id);
+
+                if (data.total_markets) {
+                    el('stat-markets').textContent = data.total_markets.toLocaleString();
+                }
+                if (data.resolved_markets) {
+                    el('stat-resolved').textContent = data.resolved_markets.toLocaleString();
+                }
+                if (data.price_observations) {
+                    // Format large numbers: 857K, 1.2M, etc.
+                    var obs = data.price_observations;
+                    if (obs >= 1e6) {
+                        el('stat-prices').textContent = (obs / 1e6).toFixed(1).replace(/\.0$/, '') + 'M+';
+                    } else if (obs >= 1e3) {
+                        el('stat-prices').textContent = Math.round(obs / 1e3).toLocaleString() + 'K+';
+                    } else {
+                        el('stat-prices').textContent = obs.toLocaleString();
+                    }
+                }
+            } catch (e) {
+                // Keep hardcoded fallback values on fetch failure
+            }
+        })();
+
+        document.getElementById('downloadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = this;
+            const success = document.getElementById('downloadSuccess');
+
+            // Here you would normally submit to a backend or Formspree
+            // For now, just show success message
+            form.style.display = 'none';
+            success.classList.add('visible');
+
+            // In production, you'd do something like:
+            // fetch('https://formspree.io/f/YOUR_ID', {
+            //     method: 'POST',
+            //     body: new FormData(form),
+            //     headers: { 'Accept': 'application/json' }
+            // }).then(() => { ... });
+        });
+    </script>
+</body>
+</html>

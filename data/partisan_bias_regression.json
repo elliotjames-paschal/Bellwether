@@ -1,0 +1,97 @@
+{
+  "models": [
+    {
+      "name": "Party Only",
+      "variables": [
+        {
+          "name": "Intercept",
+          "coef": -0.2053,
+          "se": 0.0247,
+          "p": 0.0,
+          "ci_low": -0.254,
+          "ci_high": -0.1566
+        },
+        {
+          "name": "Republican",
+          "coef": -0.0363,
+          "se": 0.0361,
+          "p": 0.3158,
+          "ci_low": -0.1076,
+          "ci_high": 0.0349
+        }
+      ],
+      "r_squared": 0.0056,
+      "n": 182
+    },
+    {
+      "name": "Party + Platform",
+      "variables": [
+        {
+          "name": "Intercept",
+          "coef": -0.2348,
+          "se": 0.0308,
+          "p": 0.0,
+          "ci_low": -0.2956,
+          "ci_high": -0.1741
+        },
+        {
+          "name": "Republican",
+          "coef": -0.0378,
+          "se": 0.036,
+          "p": 0.2948,
+          "ci_low": -0.1088,
+          "ci_high": 0.0332
+        },
+        {
+          "name": "Polymarket",
+          "coef": 0.0572,
+          "se": 0.0359,
+          "p": 0.113,
+          "ci_low": -0.0137,
+          "ci_high": 0.1282
+        }
+      ],
+      "r_squared": 0.0195,
+      "n": 182
+    },
+    {
+      "name": "Party \u00d7 Platform",
+      "variables": [
+        {
+          "name": "Intercept",
+          "coef": -0.2381,
+          "se": 0.0354,
+          "p": 0.0,
+          "ci_low": -0.3079,
+          "ci_high": -0.1682
+        },
+        {
+          "name": "Republican",
+          "coef": -0.0306,
+          "se": 0.0526,
+          "p": 0.5607,
+          "ci_low": -0.1344,
+          "ci_high": 0.0731
+        },
+        {
+          "name": "Polymarket",
+          "coef": 0.0635,
+          "se": 0.0493,
+          "p": 0.1991,
+          "ci_low": -0.0337,
+          "ci_high": 0.1608
+        },
+        {
+          "name": "Republican \u00d7 Polymarket",
+          "coef": -0.0135,
+          "se": 0.0722,
+          "p": 0.8517,
+          "ci_low": -0.1561,
+          "ci_high": 0.129
+        }
+      ],
+      "r_squared": 0.0197,
+      "n": 182
+    }
+  ]
+}

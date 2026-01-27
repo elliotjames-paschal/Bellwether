@@ -1,0 +1,38 @@
+{
+  "metrics": [
+    "Total Political Markets",
+    "Resolved Markets",
+    "Electoral Markets",
+    "Non-Electoral Markets",
+    "Earliest Market Close",
+    "Latest Market Close",
+    "Unique Election Types",
+    "Unique Political Categories",
+    "Total Volume (USD)",
+    "Avg Volume per Market"
+  ],
+  "polymarket": [
+    "18661",
+    "14428",
+    "6441",
+    "12220",
+    "2020-11-02",
+    "2025-12-18",
+    "23",
+    "15",
+    "$16,295,709,074",
+    "$873,296"
+  ],
+  "kalshi": [
+    "8739",
+    "6261",
+    "2611",
+    "6128",
+    "2025-11-04",
+    "2025-11-04",
+    "21",
+    "15",
+    "$1,573,537,582",
+    "$180,804"
+  ]
+}

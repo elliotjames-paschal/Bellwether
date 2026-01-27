@@ -1,0 +1,13 @@
+{
+  "last_updated": "2026-01-26T20:53:41.772323",
+  "total_markets": 27400,
+  "polymarket_markets": 18661,
+  "kalshi_markets": 8739,
+  "resolved_markets": 20763,
+  "price_observations": 857462,
+  "polymarket_brier": 0.0756,
+  "kalshi_brier": 0.0807,
+  "combined_brier": 0.0773,
+  "electoral_markets": 9240,
+  "unique_elections": 1267
+}

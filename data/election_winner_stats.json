@@ -1,0 +1,34 @@
+{
+  "all_elections": {
+    "polymarket": {
+      "n": 102,
+      "brier": 0.0858,
+      "accuracy": 0.8627
+    },
+    "kalshi": {
+      "n": 93,
+      "brier": 0.1199,
+      "accuracy": 0.8602
+    }
+  },
+  "shared_elections": {
+    "polymarket": {
+      "n": 72,
+      "brier": 0.1076,
+      "accuracy": 0.8194
+    },
+    "kalshi": {
+      "n": 72,
+      "brier": 0.1093,
+      "accuracy": 0.875
+    }
+  },
+  "head_to_head": {
+    "n_shared": 72,
+    "correlation": 0.8862,
+    "pm_wins": 43,
+    "kalshi_wins": 29,
+    "ties": 0,
+    "p_value": 0.8614
+  }
+}

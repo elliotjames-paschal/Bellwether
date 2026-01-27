@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>When You Measure Matters - Bellwether</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .article-header {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 80px 32px 48px;
+        }
+        .article-meta {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: 16px;
+        }
+        .article-meta a {
+            color: var(--pm-color);
+            text-decoration: none;
+        }
+        .article-meta a:hover {
+            text-decoration: underline;
+        }
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+        .article-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .article-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--pm-color), var(--kalshi-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .author-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .author-title {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .article-content {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 32px 80px;
+        }
+        .article-content p {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--gray-700);
+            margin-bottom: 24px;
+        }
+        .article-content h2 {
+            font-size: 1.5rem;
+            margin-top: 48px;
+            margin-bottom: 16px;
+        }
+        .article-content h3 {
+            font-size: 1.25rem;
+            margin-top: 36px;
+            margin-bottom: 12px;
+        }
+        .article-content ul, .article-content ol {
+            margin-bottom: 24px;
+            padding-left: 24px;
+        }
+        .article-content li {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+        .article-content blockquote {
+            border-left: 3px solid var(--pm-color);
+            padding-left: 24px;
+            margin: 32px 0;
+            font-style: italic;
+            color: var(--gray-600);
+        }
+        .article-content a {
+            color: var(--pm-color);
+        }
+        .article-content code {
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.95em;
+        }
+
+        .article-divider {
+            width: 100%;
+            height: 1px;
+            background: var(--gray-200);
+            margin: 48px 0;
+        }
+
+        .method-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9375rem;
+            margin: 24px 0 32px;
+        }
+        .method-table th {
+            text-align: left;
+            padding: 10px 14px;
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.8125rem;
+        }
+        .method-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: top;
+            color: var(--gray-700);
+            font-size: 0.9375rem;
+            line-height: 1.5;
+        }
+        .method-table tr:hover {
+            background: var(--gray-50, #fafafa);
+        }
+
+        .ref-list {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: ref-counter;
+        }
+        .ref-list li {
+            counter-increment: ref-counter;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            padding-left: 32px;
+            position: relative;
+        }
+        .ref-list li::before {
+            content: "[" counter(ref-counter) "]";
+            position: absolute;
+            left: 0;
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+        .back-link:hover {
+            color: var(--gray-700);
+        }
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .article-title {
+                font-size: 1.75rem;
+            }
+            .article-header {
+                padding: 48px 24px 32px;
+            }
+            .article-content {
+                padding: 0 24px 48px;
+            }
+            .method-table {
+                font-size: 0.8125rem;
+            }
+            .method-table th, .method-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo"><span class="nav-logo-text">Bel<span class="nav-logo-bounce">l</span><span class="nav-logo-rest">wether</span></span></a>
+            <div class="nav-links">
+                <a href="../../index.html#dashboard">Dashboard</a>
+                <a href="../../research.html">Research</a>
+                <a href="../../data.html">Data</a>
+                <a href="../../about.html">About</a>
+            </div>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        var nav = document.querySelector('.nav');
+        var scrolled = false;
+        window.addEventListener('scroll', function() {
+            var s = window.scrollY > 20;
+            if (s !== scrolled) { scrolled = s; nav.classList.toggle('scrolled', s); }
+        }, { passive: true });
+    })();
+    </script>
+
+    <article>
+        <header class="article-header">
+            <a href="../../research.html" class="back-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Research
+            </a>
+
+            <div class="article-meta">January 2026</div>
+            <h1 class="article-title">When You Measure Matters</h1>
+            <p class="article-subtitle">
+                Recent applied work increasingly relies on resolution-relative prices, often without explicit discussion of the implications. A methodological note on truncation timing and what it changes.
+            </p>
+
+            <div class="article-author" style="gap: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="author-avatar">EP</div>
+                    <div class="author-info">
+                        <span class="author-name">Elliot Paschal</span>
+                        <span class="author-title">Research Fellow, Stanford University</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--pm-color), var(--kalshi-color)); font-size: 0.75rem; letter-spacing: -0.02em;">B</div>
+                    <div class="author-info">
+                        <span class="author-name">Bell <span style="font-weight: 400; color: var(--gray-500); font-size: 0.8125rem;">1.0-preview</span></span>
+                        <span class="author-title">Bellwether Research Model</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="article-content">
+
+            <p>
+                When researchers evaluate a prediction market, they need to answer a simple question: at what moment do you read the price? The answer determines your Brier scores, your calibration curves, and your conclusions about which platform forecasts better. Despite this, the question is almost never asked explicitly. It is treated as a detail&mdash;something settled by convention or convenience rather than by argument.
+            </p>
+
+            <p>
+                That was fine when prediction markets resolved quickly. It is less innocuous now. On modern platforms like Polymarket and Kalshi, the gap between when an event outcome becomes known and when a contract formally resolves can span hours or days. During that gap, trading continues. Prices during this window do not reflect forecasts. They reflect the mechanical convergence of a market that already knows the answer.
+            </p>
+
+            <p>
+                Using those prices as a measure of forecast quality implicitly assumes that settlement timing is irrelevant&mdash;an assumption that was previously innocuous but now matters. As far as we can tell, most current applied work on these platforms relies on resolution-relative prices without examining this assumption.
+            </p>
+
+            <h2>Two truncation regimes</h2>
+
+            <p>
+                There are two ways to decide when to sample a prediction market price for evaluation:
+            </p>
+
+            <ul>
+                <li><strong>Event-time truncation:</strong> Sample the price relative to when the real-world event occurs (e.g., election day). The price reflects what the market believed before the outcome was known.</li>
+                <li><strong>Resolution-time truncation:</strong> Sample the price relative to when the platform formally settles the contract. The price may include post-outcome trading if there is a lag between the event and resolution.</li>
+            </ul>
+
+            <p>
+                On the Iowa Electronic Markets, these two regimes were effectively identical. IEM contracts resolved almost immediately after elections. There was no meaningful gap to worry about, and so the distinction never needed to be articulated.
+            </p>
+
+            <p>
+                On Polymarket and Kalshi, they are not identical. Polymarket's documentation states that markets settle "within 24 to 48 hours after the event outcome becomes definitively known." Kalshi's automated settlement typically runs within 3 to 12 hours. For some contracts, the lag is longer&mdash;waiting on official certifications, court rulings, or manual review.
+            </p>
+
+            <p>
+                This means "1 day before resolution" is not the same as "1 day before the event." The offset varies by platform, by contract, and sometimes by the idiosyncrasies of how a particular outcome was confirmed. If you compare Polymarket and Kalshi using resolution-relative timestamps, you are not comparing their forecasts at the same moment. You are comparing prices contaminated by different amounts of post-outcome information.
+            </p>
+
+            <h2>What the literature actually does</h2>
+
+            <p>
+                We reviewed how truncation is handled across studies that evaluate forecast accuracy or calibration in political prediction markets, from the classic IEM research through the most recent work on Polymarket and Kalshi. Our focus is on studies that use market prices to assess predictive performance, rather than on work examining trading behavior or price discovery. The pattern is clear.
+            </p>
+
+            <table class="method-table">
+                <thead>
+                    <tr>
+                        <th>Study / Domain</th>
+                        <th>Price used</th>
+                        <th>Truncation rule</th>
+                        <th>Explicit discussion?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Berg, Nelson &amp; Rietz (2008), IEM studies</td>
+                        <td>Last price near event</td>
+                        <td>Event-time (implicit)</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Wolfers &amp; Zitzewitz (2004, 2006)</td>
+                        <td>Prices at fixed horizons</td>
+                        <td>Event-time, multi-horizon</td>
+                        <td>Yes (implicit)</td>
+                    </tr>
+                    <tr>
+                        <td>Erikson &amp; Wlezien (2012)</td>
+                        <td>Daily probabilities up to Election Day</td>
+                        <td>Event-time</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Dud&iacute;k et al. (2017)</td>
+                        <td>Not focused on evaluation</td>
+                        <td>Theoretical convergence</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Clinton &amp; Huang (2025)</td>
+                        <td>Last price before resolution</td>
+                        <td>Resolution-time</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Cutting et al. (2025)</td>
+                        <td>Daily closing prices to Election Day</td>
+                        <td>Event-time (incidental)</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Br&uuml;ggi &amp; Whelan (2025)</td>
+                        <td>Final settlement price</td>
+                        <td>Resolution-time</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Chen et al. (2024)</td>
+                        <td>Full trading history</td>
+                        <td>N/A (behavioral study)</td>
+                        <td>No</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                The classic literature&mdash;Berg, Wolfers, Erikson&mdash;uses event-time truncation. It does so implicitly, because on IEM-era markets the distinction was moot. The treatment is coherent even though it is not formally justified: once the event happens, the market has no informational role. This was taken as obvious.
+            </p>
+
+            <p>
+                Among recent work that explicitly evaluates calibration or forecast accuracy, there has been a gradual shift toward resolution-relative timing, often driven by data availability and platform design rather than by explicit methodological commitments. Clinton and Huang (2025), the most comprehensive cross-platform study to date, use the final closing price before market resolution as the forecast&mdash;a natural choice given the data, but one that does not distinguish whether the outcome was already known before the market resolved. Br&uuml;ggi and Whelan (2025) use final settlement prices to study calibration on Kalshi, which can conflate belief aggregation with mechanical convergence.
+            </p>
+
+            <p>
+                The issue arises less from the authors' stated goals than from how these results enter broader comparisons. The cumulative effect is that the field has shifted truncation regimes&mdash;largely without discussion&mdash;and the shift can introduce systematic bias into accuracy comparisons.
+            </p>
+
+            <h2>Why this is not a nit</h2>
+
+            <p>
+                Resolution time is an institutional property of a platform. It reflects settlement procedures, verification protocols, and sometimes just how quickly someone updates a webpage. It has nothing to do with how well the market aggregated information before the outcome was known.
+            </p>
+
+            <p>
+                Post-event trading reflects certainty, not beliefs. Once election results are reported, prediction market prices converge toward 0 or 1. This is not forecasting. It is mechanical. Including this convergence in your accuracy metric biases Brier scores downward&mdash;making markets look more accurate than they actually were as forecasters.
+            </p>
+
+            <p>
+                The bias is not uniform across platforms. Polymarket's longer settlement window means more post-outcome trading is included when you truncate relative to resolution. Kalshi's faster settlement means less. In a head-to-head comparison using resolution-relative prices, this asymmetry can mechanically advantage platforms with longer settlement windows, holding forecast quality fixed&mdash;because more of the measured "forecast" consists of already knowing the answer.
+            </p>
+
+            <p>
+                Consider a hypothetical case that illustrates how truncation timing alone can alter measured accuracy. Polymarket prices a Senate race winner at 0.72 on election eve. Kalshi prices the same winner at 0.68. The winner wins. Using election eve prices, Polymarket's Brier score is 0.0784, Kalshi's is 0.1024. Polymarket was more confident and more accurate.
+            </p>
+
+            <p>
+                Now use "1 day before resolution." Polymarket settles 36 hours after results are called; 1 day before resolution, the outcome is known, the price is 0.95. Kalshi settles 8 hours later; 1 day before resolution, results were just being called, the price is 0.85. Polymarket's Brier score drops to 0.0025. Kalshi's drops to 0.0225. Both appear more accurate than they were as forecasters, and the relative gap between them has changed&mdash;not because of anything about forecast quality, but because of settlement timing.
+            </p>
+
+            <p>
+                This pattern is inherent to any analysis that uses resolution-relative timestamps on platforms with different settlement procedures. Results are sensitive to the truncation choice, even when forecast quality is held constant.
+            </p>
+
+            <h2>What almost no research does</h2>
+
+            <p>
+                Based on the available literature, no academic study of Polymarket or Kalshi:
+            </p>
+
+            <ul>
+                <li>Formally distinguishes event knowledge time from market resolution time</li>
+                <li>Compares alternative truncation rules head-to-head</li>
+                <li>Treats truncation as a design choice subject to bias analysis</li>
+                <li>Explicitly accounts for post-event trading or information leakage before resolution</li>
+                <li>Tests how much the truncation choice changes reported accuracy metrics</li>
+            </ul>
+
+            <p>
+                This represents an opportunity for greater methodological transparency. The distinction between when an outcome is known and when it is formally resolved is precisely the kind of design choice that can affect conclusions in cross-platform comparisons, shift calibration assessments, and influence which platform appears more accurate in a given benchmark.
+            </p>
+
+            <p>
+                Dud&iacute;k et al. (2017) provide the theoretical framework for thinking about this&mdash;their decomposition of forecast error into sampling, convergence, and market-maker components maps directly onto the truncation problem. But their framework was built before the resolution lag issue existed in practice, and it does not prescribe an evaluation protocol for markets where trading continues after the outcome is public.
+            </p>
+
+            <h2>Our approach</h2>
+
+            <p>
+                Our goal is not to prescribe a single correct truncation rule, but to make the timing choice explicit and to show how it affects interpretation. For electoral markets in the Bellwether dataset, we use a fixed rule: the market price at 00:00 UTC on election day. For U.S. elections on November 5, this corresponds to approximately 7:00&ndash;8:00 PM Eastern on November 4&mdash;the evening before any polls close. For elections in other time zones, the local time varies, but the UTC timestamp is universal and unambiguous.
+            </p>
+
+            <p>
+                We call this the <em>election eve price</em>. Here is why.
+            </p>
+
+            <p>
+                <strong>It is event-anchored, not resolution-anchored.</strong> The same election yields the same measurement timestamp on Polymarket and Kalshi. Cross-platform comparisons become comparisons of forecast quality at the same moment, not artifacts of settlement procedure.
+            </p>
+
+            <p>
+                <strong>It is pre-outcome.</strong> At UTC midnight on election day, no U.S. election results have been reported. No polls have closed anywhere in the country. The price reflects the market's assessment of what will happen, not a reaction to what has. This is what "forecast accuracy" should measure.
+            </p>
+
+            <p>
+                <strong>It is reproducible.</strong> UTC midnight is a universal standard. No time zone ambiguity, no daylight saving adjustments, no platform-specific offsets. Any researcher can replicate the measurement with the same timestamp arithmetic. Cutting et al. (2025), comparing Polymarket to polling, note the implicit difficulty of aligning daily market probabilities with poll data&mdash;a problem that stems from unstandardized timing. A fixed UTC anchor avoids it.
+            </p>
+
+            <p>
+                <strong>It is the natural "final forecast" moment.</strong> The evening before an election is when voters, campaigns, and media make final assessments. Wolfers and Zitzewitz (2004, 2006) treat forecasts as time-indexed objects and evaluate accuracy conditional on the horizon. Election eve is the shortest reasonable horizon at which the market is still pricing genuine uncertainty.
+            </p>
+
+            <h2>Limitations</h2>
+
+            <p>
+                UTC midnight is somewhat arbitrary. One could argue for 6 hours before polls open, or the moment of the last pre-election poll. For non-U.S. elections where voting begins at different local times, the gap between UTC midnight and the first returns varies. And for non-electoral markets&mdash;policy announcements, court decisions, economic data releases&mdash;there is no natural "election day" to anchor to. We use resolution-relative offsets for those contracts, with platform-specific adjustments documented on our <a href="../../data.html">data page</a>.
+            </p>
+
+            <p>
+                More fundamentally, no single truncation point captures everything. Early prices reflect thin liquidity and wide uncertainty. Late prices reflect near-certainty or post-event convergence. The "true forecast" is a property of the entire price path, not a single reading. Dalen (2025) proposes a continuous-time stochastic model that could in principle identify optimal sampling windows, but in practice that requires estimating latent parameters that are themselves sensitive to modeling assumptions.
+            </p>
+
+            <p>
+                For applied work, a fixed, transparent rule is more practical and more reproducible than a theoretically optimal one. Our aim is to make this design choice visible&mdash;to use a truncation point that is defensible, consistent across platforms, and grounded in what we are actually trying to measure: what the market believed before the answer was known. Rather than overturning prior conclusions, we hope this adds a dimension of transparency and comparability to an active and growing literature.
+            </p>
+
+            <div class="article-divider"></div>
+
+            <h3>References</h3>
+            <ol class="ref-list">
+                <li>Berg, J., Nelson, F., and Rietz, T. "Prediction Market Accuracy in the Long Run." <em>International Journal of Forecasting</em>, 2008.</li>
+                <li>Wolfers, J. and Zitzewitz, E. "Prediction Markets." <em>Journal of Economic Perspectives</em>, 2004.</li>
+                <li>Wolfers, J. and Zitzewitz, E. "Interpreting Prediction Market Prices as Probabilities." NBER Working Paper, 2006.</li>
+                <li>Erikson, R. and Wlezien, C. <em>The Timeline of Presidential Elections: How Campaigns Do (and Do Not) Matter.</em> University of Chicago Press, 2012.</li>
+                <li>Dud&iacute;k, M., Lahaie, S., Rogers, R., and Vaughan, J. "A Decomposition of Forecast Error in Prediction Markets." arXiv preprint, 2017.</li>
+                <li>Clinton, J. and Huang, T. "Prediction Markets? The Accuracy and Efficiency of $2.4 Billion in the 2024 Presidential Election." SocArXiv preprint, 2025.</li>
+                <li>Cutting, D., Hughes-Berheim, R., Johnson, M. et al. "Are Betting Markets Better than Polling in Predicting Political Elections?" arXiv preprint, 2025.</li>
+                <li>Br&uuml;ggi, F. and Whelan, K. "The Economics of the Kalshi Prediction Market." UCD working paper, 2025.</li>
+                <li>Sethi, R. "Political Prediction and the Wisdom of Crowds." <em>Communications of the ACM</em>, 2025.</li>
+                <li>Chen, Y., Duan, J., El Saddik, A., and Cai, W. "Political Leanings in Web3 Betting: Decoding the Interplay of Political and Profitable Motives." arXiv preprint, 2024.</li>
+                <li>Dalen, A. "Toward Black-Scholes for Prediction Markets: A Unified Kernel and Market Maker's Handbook." arXiv preprint, 2025.</li>
+            </ol>
+        </div>
+    </article>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024&ndash;2026 Stanford University</p>
+                <div class="footer-links">
+                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

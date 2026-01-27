@@ -1,0 +1,91 @@
+{
+  "categories": [
+    "Electoral",
+    "Government Operations",
+    "Party Politics",
+    "State Local",
+    "Timing Events",
+    "Polling Approval",
+    "Political Speech",
+    "Monetary Policy",
+    "Legislative",
+    "Appointments",
+    "Regulatory",
+    "International",
+    "Judicial",
+    "Military Security",
+    "Crisis Emergency"
+  ],
+  "polymarket": {
+    "brier": [
+      0.0449,
+      0.0801,
+      0.0528,
+      0.1216,
+      0.093,
+      0.0886,
+      0.1911,
+      0.0827,
+      0.0381,
+      0.0702,
+      0.0613,
+      0.0617,
+      0.0655,
+      0.0765,
+      0.0209
+    ],
+    "count": [
+      3557,
+      268,
+      608,
+      30,
+      374,
+      486,
+      1109,
+      670,
+      131,
+      568,
+      91,
+      843,
+      210,
+      673,
+      42
+    ]
+  },
+  "kalshi": {
+    "brier": [
+      0.0455,
+      0.0351,
+      0.0639,
+      0.1086,
+      0.0522,
+      0.0886,
+      0.1656,
+      0.1461,
+      0.0927,
+      0.0439,
+      0.0886,
+      0.0588,
+      0.0696,
+      0.0001,
+      0.0004
+    ],
+    "count": [
+      1121,
+      44,
+      69,
+      2,
+      260,
+      2088,
+      507,
+      5,
+      310,
+      319,
+      27,
+      69,
+      21,
+      1,
+      1
+    ]
+  }
+}

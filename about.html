@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Bellwether</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .team-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .team-card {
+            display: flex;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .team-card-accent {
+            width: 3px;
+            flex-shrink: 0;
+            background: var(--pm-color);
+        }
+        .team-card-body {
+            padding: 20px 24px;
+        }
+        .team-card-body h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+        }
+        .team-card-title {
+            font-size: 0.8125rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .team-card-link {
+            font-size: 0.8125rem;
+            color: var(--pm-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .team-card-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo"><span class="nav-logo-text">Bel<span class="nav-logo-bounce">l</span><span class="nav-logo-rest">wether</span></span></a>
+            <div class="nav-links">
+                <a href="index.html#dashboard">Dashboard</a>
+                <a href="research.html">Research</a>
+                <a href="data.html">Data</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        var nav = document.querySelector('.nav');
+        var scrolled = false;
+        window.addEventListener('scroll', function() {
+            var s = window.scrollY > 20;
+            if (s !== scrolled) { scrolled = s; nav.classList.toggle('scrolled', s); }
+        }, { passive: true });
+    })();
+    </script>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <p class="hero-eyebrow">About</p>
+                <h1>Bellwether is an automated researcher that studies political prediction markets.</h1>
+                <p class="hero-description">
+                    <span class="brand-inline" style="white-space: nowrap;">Bell</span> monitors Polymarket and Kalshi daily&mdash;tracking new markets, updating prices,
+                    and measuring how accurately these platforms forecast elections and political events.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container container-narrow">
+            <div class="about-content">
+                <h2>The Research</h2>
+                <p>
+                    Prediction markets are increasingly cited by journalists, pollsters, and campaigns
+                    as authoritative forecasts of political outcomes. But how accurate are they?
+                    Do markets systematically favor one party? Are they better at predicting
+                    presidential races than down-ballot contests?
+                </p>
+                <p>
+                    Bellwether tracks thousands of political markets across platforms to answer
+                    these questions with data.
+                </p>
+                <p>
+                    Unlike traditional academic research&mdash;which freezes findings in papers that go
+                    stale&mdash;Bellwether produces living estimates. As new elections resolve and new data
+                    arrives, analysis updates automatically. The goal isn&rsquo;t a static publication but
+                    continuously maintained knowledge infrastructure.
+                </p>
+
+                <h2>What We Study</h2>
+                <ul>
+                    <li>Forecasting accuracy for presidential, Senate, House, and gubernatorial elections</li>
+                    <li>Calibration across probability ranges</li>
+                    <li>Platform comparison between Polymarket and Kalshi</li>
+                    <li>Partisan bias in market predictions</li>
+                </ul>
+
+                <h2>Methodology</h2>
+                <p>
+                    Bellwether runs autonomously every day&mdash;discovering new markets, pulling price
+                    histories, classifying political categories, and recalculating accuracy metrics without
+                    human intervention. Markets are classified using a multi-stage verification pipeline
+                    to ensure high precision. We measure accuracy using Brier scores and calibration curves.
+                </p>
+                <p>
+                    This approach treats research as infrastructure rather than a one-time effort: findings
+                    that maintain themselves and improve as more data becomes available.
+                </p>
+
+                <h2>Why Bellwether</h2>
+                <p>
+                    Academic research typically works like this: spend months on a paper, publish it, and
+                    the findings freeze in time. By the time anyone reads it, the world has moved on.
+                </p>
+                <p>
+                    Bellwether is an experiment in a different approach&mdash;research that operates at the
+                    speed of the phenomena it studies. When markets open, Bell tracks them. When elections
+                    resolve, Bell updates its accuracy estimates. When patterns emerge, they surface in
+                    the data automatically.
+                </p>
+                <p>
+                    This is a prototype of what we believe research institutions could become: small teams
+                    of expert researchers directing automated systems to produce rigorous, replicable, and
+                    continuously updated knowledge on questions that matter.
+                </p>
+
+                <h2>Team</h2>
+                <div class="team-grid">
+                    <div class="team-card">
+                        <div class="team-card-accent"></div>
+                        <div class="team-card-body">
+                            <h3>Andy Hall</h3>
+                            <p class="team-card-title">Davies Family Professor of Political Economy<br>Graduate School of Business, Stanford University<br>Senior Fellow, Hoover Institution</p>
+                            <a class="team-card-link" href="https://www.andrewbenjaminhall.com/">andrewbenjaminhall.com</a>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-card-accent"></div>
+                        <div class="team-card-body">
+                            <h3>Elliot Paschal</h3>
+                            <p class="team-card-title">Research Fellow<br>Stanford University</p>
+                            <a class="team-card-link" href="mailto:paschal@stanford.edu">paschal@stanford.edu</a>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Acknowledgments</h2>
+                <p>
+                    This research is supported by the Stanford Graduate School of Business.
+                    Market data provided by <a href="https://domeapi.io">Dome</a>.
+                </p>
+
+                </div>
+        </div>
+    </section>
+
+    <section class="section section-alt" style="padding: 64px 32px; text-align: center;">
+        <div class="container container-narrow">
+            <p class="section-eyebrow">Contact</p>
+            <h2>Get in touch</h2>
+            <p class="section-description" style="max-width: none; margin: 0 auto;">
+                Questions or feedback about our research? Reach out at
+                <a href="mailto:paschal@stanford.edu" style="color: var(--pm-color);">paschal@stanford.edu</a>.
+            </p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024–2025 Stanford University</p>
+                <div class="footer-links">
+                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
