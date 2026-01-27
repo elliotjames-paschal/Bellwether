@@ -580,20 +580,22 @@ function initGlobe(containerId, options) {
                 lines.push('<span style="font-size:11px;opacity:0.7;">' + detail + '</span>');
             }
 
-            // Add platform links (only if that platform covers this election)
-            var linkParts = [];
-            if (e.has_pm && e.search_query) {
-                var q = encodeURIComponent(e.search_query);
-                linkParts.push('<a href="https://polymarket.com/search?_q=' + q + '" target="_blank" rel="noopener" ' +
-                    'style="color:#60a5fa;text-decoration:none;">Polymarket &nearr;</a>');
-            }
-            if (e.has_k && e.kalshi_event) {
-                linkParts.push('<a href="https://kalshi.com/markets/' + e.kalshi_event + '" target="_blank" rel="noopener" ' +
-                    'style="color:#34d399;text-decoration:none;">Kalshi &nearr;</a>');
-            }
-            if (linkParts.length) {
-                lines.push('<span style="font-size:11px;margin-top:2px;display:inline-flex;gap:8px;">' +
-                    linkParts.join('') + '</span>');
+            // Add platform links (fullscreen only)
+            if (isFullscreen) {
+                var linkParts = [];
+                if (e.has_pm && e.search_query) {
+                    var q = encodeURIComponent(e.search_query);
+                    linkParts.push('<a href="https://polymarket.com/search?_q=' + q + '" target="_blank" rel="noopener" ' +
+                        'style="color:#60a5fa;text-decoration:none;">Polymarket &nearr;</a>');
+                }
+                if (e.has_k && e.kalshi_event) {
+                    linkParts.push('<a href="https://kalshi.com/markets/' + e.kalshi_event + '" target="_blank" rel="noopener" ' +
+                        'style="color:#34d399;text-decoration:none;">Kalshi &nearr;</a>');
+                }
+                if (linkParts.length) {
+                    lines.push('<span style="font-size:11px;margin-top:2px;display:inline-flex;gap:8px;">' +
+                        linkParts.join('') + '</span>');
+                }
             }
 
             tooltipContent.innerHTML = lines.join('<br>');
