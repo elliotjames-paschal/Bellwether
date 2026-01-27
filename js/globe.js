@@ -589,7 +589,7 @@ function initGlobe(containerId, options) {
                         'style="color:#60a5fa;text-decoration:none;">Polymarket &nearr;</a>');
                 }
                 if (e.has_k && e.kalshi_event) {
-                    linkParts.push('<a href="https://kalshi.com/markets/' + e.kalshi_event + '" target="_blank" rel="noopener" ' +
+                    linkParts.push('<a href="https://kalshi.com/markets/' + e.kalshi_event.toLowerCase() + '" target="_blank" rel="noopener" ' +
                         'style="color:#34d399;text-decoration:none;">Kalshi &nearr;</a>');
                 }
                 if (linkParts.length) {
