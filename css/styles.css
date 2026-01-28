@@ -281,6 +281,62 @@ a:hover {
     justify-content: center;
 }
 
+/* Globe expanded state */
+.hero-text,
+.hero-stats {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+}
+
+.hero-symbol {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero.globe-expanded .hero-text {
+    transform: translateX(-120%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hero.globe-expanded .hero-stats {
+    transform: translateY(60px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hero.globe-expanded .hero-symbol {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+    width: min(85vw, 85vh);
+    height: min(85vw, 85vh);
+    opacity: 1;
+    z-index: 1000;
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+
+.hero.globe-expanded #globe-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Globe expanded backdrop */
+.globe-expanded-backdrop {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.globe-expanded-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
 
 /* Hero Stats - Research Institution Style */
 .hero-stats {

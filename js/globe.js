@@ -216,7 +216,8 @@ function initGlobe(containerId, options) {
         'background:rgba(255,255,255,0.92);border:1px solid #c5ddf5;border-radius:20px;' +
         'padding:8px 16px 8px 12px;cursor:pointer;display:flex;align-items:center;' +
         'color:#4285f4;font-size:13px;font-weight:500;font-family:system-ui,-apple-system,sans-serif;' +
-        'transition:all 0.2s ease;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(66,133,244,0.15);';
+        'transition:all 0.2s ease;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(66,133,244,0.15);' +
+        'opacity:1;';
     fsBtn.title = 'Explore globe in fullscreen';
     fsBtn.addEventListener('mouseenter', function() {
         fsBtn.style.background = '#4285f4';
@@ -232,76 +233,53 @@ function initGlobe(containerId, options) {
     });
     container.appendChild(fsBtn);
 
-    // Fullscreen overlay
+    // Expanded state (slides hero elements, expands globe in place)
     var isFullscreen = false;
-    var origStyles = {};
+    var heroSection = document.querySelector('.hero');
+    var backdrop = null;
+    var closeBtn = null;
 
     function enterFullscreen() {
         isFullscreen = true;
-        // Create overlay backdrop
-        var overlay = document.createElement('div');
-        overlay.id = 'globe-fullscreen-overlay';
-        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);' +
-            'display:flex;align-items:center;justify-content:center;cursor:default;' +
-            'opacity:0;transition:opacity 0.4s ease;';
 
-        // Close button
-        var closeBtn = document.createElement('button');
+        // Create backdrop
+        backdrop = document.createElement('div');
+        backdrop.className = 'globe-expanded-backdrop';
+        backdrop.addEventListener('click', exitFullscreen);
+        document.body.appendChild(backdrop);
+
+        // Create close button
+        closeBtn = document.createElement('button');
         closeBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l12 12M16 4L4 16"/></svg>';
-        closeBtn.style.cssText = 'position:absolute;top:24px;right:24px;background:none;border:none;color:#333;' +
-            'cursor:pointer;padding:8px;opacity:0.7;transition:opacity 0.15s;';
-        closeBtn.addEventListener('mouseenter', function() { closeBtn.style.opacity = '1'; });
-        closeBtn.addEventListener('mouseleave', function() { closeBtn.style.opacity = '0.7'; });
+        closeBtn.style.cssText = 'position:fixed;top:24px;right:24px;z-index:1001;background:rgba(255,255,255,0.9);' +
+            'border:1px solid #d1d1d1;border-radius:8px;color:#333;cursor:pointer;padding:10px;' +
+            'opacity:0;transition:opacity 0.3s ease 0.2s;backdrop-filter:blur(4px);';
         closeBtn.addEventListener('click', exitFullscreen);
-        overlay.appendChild(closeBtn);
+        document.body.appendChild(closeBtn);
 
-        // Move globe into overlay
-        origStyles.width = container.style.width;
-        origStyles.height = container.style.height;
-        origStyles.parent = container.parentNode;
-        origStyles.nextSibling = container.nextSibling;
+        // Add expanded class to trigger CSS transitions
+        heroSection.classList.add('globe-expanded');
 
-        var fsSize = Math.min(window.innerWidth, window.innerHeight) * 0.85;
-        container.style.width = fsSize + 'px';
-        container.style.height = fsSize + 'px';
-        container.style.opacity = '1';
-
-        // Resize SVG and projection
-        svg.attr('width', fsSize).attr('height', fsSize);
-        size = fsSize;
-        baseScale = size * 0.485;
-        projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
-
-        // Drag-to-explore hint
-        var hint = document.createElement('div');
-        hint.style.cssText = 'position:absolute;bottom:32px;left:50%;transform:translateX(-50%);' +
-            'display:flex;align-items:center;gap:6px;color:#888;font-size:13px;' +
-            'opacity:0.8;transition:opacity 0.5s;pointer-events:none;';
-        hint.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.6;">' +
-            '<path d="M3 8h10M10 5l3 3-3 3M6 5L3 8l3 3"/></svg>Drag to explore';
-        overlay.appendChild(hint);
-
-        // Fade out hint after first drag
-        var hintDismissed = false;
-        var hintDragHandler = function() {
-            if (!hintDismissed) {
-                hintDismissed = true;
-                hint.style.opacity = '0';
-                setTimeout(function() { hint.remove(); }, 600);
-                document.removeEventListener('mousedown', hintDragHandler);
-            }
-        };
-        // Listen on overlay so it catches globe drags
-        overlay.addEventListener('mousedown', hintDragHandler);
-
-        overlay.appendChild(container);
-        document.body.appendChild(overlay);
-        fsBtn.style.display = 'none';
-
-        // Fade in the overlay
+        // Show backdrop and close button
         requestAnimationFrame(function() {
-            overlay.style.opacity = '1';
+            backdrop.classList.add('visible');
+            closeBtn.style.opacity = '1';
         });
+
+        // After transition, resize the SVG to match the new container size
+        setTimeout(function() {
+            var fsSize = Math.min(window.innerWidth, window.innerHeight) * 0.85;
+            size = fsSize;
+            baseScale = size * 0.485;
+            container.style.width = fsSize + 'px';
+            container.style.height = fsSize + 'px';
+            svg.attr('width', fsSize).attr('height', fsSize);
+            projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
+        }, 50);
+
+        // Hide explore button
+        fsBtn.style.opacity = '0';
+        fsBtn.style.pointerEvents = 'none';
 
         // ESC to close
         document.addEventListener('keydown', fsEscHandler);
@@ -309,12 +287,24 @@ function initGlobe(containerId, options) {
 
     function exitFullscreen() {
         isFullscreen = false;
-        var overlay = document.getElementById('globe-fullscreen-overlay');
 
-        // Reset zoom level back to 1 when leaving fullscreen
+        // Reset zoom level
         zoomLevel = 1;
 
-        // Restore globe
+        // Remove expanded class
+        heroSection.classList.remove('globe-expanded');
+
+        // Hide backdrop and close button
+        if (backdrop) {
+            backdrop.classList.remove('visible');
+            setTimeout(function() { backdrop.remove(); backdrop = null; }, 400);
+        }
+        if (closeBtn) {
+            closeBtn.style.opacity = '0';
+            setTimeout(function() { closeBtn.remove(); closeBtn = null; }, 300);
+        }
+
+        // Restore globe size
         size = options.size || 640;
         baseScale = size * 0.485;
         container.style.width = size + 'px';
@@ -322,18 +312,10 @@ function initGlobe(containerId, options) {
         svg.attr('width', size).attr('height', size);
         projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
 
-        if (origStyles.nextSibling) {
-            origStyles.parent.insertBefore(container, origStyles.nextSibling);
-        } else {
-            origStyles.parent.appendChild(container);
-        }
+        // Show explore button
+        fsBtn.style.opacity = '1';
+        fsBtn.style.pointerEvents = 'auto';
 
-        // Fade out overlay then remove
-        if (overlay) {
-            overlay.style.opacity = '0';
-            setTimeout(function() { overlay.remove(); }, 400);
-        }
-        fsBtn.style.display = 'flex';
         document.removeEventListener('keydown', fsEscHandler);
     }
 
