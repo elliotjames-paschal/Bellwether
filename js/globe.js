@@ -255,8 +255,9 @@ function initGlobe(containerId, options) {
 
         // Resize SVG and projection
         svg.attr('width', fsSize).attr('height', fsSize);
-        projection.scale(fsSize * 0.485).translate([fsSize / 2, fsSize / 2]);
         size = fsSize;
+        baseScale = size * 0.485;
+        projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
 
         // Drag-to-explore hint
         var hint = document.createElement('div');
@@ -294,10 +295,11 @@ function initGlobe(containerId, options) {
 
         // Restore globe
         size = options.size || 640;
+        baseScale = size * 0.485;
         container.style.width = size + 'px';
         container.style.height = size + 'px';
         svg.attr('width', size).attr('height', size);
-        projection.scale(size * 0.485).translate([size / 2, size / 2]);
+        projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
 
         if (origStyles.nextSibling) {
             origStyles.parent.insertBefore(container, origStyles.nextSibling);
@@ -332,6 +334,8 @@ function initGlobe(containerId, options) {
     var liveElections = [];
     var completedElections = [];
     var hoveredMarker = null;
+    var zoomLevel = 1;
+    var baseScale = size * 0.485;
 
     // Drag & auto-rotate state
     var autoRotate = true;
@@ -348,7 +352,7 @@ function initGlobe(containerId, options) {
 
     // Projection
     var projection = d3.geoOrthographic()
-        .scale(size * 0.485)
+        .scale(baseScale)
         .center([0, 0])
         .translate([size / 2, size / 2]);
 
@@ -373,6 +377,7 @@ function initGlobe(containerId, options) {
         liveProjected = [];
         completedProjected = [];
 
+        projection.scale(baseScale * zoomLevel);
         projection.rotate([rotation, tilt, -15]);
 
         // Heartbeat pulse
@@ -480,6 +485,80 @@ function initGlobe(containerId, options) {
                 .attr("stroke", isHovered ? "#fff" : "#e0eaff")
                 .attr("stroke-width", isHovered ? 2 : 1);
         });
+
+        // ---- Compass indicator (N/S) ----
+        var compassX = size - 35;
+        var compassY = size - 35;
+        var compassR = 20;
+        var rollRad = (-15 * Math.PI) / 180;
+        var arrowDx = -Math.sin(rollRad);
+        var arrowDy = -Math.cos(rollRad);
+
+        // Background circle
+        svg.append("circle")
+            .attr("cx", compassX).attr("cy", compassY)
+            .attr("r", compassR)
+            .attr("fill", "rgba(240, 245, 252, 0.85)")
+            .attr("stroke", "#92b8d8")
+            .attr("stroke-width", 1);
+
+        // North arrow (red)
+        var nTipX = compassX + arrowDx * (compassR - 4);
+        var nTipY = compassY + arrowDy * (compassR - 4);
+        var nB1X = compassX + arrowDy * 4;
+        var nB1Y = compassY - arrowDx * 4;
+        var nB2X = compassX - arrowDy * 4;
+        var nB2Y = compassY + arrowDx * 4;
+        svg.append("polygon")
+            .attr("points", nTipX + "," + nTipY + " " + nB1X + "," + nB1Y + " " + nB2X + "," + nB2Y)
+            .attr("fill", "#e74c3c");
+
+        // South arrow (gray)
+        var sTipX = compassX - arrowDx * (compassR - 4);
+        var sTipY = compassY - arrowDy * (compassR - 4);
+        var sB1X = compassX + arrowDy * 4;
+        var sB1Y = compassY - arrowDx * 4;
+        var sB2X = compassX - arrowDy * 4;
+        var sB2Y = compassY + arrowDx * 4;
+        svg.append("polygon")
+            .attr("points", sTipX + "," + sTipY + " " + sB1X + "," + sB1Y + " " + sB2X + "," + sB2Y)
+            .attr("fill", "#7f8c9b");
+
+        // N label
+        svg.append("text")
+            .attr("x", nTipX + arrowDx * 6)
+            .attr("y", nTipY + arrowDy * 6)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "central")
+            .attr("fill", "#e74c3c")
+            .attr("font-size", "9px")
+            .attr("font-weight", "bold")
+            .attr("font-family", "system-ui, -apple-system, sans-serif")
+            .text("N");
+
+        // S label
+        svg.append("text")
+            .attr("x", sTipX - arrowDx * 6)
+            .attr("y", sTipY - arrowDy * 6)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "central")
+            .attr("fill", "#7f8c9b")
+            .attr("font-size", "9px")
+            .attr("font-weight", "bold")
+            .attr("font-family", "system-ui, -apple-system, sans-serif")
+            .text("S");
+
+        // ---- "for jack" text ----
+        svg.append("text")
+            .attr("x", size / 2)
+            .attr("y", size - 8)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#9ec2e6")
+            .attr("font-size", "11px")
+            .attr("font-style", "italic")
+            .attr("font-family", "system-ui, -apple-system, sans-serif")
+            .attr("letter-spacing", "1px")
+            .text("for jack");
     }
 
     function animate() {
@@ -655,6 +734,13 @@ function initGlobe(containerId, options) {
         updateCursor();
         scheduleResume();
     });
+
+    // Scroll-wheel zoom
+    svgNode.addEventListener('wheel', function(evt) {
+        evt.preventDefault();
+        var delta = evt.deltaY > 0 ? -0.08 : 0.08;
+        zoomLevel = Math.max(0.5, Math.min(4, zoomLevel + delta));
+    }, { passive: false });
 
     // Load data — use countries topology for borders
     Promise.all([
