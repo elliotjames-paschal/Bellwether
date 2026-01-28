@@ -21,6 +21,11 @@
       "n": 73,
       "brier": 0.1086,
       "accuracy": 0.8767
+    },
+    "combined": {
+      "n": 71,
+      "brier": 0.1077,
+      "accuracy": 0.8592
     }
   },
   "head_to_head": {

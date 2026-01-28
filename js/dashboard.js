@@ -174,7 +174,8 @@ async function loadInsights() {
 
         const insightAccuracy = document.getElementById('insight-accuracy');
         if (insightAccuracy && stats.shared_elections) {
-            const acc = stats.shared_elections.polymarket.accuracy * 100;
+            const src = stats.shared_elections.combined || stats.shared_elections.polymarket;
+            const acc = src.accuracy * 100;
             insightAccuracy.textContent = acc.toFixed(1) + '%';
         }
 
