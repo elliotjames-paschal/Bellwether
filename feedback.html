@@ -10,19 +10,7 @@
             max-width: 480px;
             margin: 0 auto;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--gray-700);
-            margin-bottom: 6px;
-        }
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .feedback-form textarea {
             width: 100%;
             padding: 12px 16px;
             font-size: 0.9375rem;
@@ -33,27 +21,15 @@
             color: var(--gray-900);
             transition: border-color 0.2s;
             box-sizing: border-box;
+            resize: vertical;
+            min-height: 140px;
         }
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .feedback-form textarea:focus {
             outline: none;
             border-color: var(--pm-color);
         }
-        .form-group select {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 40px;
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
         .form-submit {
-            margin-top: 8px;
+            margin-top: 12px;
         }
         .form-submit .btn-primary {
             width: 100%;
@@ -64,6 +40,8 @@
         }
         .form-success {
             display: none;
+            max-width: 480px;
+            margin: 0 auto;
             padding: 20px 24px;
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid var(--kalshi-color);
@@ -129,35 +107,9 @@
     <section class="section">
         <div class="container container-narrow">
             <form class="feedback-form" id="feedbackForm">
-                <div class="form-group">
-                    <label for="fb-name">Name</label>
-                    <input type="text" id="fb-name" name="name" placeholder="Your name (optional)">
-                </div>
-                <div class="form-group">
-                    <label for="fb-email">Email</label>
-                    <input type="email" id="fb-email" name="email" placeholder="Your email (optional)">
-                </div>
-                <div class="form-group">
-                    <label for="fb-affiliation">Affiliation</label>
-                    <input type="text" id="fb-affiliation" name="affiliation" placeholder="Organization or university (optional)">
-                </div>
-                <div class="form-group">
-                    <label for="fb-type">Type</label>
-                    <select id="fb-type" name="type">
-                        <option value="General feedback">General feedback</option>
-                        <option value="Question about methodology">Question about methodology</option>
-                        <option value="Data request">Data request</option>
-                        <option value="Feature suggestion">Feature suggestion</option>
-                        <option value="Bug report">Bug report</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="fb-message">Message <span style="color: #dc2626;">*</span></label>
-                    <textarea id="fb-message" name="message" placeholder="Your feedback, question, or suggestion..." required></textarea>
-                </div>
+                <textarea name="message" placeholder="Your feedback, question, or suggestion..." required></textarea>
                 <div class="form-submit">
-                    <button type="submit" class="btn-primary" id="submitBtn">Submit Feedback</button>
+                    <button type="submit" class="btn-primary" id="submitBtn">Submit</button>
                 </div>
                 <div class="form-error" id="formError"></div>
             </form>
@@ -196,10 +148,6 @@
             submitBtn.textContent = 'Submitting...';
 
             var payload = {
-                name: form.name.value.trim(),
-                email: form.email.value.trim(),
-                affiliation: form.affiliation.value.trim(),
-                type: form.type.value,
                 message: form.message.value.trim()
             };
 
