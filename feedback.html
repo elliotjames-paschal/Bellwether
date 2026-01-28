@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - Bellwether</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .feedback-form {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 0.9375rem;
+            font-family: inherit;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            background: var(--white);
+            color: var(--gray-900);
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--pm-color);
+        }
+        .form-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-submit {
+            margin-top: 8px;
+        }
+        .form-submit .btn-primary {
+            width: 100%;
+        }
+        .form-submit .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .form-success {
+            display: none;
+            padding: 20px 24px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--kalshi-color);
+            border-radius: 8px;
+            color: var(--kalshi-color);
+            text-align: center;
+            font-weight: 500;
+        }
+        .form-success.visible {
+            display: block;
+        }
+        .form-error {
+            display: none;
+            padding: 16px 20px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 12px;
+        }
+        .form-error.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="./" class="nav-logo"><span class="nav-logo-text">Bel<span class="nav-logo-bounce">l</span><span class="nav-logo-rest">wether</span></span></a>
+            <div class="nav-links">
+                <a href="index.html#dashboard">Dashboard</a>
+                <a href="feedback.html">Feedback</a>
+                <a href="research.html">Research</a>
+                <a href="data.html">Data</a>
+                <a href="about.html">About</a>
+            </div>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        var nav = document.querySelector('.nav');
+        var scrolled = false;
+        window.addEventListener('scroll', function() {
+            var s = window.scrollY > 20;
+            if (s !== scrolled) { scrolled = s; nav.classList.toggle('scrolled', s); }
+        }, { passive: true });
+    })();
+    </script>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <p class="hero-eyebrow">Feedback</p>
+                <h1>Help us improve Bellwether</h1>
+                <p class="hero-description">
+                    We'd love to hear your thoughts, questions, or suggestions about our research and platform.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container container-narrow">
+            <form class="feedback-form" id="feedbackForm">
+                <div class="form-group">
+                    <label for="fb-name">Name</label>
+                    <input type="text" id="fb-name" name="name" placeholder="Your name (optional)">
+                </div>
+                <div class="form-group">
+                    <label for="fb-email">Email</label>
+                    <input type="email" id="fb-email" name="email" placeholder="Your email (optional)">
+                </div>
+                <div class="form-group">
+                    <label for="fb-affiliation">Affiliation</label>
+                    <input type="text" id="fb-affiliation" name="affiliation" placeholder="Organization or university (optional)">
+                </div>
+                <div class="form-group">
+                    <label for="fb-type">Type</label>
+                    <select id="fb-type" name="type">
+                        <option value="General feedback">General feedback</option>
+                        <option value="Question about methodology">Question about methodology</option>
+                        <option value="Data request">Data request</option>
+                        <option value="Feature suggestion">Feature suggestion</option>
+                        <option value="Bug report">Bug report</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fb-message">Message <span style="color: #dc2626;">*</span></label>
+                    <textarea id="fb-message" name="message" placeholder="Your feedback, question, or suggestion..." required></textarea>
+                </div>
+                <div class="form-submit">
+                    <button type="submit" class="btn-primary" id="submitBtn">Submit Feedback</button>
+                </div>
+                <div class="form-error" id="formError"></div>
+            </form>
+            <div class="form-success" id="formSuccess">
+                Thank you for your feedback! We'll review it shortly.
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024–2025 Stanford University</p>
+                <div class="footer-links">
+                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    (function() {
+        // Replace this URL with your deployed Google Apps Script web app URL
+        var SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+
+        var form = document.getElementById('feedbackForm');
+        var submitBtn = document.getElementById('submitBtn');
+        var formSuccess = document.getElementById('formSuccess');
+        var formError = document.getElementById('formError');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            formError.classList.remove('visible');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            var payload = {
+                name: form.name.value.trim(),
+                email: form.email.value.trim(),
+                affiliation: form.affiliation.value.trim(),
+                type: form.type.value,
+                message: form.message.value.trim()
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(function() {
+                form.style.display = 'none';
+                formSuccess.classList.add('visible');
+            })
+            .catch(function(err) {
+                formError.textContent = 'Something went wrong. Please try again or email paschal@stanford.edu.';
+                formError.classList.add('visible');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Feedback';
+            });
+        });
+    })();
+    </script>
+</body>
+</html>
