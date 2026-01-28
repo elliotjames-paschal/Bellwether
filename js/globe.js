@@ -230,7 +230,8 @@ function initGlobe(containerId, options) {
         var overlay = document.createElement('div');
         overlay.id = 'globe-fullscreen-overlay';
         overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);' +
-            'display:flex;align-items:center;justify-content:center;cursor:default;';
+            'display:flex;align-items:center;justify-content:center;cursor:default;' +
+            'opacity:0;transition:opacity 0.4s ease;';
 
         // Close button
         var closeBtn = document.createElement('button');
@@ -285,6 +286,11 @@ function initGlobe(containerId, options) {
         document.body.appendChild(overlay);
         fsBtn.style.display = 'none';
 
+        // Fade in the overlay
+        requestAnimationFrame(function() {
+            overlay.style.opacity = '1';
+        });
+
         // ESC to close
         document.addEventListener('keydown', fsEscHandler);
     }
@@ -292,6 +298,9 @@ function initGlobe(containerId, options) {
     function exitFullscreen() {
         isFullscreen = false;
         var overlay = document.getElementById('globe-fullscreen-overlay');
+
+        // Reset zoom level back to 1 when leaving fullscreen
+        zoomLevel = 1;
 
         // Restore globe
         size = options.size || 640;
@@ -307,7 +316,11 @@ function initGlobe(containerId, options) {
             origStyles.parent.appendChild(container);
         }
 
-        if (overlay) overlay.remove();
+        // Fade out overlay then remove
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(function() { overlay.remove(); }, 400);
+        }
         fsBtn.style.display = 'flex';
         document.removeEventListener('keydown', fsEscHandler);
     }
@@ -486,79 +499,6 @@ function initGlobe(containerId, options) {
                 .attr("stroke-width", isHovered ? 2 : 1);
         });
 
-        // ---- Compass indicator (N/S) ----
-        var compassX = size - 35;
-        var compassY = size - 35;
-        var compassR = 20;
-        var rollRad = (-15 * Math.PI) / 180;
-        var arrowDx = -Math.sin(rollRad);
-        var arrowDy = -Math.cos(rollRad);
-
-        // Background circle
-        svg.append("circle")
-            .attr("cx", compassX).attr("cy", compassY)
-            .attr("r", compassR)
-            .attr("fill", "rgba(240, 245, 252, 0.85)")
-            .attr("stroke", "#92b8d8")
-            .attr("stroke-width", 1);
-
-        // North arrow (red)
-        var nTipX = compassX + arrowDx * (compassR - 4);
-        var nTipY = compassY + arrowDy * (compassR - 4);
-        var nB1X = compassX + arrowDy * 4;
-        var nB1Y = compassY - arrowDx * 4;
-        var nB2X = compassX - arrowDy * 4;
-        var nB2Y = compassY + arrowDx * 4;
-        svg.append("polygon")
-            .attr("points", nTipX + "," + nTipY + " " + nB1X + "," + nB1Y + " " + nB2X + "," + nB2Y)
-            .attr("fill", "#e74c3c");
-
-        // South arrow (gray)
-        var sTipX = compassX - arrowDx * (compassR - 4);
-        var sTipY = compassY - arrowDy * (compassR - 4);
-        var sB1X = compassX + arrowDy * 4;
-        var sB1Y = compassY - arrowDx * 4;
-        var sB2X = compassX - arrowDy * 4;
-        var sB2Y = compassY + arrowDx * 4;
-        svg.append("polygon")
-            .attr("points", sTipX + "," + sTipY + " " + sB1X + "," + sB1Y + " " + sB2X + "," + sB2Y)
-            .attr("fill", "#7f8c9b");
-
-        // N label
-        svg.append("text")
-            .attr("x", nTipX + arrowDx * 6)
-            .attr("y", nTipY + arrowDy * 6)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "central")
-            .attr("fill", "#e74c3c")
-            .attr("font-size", "9px")
-            .attr("font-weight", "bold")
-            .attr("font-family", "system-ui, -apple-system, sans-serif")
-            .text("N");
-
-        // S label
-        svg.append("text")
-            .attr("x", sTipX - arrowDx * 6)
-            .attr("y", sTipY - arrowDy * 6)
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "central")
-            .attr("fill", "#7f8c9b")
-            .attr("font-size", "9px")
-            .attr("font-weight", "bold")
-            .attr("font-family", "system-ui, -apple-system, sans-serif")
-            .text("S");
-
-        // ---- "for jack" text ----
-        svg.append("text")
-            .attr("x", size / 2)
-            .attr("y", size - 8)
-            .attr("text-anchor", "middle")
-            .attr("fill", "#9ec2e6")
-            .attr("font-size", "11px")
-            .attr("font-style", "italic")
-            .attr("font-family", "system-ui, -apple-system, sans-serif")
-            .attr("letter-spacing", "1px")
-            .text("for jack");
     }
 
     function animate() {
@@ -720,9 +660,10 @@ function initGlobe(containerId, options) {
         if (!isDragging) return;
         var dx = evt.clientX - dragStartX;
         var dy = evt.clientY - dragStartY;
-        // Convert px delta to degrees
-        rotation = (dragStartRotation + dx * 0.3) % 360;
-        tilt = Math.max(-90, Math.min(90, dragStartTilt - dy * 0.3));
+        // Convert px delta to degrees (scale sensitivity by zoom so drag feels consistent when zoomed in)
+        var dragSensitivity = 0.3 / zoomLevel;
+        rotation = (dragStartRotation + dx * dragSensitivity) % 360;
+        tilt = Math.max(-90, Math.min(90, dragStartTilt - dy * dragSensitivity));
         tooltip.style.opacity = '0';
         tooltip.style.pointerEvents = 'none';
         hoveredMarker = null;
@@ -735,8 +676,9 @@ function initGlobe(containerId, options) {
         scheduleResume();
     });
 
-    // Scroll-wheel zoom
+    // Scroll-wheel zoom (only in fullscreen/expand mode)
     svgNode.addEventListener('wheel', function(evt) {
+        if (!isFullscreen) return;
         evt.preventDefault();
         var delta = evt.deltaY > 0 ? -0.08 : 0.08;
         zoomLevel = Math.max(0.5, Math.min(4, zoomLevel + delta));
