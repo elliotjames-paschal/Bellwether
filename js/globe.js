@@ -212,7 +212,7 @@ function initGlobe(containerId, options) {
     // Fullscreen button - pill style with text
     var fsBtn = document.createElement('button');
     fsBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="flex-shrink:0;"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg><span style="margin-left:6px;">Explore</span>';
-    fsBtn.style.cssText = 'position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:10;' +
+    fsBtn.style.cssText = 'position:absolute;bottom:16px;right:16px;z-index:10;' +
         'background:rgba(255,255,255,0.92);border:1px solid #c5ddf5;border-radius:20px;' +
         'padding:8px 16px 8px 12px;cursor:pointer;display:flex;align-items:center;' +
         'color:#4285f4;font-size:13px;font-weight:500;font-family:system-ui,-apple-system,sans-serif;' +
