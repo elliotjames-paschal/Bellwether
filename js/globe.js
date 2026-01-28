@@ -209,15 +209,27 @@ function initGlobe(containerId, options) {
         delayedHideTooltip();
     });
 
-    // Fullscreen button
+    // Fullscreen button - pill style with text
     var fsBtn = document.createElement('button');
-    fsBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg>';
-    fsBtn.style.cssText = 'position:absolute;bottom:12px;right:12px;z-index:10;background:rgba(255,255,255,0.9);' +
-        'border:1px solid #d1d1d1;border-radius:6px;padding:6px;cursor:pointer;display:flex;align-items:center;' +
-        'justify-content:center;color:#666;transition:color 0.15s,border-color 0.15s;backdrop-filter:blur(4px);';
-    fsBtn.title = 'Fullscreen globe';
-    fsBtn.addEventListener('mouseenter', function() { fsBtn.style.color = '#2563eb'; fsBtn.style.borderColor = '#2563eb'; });
-    fsBtn.addEventListener('mouseleave', function() { fsBtn.style.color = '#666'; fsBtn.style.borderColor = '#d1d1d1'; });
+    fsBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="flex-shrink:0;"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg><span style="margin-left:6px;">Explore</span>';
+    fsBtn.style.cssText = 'position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:10;' +
+        'background:rgba(255,255,255,0.92);border:1px solid #c5ddf5;border-radius:20px;' +
+        'padding:8px 16px 8px 12px;cursor:pointer;display:flex;align-items:center;' +
+        'color:#4285f4;font-size:13px;font-weight:500;font-family:system-ui,-apple-system,sans-serif;' +
+        'transition:all 0.2s ease;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(66,133,244,0.15);';
+    fsBtn.title = 'Explore globe in fullscreen';
+    fsBtn.addEventListener('mouseenter', function() {
+        fsBtn.style.background = '#4285f4';
+        fsBtn.style.color = '#fff';
+        fsBtn.style.borderColor = '#4285f4';
+        fsBtn.style.boxShadow = '0 4px 12px rgba(66,133,244,0.3)';
+    });
+    fsBtn.addEventListener('mouseleave', function() {
+        fsBtn.style.background = 'rgba(255,255,255,0.92)';
+        fsBtn.style.color = '#4285f4';
+        fsBtn.style.borderColor = '#c5ddf5';
+        fsBtn.style.boxShadow = '0 2px 8px rgba(66,133,244,0.15)';
+    });
     container.appendChild(fsBtn);
 
     // Fullscreen overlay
