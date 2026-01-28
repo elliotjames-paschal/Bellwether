@@ -538,7 +538,7 @@ function initGlobe(containerId, options) {
             var isHovered = hoveredMarker && hoveredMarker.type === 'completed' && hoveredMarker.idx === idx;
             svg.append("circle")
                 .attr("cx", coords[0]).attr("cy", coords[1])
-                .attr("r", (isHovered ? 7 : 4) * markerScale)
+                .attr("r", (isHovered ? 5 : 3) * markerScale)
                 .attr("fill", isHovered ? "#2563eb" : "#3b82f6")
                 .attr("stroke", isHovered ? "#fff" : "none")
                 .attr("stroke-width", (isHovered ? 1.5 : 0) * markerScale)
@@ -555,7 +555,7 @@ function initGlobe(containerId, options) {
 
             var phase = livePulse + (e.lat * 0.7 + e.lng * 0.3);
             var ringPulse = 0.3 + Math.sin(phase) * 0.25;
-            var ringSize = (10 + Math.sin(phase) * 3) * markerScale;
+            var ringSize = (7 + Math.sin(phase) * 2) * markerScale;
 
             // Outer pulsing ring
             svg.append("circle")
@@ -563,17 +563,17 @@ function initGlobe(containerId, options) {
                 .attr("r", ringSize)
                 .attr("fill", "none")
                 .attr("stroke", "#1d6ff2")
-                .attr("stroke-width", 2 * markerScale)
+                .attr("stroke-width", 1.5 * markerScale)
                 .attr("opacity", ringPulse);
 
             // Solid dot
             var isHovered = hoveredMarker && hoveredMarker.type === 'live' && hoveredMarker.idx === idx;
             svg.append("circle")
                 .attr("cx", coords[0]).attr("cy", coords[1])
-                .attr("r", (isHovered ? 8 : 5.5) * markerScale)
+                .attr("r", (isHovered ? 6 : 4) * markerScale)
                 .attr("fill", isHovered ? "#1a56cc" : "#1d6ff2")
                 .attr("stroke", isHovered ? "#fff" : "#e0eaff")
-                .attr("stroke-width", (isHovered ? 2 : 1) * markerScale);
+                .attr("stroke-width", (isHovered ? 1.5 : 0.75) * markerScale);
         });
 
     }
