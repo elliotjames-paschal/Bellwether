@@ -236,11 +236,28 @@ function initGlobe(containerId, options) {
     // Expanded state (slides hero elements, expands globe in place)
     var isFullscreen = false;
     var heroSection = document.querySelector('.hero');
+    var heroSymbol = document.querySelector('.hero-symbol');
     var backdrop = null;
     var closeBtn = null;
+    var originalSize = options.size || 640;
 
     function enterFullscreen() {
         isFullscreen = true;
+
+        // Get current globe position
+        var rect = heroSymbol.getBoundingClientRect();
+        var currentCenterX = rect.left + rect.width / 2;
+        var currentCenterY = rect.top + rect.height / 2;
+
+        // Calculate target position (center of viewport) and size
+        var viewportCenterX = window.innerWidth / 2;
+        var viewportCenterY = window.innerHeight / 2;
+        var fsSize = Math.min(window.innerWidth, window.innerHeight) * 0.8;
+        var scaleFactor = fsSize / originalSize;
+
+        // Calculate translation needed
+        var translateX = viewportCenterX - currentCenterX;
+        var translateY = viewportCenterY - currentCenterY;
 
         // Create backdrop
         backdrop = document.createElement('div');
@@ -253,29 +270,21 @@ function initGlobe(containerId, options) {
         closeBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l12 12M16 4L4 16"/></svg>';
         closeBtn.style.cssText = 'position:fixed;top:24px;right:24px;z-index:1001;background:rgba(255,255,255,0.9);' +
             'border:1px solid #d1d1d1;border-radius:8px;color:#333;cursor:pointer;padding:10px;' +
-            'opacity:0;transition:opacity 0.3s ease 0.2s;backdrop-filter:blur(4px);';
+            'opacity:0;transition:opacity 0.3s ease 0.3s;backdrop-filter:blur(4px);';
         closeBtn.addEventListener('click', exitFullscreen);
         document.body.appendChild(closeBtn);
 
-        // Add expanded class to trigger CSS transitions
+        // Add expanded class for hero text/stats animation
         heroSection.classList.add('globe-expanded');
 
         // Show backdrop and close button
         requestAnimationFrame(function() {
             backdrop.classList.add('visible');
             closeBtn.style.opacity = '1';
-        });
 
-        // After transition, resize the SVG to match the new container size
-        setTimeout(function() {
-            var fsSize = Math.min(window.innerWidth, window.innerHeight) * 0.85;
-            size = fsSize;
-            baseScale = size * 0.485;
-            container.style.width = fsSize + 'px';
-            container.style.height = fsSize + 'px';
-            svg.attr('width', fsSize).attr('height', fsSize);
-            projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
-        }, 50);
+            // Apply transform to globe (translate + scale)
+            heroSymbol.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) scale(' + scaleFactor + ')';
+        });
 
         // Hide explore button
         fsBtn.style.opacity = '0';
@@ -291,30 +300,27 @@ function initGlobe(containerId, options) {
         // Reset zoom level
         zoomLevel = 1;
 
+        // Remove transform from globe
+        heroSymbol.style.transform = '';
+
         // Remove expanded class
         heroSection.classList.remove('globe-expanded');
 
         // Hide backdrop and close button
         if (backdrop) {
             backdrop.classList.remove('visible');
-            setTimeout(function() { backdrop.remove(); backdrop = null; }, 400);
+            setTimeout(function() { backdrop.remove(); backdrop = null; }, 500);
         }
         if (closeBtn) {
             closeBtn.style.opacity = '0';
             setTimeout(function() { closeBtn.remove(); closeBtn = null; }, 300);
         }
 
-        // Restore globe size
-        size = options.size || 640;
-        baseScale = size * 0.485;
-        container.style.width = size + 'px';
-        container.style.height = size + 'px';
-        svg.attr('width', size).attr('height', size);
-        projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
-
         // Show explore button
-        fsBtn.style.opacity = '1';
-        fsBtn.style.pointerEvents = 'auto';
+        setTimeout(function() {
+            fsBtn.style.opacity = '1';
+            fsBtn.style.pointerEvents = 'auto';
+        }, 300);
 
         document.removeEventListener('keydown', fsEscHandler);
     }
