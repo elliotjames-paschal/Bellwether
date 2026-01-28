@@ -524,6 +524,9 @@ function initGlobe(containerId, options) {
             .attr("stroke", "#d4e4f7")
             .attr("stroke-width", 0.3);
 
+        // Scale factor for markers (so they scale with globe size)
+        var markerScale = size / originalSize;
+
         // Completed elections (hoverable dots)
         completedElections.forEach(function(e, idx) {
             if (!isVisible(e.lng, e.lat)) return;
@@ -535,10 +538,10 @@ function initGlobe(containerId, options) {
             var isHovered = hoveredMarker && hoveredMarker.type === 'completed' && hoveredMarker.idx === idx;
             svg.append("circle")
                 .attr("cx", coords[0]).attr("cy", coords[1])
-                .attr("r", isHovered ? 7 : 4)
+                .attr("r", (isHovered ? 7 : 4) * markerScale)
                 .attr("fill", isHovered ? "#2563eb" : "#3b82f6")
                 .attr("stroke", isHovered ? "#fff" : "none")
-                .attr("stroke-width", isHovered ? 1.5 : 0)
+                .attr("stroke-width", (isHovered ? 1.5 : 0) * markerScale)
                 .attr("opacity", isHovered ? 1 : 0.82);
         });
 
@@ -552,7 +555,7 @@ function initGlobe(containerId, options) {
 
             var phase = livePulse + (e.lat * 0.7 + e.lng * 0.3);
             var ringPulse = 0.3 + Math.sin(phase) * 0.25;
-            var ringSize = 10 + Math.sin(phase) * 3;
+            var ringSize = (10 + Math.sin(phase) * 3) * markerScale;
 
             // Outer pulsing ring
             svg.append("circle")
@@ -560,19 +563,92 @@ function initGlobe(containerId, options) {
                 .attr("r", ringSize)
                 .attr("fill", "none")
                 .attr("stroke", "#1d6ff2")
-                .attr("stroke-width", 2)
+                .attr("stroke-width", 2 * markerScale)
                 .attr("opacity", ringPulse);
 
             // Solid dot
             var isHovered = hoveredMarker && hoveredMarker.type === 'live' && hoveredMarker.idx === idx;
             svg.append("circle")
                 .attr("cx", coords[0]).attr("cy", coords[1])
-                .attr("r", isHovered ? 8 : 5.5)
+                .attr("r", (isHovered ? 8 : 5.5) * markerScale)
                 .attr("fill", isHovered ? "#1a56cc" : "#1d6ff2")
                 .attr("stroke", isHovered ? "#fff" : "#e0eaff")
-                .attr("stroke-width", isHovered ? 2 : 1);
+                .attr("stroke-width", (isHovered ? 2 : 1) * markerScale);
         });
 
+        // ---- Compass indicator (N/S) ----
+        var compassX = size - 35 * markerScale;
+        var compassY = size - 35 * markerScale;
+        var compassR = 20 * markerScale;
+        var rollRad = (-15 * Math.PI) / 180;
+        var arrowDx = -Math.sin(rollRad);
+        var arrowDy = -Math.cos(rollRad);
+
+        // Background circle
+        svg.append("circle")
+            .attr("cx", compassX).attr("cy", compassY)
+            .attr("r", compassR)
+            .attr("fill", "rgba(240, 245, 252, 0.85)")
+            .attr("stroke", "#92b8d8")
+            .attr("stroke-width", 1);
+
+        // North arrow (red)
+        var nTipX = compassX + arrowDx * (compassR - 4 * markerScale);
+        var nTipY = compassY + arrowDy * (compassR - 4 * markerScale);
+        var nB1X = compassX + arrowDy * 4 * markerScale;
+        var nB1Y = compassY - arrowDx * 4 * markerScale;
+        var nB2X = compassX - arrowDy * 4 * markerScale;
+        var nB2Y = compassY + arrowDx * 4 * markerScale;
+        svg.append("polygon")
+            .attr("points", nTipX + "," + nTipY + " " + nB1X + "," + nB1Y + " " + nB2X + "," + nB2Y)
+            .attr("fill", "#e74c3c");
+
+        // South arrow (gray)
+        var sTipX = compassX - arrowDx * (compassR - 4 * markerScale);
+        var sTipY = compassY - arrowDy * (compassR - 4 * markerScale);
+        var sB1X = compassX + arrowDy * 4 * markerScale;
+        var sB1Y = compassY - arrowDx * 4 * markerScale;
+        var sB2X = compassX - arrowDy * 4 * markerScale;
+        var sB2Y = compassY + arrowDx * 4 * markerScale;
+        svg.append("polygon")
+            .attr("points", sTipX + "," + sTipY + " " + sB1X + "," + sB1Y + " " + sB2X + "," + sB2Y)
+            .attr("fill", "#7f8c9b");
+
+        // N label
+        svg.append("text")
+            .attr("x", nTipX + arrowDx * 6 * markerScale)
+            .attr("y", nTipY + arrowDy * 6 * markerScale)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "central")
+            .attr("fill", "#e74c3c")
+            .attr("font-size", (9 * markerScale) + "px")
+            .attr("font-weight", "bold")
+            .attr("font-family", "system-ui, -apple-system, sans-serif")
+            .text("N");
+
+        // S label
+        svg.append("text")
+            .attr("x", sTipX - arrowDx * 6 * markerScale)
+            .attr("y", sTipY - arrowDy * 6 * markerScale)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "central")
+            .attr("fill", "#7f8c9b")
+            .attr("font-size", (9 * markerScale) + "px")
+            .attr("font-weight", "bold")
+            .attr("font-family", "system-ui, -apple-system, sans-serif")
+            .text("S");
+
+        // ---- "for jack" text ----
+        svg.append("text")
+            .attr("x", size / 2)
+            .attr("y", size - 8 * markerScale)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#9ec2e6")
+            .attr("font-size", (11 * markerScale) + "px")
+            .attr("font-style", "italic")
+            .attr("font-family", "system-ui, -apple-system, sans-serif")
+            .attr("letter-spacing", "1px")
+            .text("for jack");
     }
 
     function animate() {
