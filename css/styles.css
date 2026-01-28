@@ -1183,12 +1183,21 @@ a:hover {
 
     .hero-layout {
         flex-direction: column;
-        gap: 32px;
+        gap: 0;
         align-items: flex-start;
     }
 
     .hero-symbol {
-        display: none;
+        position: relative;
+        right: auto;
+        top: auto;
+        width: 100%;
+        height: 260px;
+        margin: -10px auto 0;
+        opacity: 0.45;
+        overflow: hidden;
+        -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 15%, rgba(0,0,0,0.4) 35%, transparent 60%);
+        mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 15%, rgba(0,0,0,0.4) 35%, transparent 60%);
     }
 
     .hero-stats {
@@ -1215,6 +1224,10 @@ a:hover {
     .dashboard-tabs {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    .hero-symbol button {
+        display: none;
     }
 }
 
