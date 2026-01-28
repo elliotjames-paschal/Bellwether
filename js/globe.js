@@ -240,6 +240,7 @@ function initGlobe(containerId, options) {
     var backdrop = null;
     var closeBtn = null;
     var originalSize = options.size || 640;
+    var transitionDuration = 600; // ms, matches CSS
 
     function enterFullscreen() {
         isFullscreen = true;
@@ -286,6 +287,36 @@ function initGlobe(containerId, options) {
             heroSymbol.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) scale(' + scaleFactor + ')';
         });
 
+        // After animation completes, swap to full-resolution globe
+        setTimeout(function() {
+            if (!isFullscreen) return; // user may have closed early
+
+            // Remove transform and reposition with actual size
+            heroSymbol.style.transition = 'none';
+            heroSymbol.style.transform = '';
+            heroSymbol.style.position = 'fixed';
+            heroSymbol.style.top = '50%';
+            heroSymbol.style.left = '50%';
+            heroSymbol.style.right = 'auto';
+            heroSymbol.style.marginTop = (-fsSize / 2) + 'px';
+            heroSymbol.style.marginLeft = (-fsSize / 2) + 'px';
+            heroSymbol.style.width = fsSize + 'px';
+            heroSymbol.style.height = fsSize + 'px';
+
+            // Resize SVG and projection to full resolution
+            size = fsSize;
+            baseScale = size * 0.485;
+            container.style.width = fsSize + 'px';
+            container.style.height = fsSize + 'px';
+            svg.attr('width', fsSize).attr('height', fsSize);
+            projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
+
+            // Re-enable transition for exit
+            requestAnimationFrame(function() {
+                heroSymbol.style.transition = '';
+            });
+        }, transitionDuration + 50);
+
         // Hide explore button
         fsBtn.style.opacity = '0';
         fsBtn.style.pointerEvents = 'none';
@@ -295,13 +326,56 @@ function initGlobe(containerId, options) {
     }
 
     function exitFullscreen() {
+        if (!isFullscreen) return;
         isFullscreen = false;
 
         // Reset zoom level
         zoomLevel = 1;
 
-        // Remove transform from globe
-        heroSymbol.style.transform = '';
+        // Get current fullscreen position for smooth exit
+        var fsSize = parseFloat(heroSymbol.style.width) || (Math.min(window.innerWidth, window.innerHeight) * 0.8);
+
+        // First, restore to original size but keep position
+        size = originalSize;
+        baseScale = size * 0.485;
+        container.style.width = originalSize + 'px';
+        container.style.height = originalSize + 'px';
+        svg.attr('width', originalSize).attr('height', originalSize);
+        projection.scale(baseScale * zoomLevel).translate([size / 2, size / 2]);
+
+        // Calculate scale factor to match current visual size
+        var scaleFactor = fsSize / originalSize;
+
+        // Reset heroSymbol to original CSS positioning but with transform to match current visual
+        heroSymbol.style.transition = 'none';
+        heroSymbol.style.position = '';
+        heroSymbol.style.top = '';
+        heroSymbol.style.left = '';
+        heroSymbol.style.right = '';
+        heroSymbol.style.marginTop = '';
+        heroSymbol.style.marginLeft = '';
+        heroSymbol.style.width = '';
+        heroSymbol.style.height = '';
+
+        // Get original position
+        var rect = heroSymbol.getBoundingClientRect();
+        var currentCenterX = rect.left + rect.width / 2;
+        var currentCenterY = rect.top + rect.height / 2;
+        var viewportCenterX = window.innerWidth / 2;
+        var viewportCenterY = window.innerHeight / 2;
+        var translateX = viewportCenterX - currentCenterX;
+        var translateY = viewportCenterY - currentCenterY;
+
+        // Start from expanded position
+        heroSymbol.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) scale(' + scaleFactor + ')';
+
+        // Re-enable transition and animate back
+        requestAnimationFrame(function() {
+            heroSymbol.style.transition = '';
+            requestAnimationFrame(function() {
+                heroSymbol.style.transform = '';
+            });
+        });
 
         // Remove expanded class
         heroSection.classList.remove('globe-expanded');
