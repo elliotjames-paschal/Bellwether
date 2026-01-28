@@ -6,9 +6,9 @@
       "accuracy": 0.8654
     },
     "kalshi": {
-      "n": 94,
-      "brier": 0.1193,
-      "accuracy": 0.8617
+      "n": 96,
+      "brier": 0.1168,
+      "accuracy": 0.8646
     }
   },
   "shared_elections": {

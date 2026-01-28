@@ -1437,12 +1437,12 @@
         "correct": false
       },
       {
-        "price": 0.0,
+        "price": 0.01,
         "volume": 11742.06,
         "correct": false
       },
       {
-        "price": 0.03,
+        "price": 0.0,
         "volume": 1667.93,
         "correct": false
       },
@@ -4222,7 +4222,7 @@
         "correct": false
       },
       {
-        "price": 0.96,
+        "price": 0.99,
         "volume": 9659775.26,
         "correct": true
       },
@@ -4592,7 +4592,7 @@
         "correct": false
       },
       {
-        "price": 0.84,
+        "price": 0.99,
         "volume": 485985.41,
         "correct": true
       },
@@ -4627,7 +4627,7 @@
         "correct": false
       },
       {
-        "price": 0.05,
+        "price": 0.0,
         "volume": 21405.61,
         "correct": false
       },
@@ -6637,7 +6637,7 @@
         "correct": false
       },
       {
-        "price": 0.01,
+        "price": 0.0,
         "volume": 291427.67,
         "correct": false
       },
@@ -6792,7 +6792,7 @@
         "correct": false
       },
       {
-        "price": 0.07,
+        "price": 0.0,
         "volume": 45368.21,
         "correct": false
       },
@@ -6972,7 +6972,7 @@
         "correct": true
       },
       {
-        "price": 0.98,
+        "price": 0.99,
         "volume": 105425.45,
         "correct": true
       },
@@ -7367,7 +7367,7 @@
         "correct": true
       },
       {
-        "price": 0.06,
+        "price": 0.0,
         "volume": 48281.35,
         "correct": false
       },
@@ -8527,7 +8527,7 @@
         "correct": true
       },
       {
-        "price": 0.05,
+        "price": 0.99,
         "volume": 41661.38,
         "correct": true
       },
@@ -9087,7 +9087,7 @@
         "correct": false
       },
       {
-        "price": 0.94,
+        "price": 0.99,
         "volume": 144481.74,
         "correct": true
       },
@@ -9607,7 +9607,7 @@
         "correct": false
       },
       {
-        "price": 0.07,
+        "price": 0.0,
         "volume": 34136.22,
         "correct": false
       },
@@ -10004,36 +10004,36 @@
     ],
     "bins": [
       {
-        "price_mid": 0.0063,
-        "median_volume": 81436.56
+        "price_mid": 0.0062,
+        "median_volume": 81093.98
       },
       {
-        "price_mid": 0.0662,
+        "price_mid": 0.0663,
         "median_volume": 44444.88
       },
       {
-        "price_mid": 0.1167,
-        "median_volume": 39845.74
+        "price_mid": 0.1168,
+        "median_volume": 39901.69
       },
       {
         "price_mid": 0.1689,
-        "median_volume": 35461.07
+        "median_volume": 35340.52
       },
       {
-        "price_mid": 0.2168,
-        "median_volume": 29886.48
+        "price_mid": 0.2169,
+        "median_volume": 29640.62
       },
       {
-        "price_mid": 0.267,
-        "median_volume": 19665.39
+        "price_mid": 0.2669,
+        "median_volume": 19673.74
       },
       {
-        "price_mid": 0.319,
-        "median_volume": 27821.01
+        "price_mid": 0.3189,
+        "median_volume": 27734.37
       },
       {
-        "price_mid": 0.3671,
-        "median_volume": 31674.62
+        "price_mid": 0.3672,
+        "median_volume": 31293.64
       },
       {
         "price_mid": 0.4171,
@@ -10048,16 +10048,16 @@
         "median_volume": 18652.46
       },
       {
-        "price_mid": 0.5664,
-        "median_volume": 37075.21
+        "price_mid": 0.5666,
+        "median_volume": 36697.3
       },
       {
         "price_mid": 0.6186,
-        "median_volume": 36105.12
+        "median_volume": 34945.55
       },
       {
-        "price_mid": 0.6705,
-        "median_volume": 35796.26
+        "price_mid": 0.6706,
+        "median_volume": 35897.23
       },
       {
         "price_mid": 0.7165,
@@ -10069,22 +10069,22 @@
       },
       {
         "price_mid": 0.8188,
-        "median_volume": 42595.3
+        "median_volume": 36639.44
       },
       {
         "price_mid": 0.8695,
         "median_volume": 79377.52
       },
       {
-        "price_mid": 0.92,
+        "price_mid": 0.9199,
         "median_volume": 111231.57
       },
       {
-        "price_mid": 0.979,
-        "median_volume": 102328.41
+        "price_mid": 0.9795,
+        "median_volume": 102307.55
       }
     ],
-    "correlation": 0.0107,
+    "correlation": 0.0106,
     "n": 9418
   },
   "kalshi": {
