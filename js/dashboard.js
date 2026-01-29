@@ -128,7 +128,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 async function fetchJSON(filename) {
-    const response = await fetch(`data/${filename}`);
+    const cacheBuster = new Date().toISOString().slice(0, 10); // Daily cache bust
+    const response = await fetch(`data/${filename}?v=${cacheBuster}`);
     if (!response.ok) throw new Error(`Failed to load ${filename}`);
     return response.json();
 }
