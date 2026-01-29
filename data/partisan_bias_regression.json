@@ -5,22 +5,22 @@
       "variables": [
         {
           "name": "Intercept",
-          "coef": -0.1928,
-          "se": 0.024,
+          "coef": -0.1826,
+          "se": 0.0232,
           "p": 0.0,
-          "ci_low": -0.2401,
-          "ci_high": -0.1455
+          "ci_low": -0.2284,
+          "ci_high": -0.1367
         },
         {
           "name": "Republican",
-          "coef": -0.046,
-          "se": 0.0348,
-          "p": 0.187,
-          "ci_low": -0.1146,
-          "ci_high": 0.0225
+          "coef": -0.0563,
+          "se": 0.0337,
+          "p": 0.0966,
+          "ci_low": -0.1227,
+          "ci_high": 0.0102
         }
       ],
-      "r_squared": 0.0095,
+      "r_squared": 0.015,
       "n": 185
     },
     {
@@ -28,30 +28,30 @@
       "variables": [
         {
           "name": "Intercept",
-          "coef": -0.2185,
-          "se": 0.0296,
+          "coef": -0.2028,
+          "se": 0.0288,
           "p": 0.0,
-          "ci_low": -0.277,
-          "ci_high": -0.16
+          "ci_low": -0.2596,
+          "ci_high": -0.146
         },
         {
           "name": "Republican",
-          "coef": -0.0481,
-          "se": 0.0347,
-          "p": 0.1672,
-          "ci_low": -0.1165,
-          "ci_high": 0.0203
+          "coef": -0.0579,
+          "se": 0.0337,
+          "p": 0.0874,
+          "ci_low": -0.1243,
+          "ci_high": 0.0086
         },
         {
           "name": "Polymarket",
-          "coef": 0.0509,
-          "se": 0.0347,
-          "p": 0.1443,
-          "ci_low": -0.0176,
-          "ci_high": 0.1193
+          "coef": 0.04,
+          "se": 0.0337,
+          "p": 0.2363,
+          "ci_low": -0.0264,
+          "ci_high": 0.1064
         }
       ],
-      "r_squared": 0.0211,
+      "r_squared": 0.0226,
       "n": 185
     },
     {
@@ -59,38 +59,38 @@
       "variables": [
         {
           "name": "Intercept",
-          "coef": -0.2173,
-          "se": 0.0341,
+          "coef": -0.1967,
+          "se": 0.0331,
           "p": 0.0,
-          "ci_low": -0.2845,
-          "ci_high": -0.1501
+          "ci_low": -0.2619,
+          "ci_high": -0.1314
         },
         {
           "name": "Republican",
-          "coef": -0.0507,
-          "se": 0.0505,
-          "p": 0.317,
-          "ci_low": -0.1504,
-          "ci_high": 0.049
+          "coef": -0.0713,
+          "se": 0.049,
+          "p": 0.1475,
+          "ci_low": -0.1681,
+          "ci_high": 0.0254
         },
         {
           "name": "Polymarket",
-          "coef": 0.0485,
-          "se": 0.0479,
-          "p": 0.3129,
-          "ci_low": -0.0461,
-          "ci_high": 0.1431
+          "coef": 0.0279,
+          "se": 0.0465,
+          "p": 0.5496,
+          "ci_low": -0.0639,
+          "ci_high": 0.1197
         },
         {
           "name": "Republican \u00d7 Polymarket",
-          "coef": 0.005,
-          "se": 0.0697,
-          "p": 0.9434,
-          "ci_low": -0.1325,
-          "ci_high": 0.1424
+          "coef": 0.0256,
+          "se": 0.0676,
+          "p": 0.7055,
+          "ci_low": -0.1078,
+          "ci_high": 0.159
         }
       ],
-      "r_squared": 0.0211,
+      "r_squared": 0.0234,
       "n": 185
     }
   ]

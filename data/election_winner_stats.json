@@ -7,8 +7,8 @@
     },
     "kalshi": {
       "n": 96,
-      "brier": 0.1168,
-      "accuracy": 0.8646
+      "brier": 0.1064,
+      "accuracy": 0.875
     }
   },
   "shared_elections": {
