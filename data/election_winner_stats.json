@@ -23,9 +23,9 @@
       "accuracy": 0.8767
     },
     "combined": {
-      "n": 71,
-      "brier": 0.1077,
-      "accuracy": 0.8592
+      "n": 70,
+      "brier": 0.1085,
+      "accuracy": 0.8571
     }
   },
   "head_to_head": {
