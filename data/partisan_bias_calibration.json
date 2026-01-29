@@ -57,56 +57,56 @@
   "kalshi": {
     "bins": [
       {
-        "predicted": 0.0633,
-        "actual": 0.1667,
+        "predicted": 0.06,
+        "actual": 0.0,
         "count": 6
       },
       {
-        "predicted": 0.1533,
-        "actual": 0.1667,
+        "predicted": 0.1183,
+        "actual": 0.5,
         "count": 6
       },
       {
-        "predicted": 0.245,
+        "predicted": 0.2267,
         "actual": 0.3333,
         "count": 6
       },
       {
-        "predicted": 0.3267,
+        "predicted": 0.295,
+        "actual": 0.3333,
+        "count": 6
+      },
+      {
+        "predicted": 0.3933,
+        "actual": 0.3333,
+        "count": 6
+      },
+      {
+        "predicted": 0.4767,
         "actual": 0.5,
         "count": 6
       },
       {
-        "predicted": 0.42,
-        "actual": 0.5,
-        "count": 6
-      },
-      {
-        "predicted": 0.515,
-        "actual": 0.5,
-        "count": 6
-      },
-      {
-        "predicted": 0.6017,
+        "predicted": 0.575,
         "actual": 0.8333,
         "count": 6
       },
       {
-        "predicted": 0.855,
+        "predicted": 0.7533,
         "actual": 1.0,
         "count": 6
       },
       {
-        "predicted": 0.9683,
+        "predicted": 0.9567,
         "actual": 1.0,
         "count": 6
       },
       {
-        "predicted": 0.98,
+        "predicted": 0.9778,
         "actual": 1.0,
-        "count": 7
+        "count": 9
       }
     ],
-    "n_elections": 61
+    "n_elections": 63
   }
 }
