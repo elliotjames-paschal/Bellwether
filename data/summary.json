@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-28T15:42:12.665872",
+  "last_updated": "2026-01-28T16:17:39.104347",
   "total_markets": 31755,
   "polymarket_markets": 18897,
   "kalshi_markets": 12858,
@@ -9,5 +9,5 @@
   "kalshi_brier": 0.0821,
   "combined_brier": 0.0788,
   "electoral_markets": 10475,
-  "unique_elections": 1452
+  "unique_elections": 1451
 }

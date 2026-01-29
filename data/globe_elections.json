@@ -886,6 +886,19 @@
       "pm_event": "pedro-snchez-out-as-pm-of-spain-by"
     },
     {
+      "lat": 44.56,
+      "lng": -72.58,
+      "label": "2026 \u2014 Vermont \u2014 Governor (+1 more)",
+      "elections": 2,
+      "markets": 22,
+      "volume": 37368.02,
+      "search_query": "Governor Vermont United States 2026",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "GOVPARTYVT-26",
+      "pm_event": "vermont-governor-democratic-primary-winner"
+    },
+    {
       "lat": 39.93,
       "lng": 32.85,
       "label": "Turkey \u2014 President (+1 more)",
@@ -897,19 +910,6 @@
       "has_k": 1,
       "kalshi_event": "KXTURKEYPRES-28",
       "pm_event": "turkey-snap-presidential-election-called-before-july"
-    },
-    {
-      "lat": 44.56,
-      "lng": -72.58,
-      "label": "2026 \u2014 Vermont \u2014 Governor (+1 more)",
-      "elections": 2,
-      "markets": 10,
-      "volume": 37031.02,
-      "search_query": "Governor Vermont United States 2026",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "GOVPARTYVT-26",
-      "pm_event": "vermont-governor-democratic-primary-winner"
     },
     {
       "lat": 32.36,
@@ -3109,8 +3109,8 @@
       "lng": -72.58,
       "label": "2024 \u2014 Vermont \u2014 Senate (+1 more)",
       "elections": 2,
-      "markets": 25,
-      "volume": 392050.39,
+      "markets": 13,
+      "volume": 391713.39,
       "search_query": "Senate Vermont United States 2024",
       "has_pm": 1,
       "has_k": 1,
