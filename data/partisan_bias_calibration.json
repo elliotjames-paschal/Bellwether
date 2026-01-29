@@ -2,111 +2,111 @@
   "polymarket": {
     "bins": [
       {
-        "predicted": 0.0031,
+        "predicted": 0.0053,
         "actual": 0.0,
-        "count": 5
+        "count": 9
       },
       {
-        "predicted": 0.0121,
+        "predicted": 0.0187,
         "actual": 0.0,
-        "count": 5
+        "count": 9
       },
       {
-        "predicted": 0.0212,
+        "predicted": 0.044,
         "actual": 0.0,
-        "count": 5
+        "count": 9
       },
       {
-        "predicted": 0.0416,
-        "actual": 0.0,
-        "count": 5
+        "predicted": 0.151,
+        "actual": 0.1111,
+        "count": 9
       },
       {
-        "predicted": 0.0772,
-        "actual": 0.0,
-        "count": 5
+        "predicted": 0.2892,
+        "actual": 0.3333,
+        "count": 9
       },
       {
-        "predicted": 0.1914,
-        "actual": 0.2,
-        "count": 5
+        "predicted": 0.4795,
+        "actual": 0.5556,
+        "count": 9
       },
       {
-        "predicted": 0.4261,
-        "actual": 0.6,
-        "count": 5
+        "predicted": 0.6066,
+        "actual": 0.6667,
+        "count": 9
       },
       {
-        "predicted": 0.7569,
-        "actual": 1.0,
-        "count": 5
+        "predicted": 0.7798,
+        "actual": 0.7778,
+        "count": 9
       },
       {
-        "predicted": 0.938,
-        "actual": 1.0,
-        "count": 5
-      },
-      {
-        "predicted": 0.9859,
+        "predicted": 0.9204,
         "actual": 1.0,
         "count": 9
+      },
+      {
+        "predicted": 0.9871,
+        "actual": 1.0,
+        "count": 17
       }
     ],
-    "n_elections": 54
+    "n_elections": 98
   },
   "kalshi": {
     "bins": [
       {
-        "predicted": 0.06,
+        "predicted": 0.01,
         "actual": 0.0,
-        "count": 6
+        "count": 8
       },
       {
-        "predicted": 0.1183,
+        "predicted": 0.035,
+        "actual": 0.0,
+        "count": 8
+      },
+      {
+        "predicted": 0.08,
+        "actual": 0.0,
+        "count": 8
+      },
+      {
+        "predicted": 0.1925,
+        "actual": 0.0,
+        "count": 8
+      },
+      {
+        "predicted": 0.2775,
         "actual": 0.5,
-        "count": 6
+        "count": 8
       },
       {
-        "predicted": 0.2267,
-        "actual": 0.3333,
-        "count": 6
+        "predicted": 0.4012,
+        "actual": 0.375,
+        "count": 8
       },
       {
-        "predicted": 0.295,
-        "actual": 0.3333,
-        "count": 6
-      },
-      {
-        "predicted": 0.3933,
-        "actual": 0.3333,
-        "count": 6
-      },
-      {
-        "predicted": 0.4767,
+        "predicted": 0.5212,
         "actual": 0.5,
-        "count": 6
+        "count": 8
       },
       {
-        "predicted": 0.575,
-        "actual": 0.8333,
-        "count": 6
-      },
-      {
-        "predicted": 0.7533,
+        "predicted": 0.6412,
         "actual": 1.0,
-        "count": 6
+        "count": 8
       },
       {
-        "predicted": 0.9567,
-        "actual": 1.0,
-        "count": 6
+        "predicted": 0.8538,
+        "actual": 0.625,
+        "count": 8
       },
       {
-        "predicted": 0.9778,
-        "actual": 1.0,
-        "count": 9
+        "predicted": 0.9688,
+        "actual": 0.9412,
+        "count": 17
       }
     ],
-    "n_elections": 63
+    "n_elections": 89
   }
 }
