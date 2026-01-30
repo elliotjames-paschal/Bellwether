@@ -6,7 +6,7 @@
       "label": "2028 \u2014 United States \u2014 President (+16 more)",
       "elections": 17,
       "markets": 519,
-      "volume": 196129171.98,
+      "volume": 196129266.98,
       "search_query": "President United States 2028",
       "has_pm": 1,
       "has_k": 1,
@@ -117,6 +117,19 @@
       "pm_event": "next-french-presidential-election"
     },
     {
+      "lat": 10.49,
+      "lng": -66.88,
+      "label": "2026 \u2014 Venezuela \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 10,
+      "volume": 7027966.03,
+      "search_query": "President Venezuela 2026",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXLEADEROUT-26",
+      "pm_event": "venezuela-presidential-election-scheduled-by"
+    },
+    {
       "lat": 51.51,
       "lng": -0.13,
       "label": "United Kingdom \u2014 Prime Minister (+6 more)",
@@ -154,19 +167,6 @@
       "has_k": 1,
       "kalshi_event": "KXBRPRES-26",
       "pm_event": "brazil-presidential-election"
-    },
-    {
-      "lat": 10.49,
-      "lng": -66.88,
-      "label": "2026 \u2014 Venezuela \u2014 President (+1 more)",
-      "elections": 2,
-      "markets": 10,
-      "volume": 4247390.03,
-      "search_query": "President Venezuela 2026",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXLEADEROUT-26",
-      "pm_event": "venezuela-presidential-election-scheduled-by"
     },
     {
       "lat": 21.03,
@@ -211,8 +211,8 @@
       "lng": 100.5,
       "label": "2026 \u2014 Thailand \u2014 Parliament (+1 more)",
       "elections": 2,
-      "markets": 51,
-      "volume": 1594083.76,
+      "markets": 60,
+      "volume": 1596817.95,
       "search_query": "Parliament Thailand 2026",
       "has_pm": 1,
       "has_k": 1,
@@ -348,6 +348,19 @@
       "pm_event": "alaska-governor-election-winner"
     },
     {
+      "lat": 31.77,
+      "lng": 35.22,
+      "label": "Israel \u2014 Prime Minister (+2 more)",
+      "elections": 3,
+      "markets": 17,
+      "volume": 642728.51,
+      "search_query": "Prime Minister Israel",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXLEADEROUT-26",
+      "pm_event": "who-will-be-the-next-prime-minister-of-israel-after-the-next-election"
+    },
+    {
       "lat": 32.68,
       "lng": -83.22,
       "label": "2026 \u2014 Georgia \u2014 Senate (+2 more)",
@@ -359,19 +372,6 @@
       "has_k": 1,
       "kalshi_event": "SENATEGA-26",
       "pm_event": "georgia-governor-republican-primary-winner"
-    },
-    {
-      "lat": 31.77,
-      "lng": 35.22,
-      "label": "Israel \u2014 Prime Minister (+2 more)",
-      "elections": 3,
-      "markets": 17,
-      "volume": 615047.51,
-      "search_query": "Prime Minister Israel",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXLEADEROUT-26",
-      "pm_event": "who-will-be-the-next-prime-minister-of-israel-after-the-next-election"
     },
     {
       "lat": 27.99,
@@ -413,6 +413,18 @@
       "pm_event": "new-york-democratic-governor-primary-winner"
     },
     {
+      "lat": 39.9,
+      "lng": 116.4,
+      "label": "2026 \u2014 China \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 307915.0,
+      "search_query": "President China 2026",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXLEADEROUT-26"
+    },
+    {
       "lat": 35.76,
       "lng": -79.02,
       "label": "2026 \u2014 North Carolina \u2014 Senate (+6 more)",
@@ -436,18 +448,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "bangladesh-parliamentary-election-winner-154"
-    },
-    {
-      "lat": 39.9,
-      "lng": 116.4,
-      "label": "2026 \u2014 China \u2014 President",
-      "elections": 1,
-      "markets": 1,
-      "volume": 275760.0,
-      "search_query": "President China 2026",
-      "has_pm": 0,
-      "has_k": 1,
-      "kalshi_event": "KXLEADEROUT-26"
     },
     {
       "lat": 46.73,
@@ -630,6 +630,19 @@
       "pm_event": "new-hampshire-senate-election-winner"
     },
     {
+      "lat": 64.17,
+      "lng": -51.74,
+      "label": "2026 \u2014 Greenland \u2014 Other",
+      "elections": 1,
+      "markets": 2,
+      "volume": 93192.04,
+      "search_query": "Other Greenland 2026",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXGREENIND-26",
+      "pm_event": "will-greenland-vote-for-independence-in-2026"
+    },
+    {
       "lat": 46.81,
       "lng": -71.21,
       "label": "2026 \u2014 Quebec \u2014 Regional",
@@ -730,19 +743,6 @@
       "has_k": 1,
       "kalshi_event": "GOVPARTYNM-26",
       "pm_event": "new-mexico-governor-republican-primary-winner"
-    },
-    {
-      "lat": 64.17,
-      "lng": -51.74,
-      "label": "2026 \u2014 Greenland \u2014 Other",
-      "elections": 1,
-      "markets": 2,
-      "volume": 78337.04,
-      "search_query": "Other Greenland 2026",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXGREENIND-26",
-      "pm_event": "will-greenland-vote-for-independence-in-2026"
     },
     {
       "lat": 37.27,
@@ -2201,10 +2201,10 @@
     {
       "lat": 34.05,
       "lng": -111.09,
-      "label": "2024 \u2014 Arizona \u2014 Senate (+11 more)",
-      "elections": 12,
-      "markets": 78,
-      "volume": 67020399.71,
+      "label": "2024 \u2014 Arizona \u2014 Senate (+12 more)",
+      "elections": 13,
+      "markets": 79,
+      "volume": 67020688.36,
       "search_query": "Senate Arizona United States 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -2354,10 +2354,10 @@
     {
       "lat": 36.78,
       "lng": -119.42,
-      "label": "2024 \u2014 CA-13 \u2014 House (+30 more)",
-      "elections": 31,
-      "markets": 90,
-      "volume": 16211307.17,
+      "label": "2024 \u2014 CA-13 \u2014 House (+31 more)",
+      "elections": 32,
+      "markets": 91,
+      "volume": 16211337.17,
       "search_query": "House CA-13 United States 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -2369,8 +2369,8 @@
       "lng": -81.76,
       "label": "2024 \u2014 Florida \u2014 President (+25 more)",
       "elections": 26,
-      "markets": 127,
-      "volume": 12357141.79,
+      "markets": 128,
+      "volume": 12357169.79,
       "search_query": "President Florida United States 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -2469,8 +2469,8 @@
       "lng": -0.13,
       "label": "2024 \u2014 United Kingdom \u2014 Prime Minister (+3 more)",
       "elections": 4,
-      "markets": 35,
-      "volume": 6774609.4,
+      "markets": 36,
+      "volume": 6776130.38,
       "search_query": "Prime Minister United Kingdom 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -2506,10 +2506,10 @@
     {
       "lat": 31.97,
       "lng": -99.9,
-      "label": "2024 \u2014 Texas \u2014 Senate (+22 more)",
-      "elections": 23,
-      "markets": 83,
-      "volume": 6174165.07,
+      "label": "2024 \u2014 Texas \u2014 Senate (+23 more)",
+      "elections": 24,
+      "markets": 88,
+      "volume": 6174251.65,
       "search_query": "Senate Texas United States 2024",
       "has_pm": 1,
       "has_k": 1,
