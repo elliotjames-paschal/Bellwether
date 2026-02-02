@@ -5,8 +5,8 @@
       "lng": -77.04,
       "label": "2028 \u2014 United States \u2014 President (+16 more)",
       "elections": 17,
-      "markets": 518,
-      "volume": 196129311.9,
+      "markets": 516,
+      "volume": 193237112.77,
       "search_query": "President United States 2028",
       "has_pm": 1,
       "has_k": 1,
@@ -122,7 +122,7 @@
       "label": "2026 \u2014 Venezuela \u2014 President (+1 more)",
       "elections": 2,
       "markets": 10,
-      "volume": 7027966.03,
+      "volume": 7064073.91,
       "search_query": "President Venezuela 2026",
       "has_pm": 1,
       "has_k": 1,
@@ -141,6 +141,19 @@
       "has_k": 1,
       "kalshi_event": "KXNEXTUKPM-30",
       "pm_event": "starmer-out-before-july"
+    },
+    {
+      "lat": 9.93,
+      "lng": -84.08,
+      "label": "2026 \u2014 Costa Rica \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 77,
+      "volume": 5415102.35,
+      "search_query": "President Costa Rica 2026",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXCOSTARICAPRES-26",
+      "pm_event": "costa-rica-presidential-election"
     },
     {
       "lat": 37.43,
@@ -179,19 +192,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "next-president-of-vietnam"
-    },
-    {
-      "lat": 9.93,
-      "lng": -84.08,
-      "label": "2026 \u2014 Costa Rica \u2014 President (+1 more)",
-      "elections": 2,
-      "markets": 77,
-      "volume": 2417794.19,
-      "search_query": "President Costa Rica 2026",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXCOSTARICAPRES-26",
-      "pm_event": "costa-rica-presidential-election"
     },
     {
       "lat": 37.57,
@@ -296,19 +296,6 @@
       "pm_event": "ohio-governor-republican-primary-winner"
     },
     {
-      "lat": 50.45,
-      "lng": 30.52,
-      "label": "2026 \u2014 Ukraine \u2014 President (+2 more)",
-      "elections": 3,
-      "markets": 10,
-      "volume": 1046164.81,
-      "search_query": "President Ukraine 2026",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXELECTUKRAINE-26",
-      "pm_event": "zelenskyy-out-as-ukraine-president-by-march-31-2026"
-    },
-    {
       "lat": 47.5,
       "lng": 19.04,
       "label": "Hungary \u2014 Prime Minister (+2 more)",
@@ -322,12 +309,25 @@
       "pm_event": "next-prime-minister-of-hungary"
     },
     {
+      "lat": 50.45,
+      "lng": 30.52,
+      "label": "2026 \u2014 Ukraine \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 9,
+      "volume": 914732.18,
+      "search_query": "President Ukraine 2026",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXELECTUKRAINE-26",
+      "pm_event": "zelenskyy-out-as-ukraine-president-by-march-31-2026"
+    },
+    {
       "lat": 35.68,
       "lng": 139.69,
       "label": "2026 \u2014 Japan \u2014 Parliament (+3 more)",
       "elections": 4,
-      "markets": 88,
-      "volume": 851527.34,
+      "markets": 92,
+      "volume": 851619.17,
       "search_query": "Parliament Japan 2026",
       "has_pm": 1,
       "has_k": 1,
@@ -481,7 +481,7 @@
       "label": "2026 \u2014 Maine \u2014 Senate (+2 more)",
       "elections": 3,
       "markets": 72,
-      "volume": 212887.03,
+      "volume": 213490.33,
       "search_query": "Senate Maine United States 2026",
       "has_pm": 1,
       "has_k": 1,
@@ -589,6 +589,19 @@
       "has_k": 1,
       "kalshi_event": "GOVPARTYWI-26",
       "pm_event": "wisconsin-governor-winner-2026"
+    },
+    {
+      "lat": 19.43,
+      "lng": -99.13,
+      "label": "Mexico \u2014 President (+2 more)",
+      "elections": 3,
+      "markets": 9,
+      "volume": 104542.42,
+      "search_query": "President Mexico",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXMEXICODEPUTIES-27",
+      "pm_event": "claudia-sheinbaum-out-as-president-of-mexico-by-june-30"
     },
     {
       "lat": 37.67,
@@ -704,19 +717,6 @@
       "has_k": 1,
       "kalshi_event": "KXSENATEILD-26",
       "pm_event": "illinois-governor-republican-primary-winner"
-    },
-    {
-      "lat": 19.43,
-      "lng": -99.13,
-      "label": "Mexico \u2014 President (+2 more)",
-      "elections": 3,
-      "markets": 9,
-      "volume": 83309.04,
-      "search_query": "President Mexico",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXMEXICODEPUTIES-27",
-      "pm_event": "claudia-sheinbaum-out-as-president-of-mexico-by-june-30"
     },
     {
       "lat": 44.07,
@@ -2072,8 +2072,8 @@
       "lng": -77.04,
       "label": "2024 \u2014 United States \u2014 President (+29 more)",
       "elections": 30,
-      "markets": 1424,
-      "volume": 8041297027.7,
+      "markets": 901,
+      "volume": 7335450722.73,
       "search_query": "President United States 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -2120,6 +2120,19 @@
       "pm_event": "next-president-of-south-korea"
     },
     {
+      "lat": 41.2,
+      "lng": -77.19,
+      "label": "2024 \u2014 Pennsylvania \u2014 President (+21 more)",
+      "elections": 22,
+      "markets": 94,
+      "volume": 275713014.77,
+      "search_query": "President Pennsylvania United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYPA-24",
+      "pm_event": "pennsylvania-margin-of-victory"
+    },
+    {
       "lat": 52.52,
       "lng": 13.41,
       "label": "2024 \u2014 Germany \u2014 Parliament (+3 more)",
@@ -2131,19 +2144,6 @@
       "has_k": 1,
       "kalshi_event": "KXAFDPERCENT-25",
       "pm_event": "germany-parliamentary-election"
-    },
-    {
-      "lat": 41.2,
-      "lng": -77.19,
-      "label": "2024 \u2014 Pennsylvania \u2014 President (+18 more)",
-      "elections": 19,
-      "markets": 61,
-      "volume": 203159543.9,
-      "search_query": "President Pennsylvania United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "SENATEPA-24",
-      "pm_event": "pennsylvania-margin-of-victory"
     },
     {
       "lat": 53.35,
@@ -2172,6 +2172,19 @@
       "pm_event": "poland-presidential-election"
     },
     {
+      "lat": 38.8,
+      "lng": -116.42,
+      "label": "2024 \u2014 Nevada \u2014 President (+6 more)",
+      "elections": 7,
+      "markets": 42,
+      "volume": 126822411.12,
+      "search_query": "President Nevada United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYNV-24",
+      "pm_event": "nevada-margin-of-victory"
+    },
+    {
       "lat": 45.42,
       "lng": -75.69,
       "label": "2024 \u2014 Canada \u2014 Prime Minister (+38 more)",
@@ -2183,6 +2196,19 @@
       "has_k": 1,
       "kalshi_event": "KXCANADAELECT-25APR",
       "pm_event": "next-prime-minster-of-canada"
+    },
+    {
+      "lat": 34.05,
+      "lng": -111.09,
+      "label": "2024 \u2014 Arizona \u2014 Senate (+13 more)",
+      "elections": 14,
+      "markets": 92,
+      "volume": 95404019.49,
+      "search_query": "Senate Arizona United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "SENATEAZ-24",
+      "pm_event": "arizona-us-senate-election-winner"
     },
     {
       "lat": -33.45,
@@ -2198,17 +2224,43 @@
       "pm_event": "chile-presidential-election"
     },
     {
-      "lat": 34.05,
-      "lng": -111.09,
-      "label": "2024 \u2014 Arizona \u2014 Senate (+12 more)",
-      "elections": 13,
-      "markets": 79,
-      "volume": 67020688.36,
-      "search_query": "Senate Arizona United States 2024",
+      "lat": 43.78,
+      "lng": -88.79,
+      "label": "2024 \u2014 Wisconsin \u2014 President (+13 more)",
+      "elections": 14,
+      "markets": 59,
+      "volume": 75548947.61,
+      "search_query": "President Wisconsin United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATEAZ-24",
-      "pm_event": "arizona-us-senate-election-winner"
+      "kalshi_event": "CLOSESTSTATE-24",
+      "pm_event": "wisconsin-margin-of-victory"
+    },
+    {
+      "lat": 43.19,
+      "lng": -71.57,
+      "label": "2024 \u2014 New Hampshire \u2014 President (+3 more)",
+      "elections": 4,
+      "markets": 49,
+      "volume": 71589934.86,
+      "search_query": "President New Hampshire United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYNH-24",
+      "pm_event": "closest-state-in-the-presidential-election"
+    },
+    {
+      "lat": 41.88,
+      "lng": -93.1,
+      "label": "2024 \u2014 Iowa \u2014 President (+5 more)",
+      "elections": 6,
+      "markets": 64,
+      "volume": 71346069.31,
+      "search_query": "President Iowa United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYIA-24",
+      "pm_event": "iowa-margin-of-victory"
     },
     {
       "lat": 52.37,
@@ -2222,6 +2274,32 @@
       "has_k": 1,
       "kalshi_event": "KXPARTYWINNL-25",
       "pm_event": "netherlands-parliamentary-election"
+    },
+    {
+      "lat": 44.31,
+      "lng": -85.6,
+      "label": "2024 \u2014 Michigan \u2014 President (+8 more)",
+      "elections": 9,
+      "markets": 70,
+      "volume": 49969435.84,
+      "search_query": "President Michigan United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYMI-24",
+      "pm_event": "michigan-presidential-election-winner"
+    },
+    {
+      "lat": 32.68,
+      "lng": -83.22,
+      "label": "2024 \u2014 Georgia \u2014 President (+13 more)",
+      "elections": 14,
+      "markets": 73,
+      "volume": 46288455.07,
+      "search_query": "President Georgia United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYGA-24",
+      "pm_event": "georgia-presidential-election-winner"
     },
     {
       "lat": 10.49,
@@ -2287,6 +2365,32 @@
       "pm_event": "bolivia-presidential-election"
     },
     {
+      "lat": 37.43,
+      "lng": -78.66,
+      "label": "2024 \u2014 Virginia \u2014 President (+15 more)",
+      "elections": 16,
+      "markets": 108,
+      "volume": 36602965.08,
+      "search_query": "President Virginia United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "CLOSESTSTATE-24",
+      "pm_event": "virginia-presidential-election-winner"
+    },
+    {
+      "lat": 27.99,
+      "lng": -81.76,
+      "label": "2024 \u2014 Florida \u2014 President (+26 more)",
+      "elections": 27,
+      "markets": 138,
+      "volume": 35982767.79,
+      "search_query": "President Florida United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "SENATEFL-24",
+      "pm_event": "closest-state-in-the-presidential-election"
+    },
+    {
       "lat": 41.9,
       "lng": 12.45,
       "label": "Vatican City \u2014 Other (+1 more)",
@@ -2299,25 +2403,38 @@
       "pm_event": "who-will-be-the-next-pope"
     },
     {
-      "lat": 41.88,
-      "lng": -93.1,
-      "label": "2024 \u2014 Iowa \u2014 President (+5 more)",
-      "elections": 6,
-      "markets": 29,
-      "volume": 26749095.52,
-      "search_query": "President Iowa United States 2024",
+      "lat": 35.76,
+      "lng": -79.02,
+      "label": "2024 \u2014 North Carolina \u2014 President (+9 more)",
+      "elections": 10,
+      "markets": 52,
+      "volume": 32327972.59,
+      "search_query": "President North Carolina United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "HOUSEIA1-24",
-      "pm_event": "ia-01-election-bohannan-d-vs-miller-meeks-r"
+      "kalshi_event": "PRESPARTYNC-24",
+      "pm_event": "north-carolina-presidential-election-winner"
+    },
+    {
+      "lat": 40.06,
+      "lng": -74.41,
+      "label": "2025 \u2014 New Jersey \u2014 Governor (+8 more)",
+      "elections": 9,
+      "markets": 118,
+      "volume": 25230361.76,
+      "search_query": "Governor New Jersey United States 2025",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "GOVPARTYNJ-25",
+      "pm_event": "new-jersey-governor-election-winner-2025"
     },
     {
       "lat": 40.42,
       "lng": -82.91,
       "label": "2024 \u2014 Ohio \u2014 Senate (+8 more)",
       "elections": 9,
-      "markets": 33,
-      "volume": 18636279.8,
+      "markets": 41,
+      "volume": 21492211.38,
       "search_query": "Senate Ohio United States 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -2325,17 +2442,43 @@
       "pm_event": "ohio-us-senate-election-winner"
     },
     {
-      "lat": 40.06,
-      "lng": -74.41,
-      "label": "2025 \u2014 New Jersey \u2014 Governor (+8 more)",
-      "elections": 9,
-      "markets": 114,
-      "volume": 18182851.92,
-      "search_query": "Governor New Jersey United States 2025",
+      "lat": 31.97,
+      "lng": -99.9,
+      "label": "2024 \u2014 Texas \u2014 President (+28 more)",
+      "elections": 29,
+      "markets": 105,
+      "volume": 21311120.59,
+      "search_query": "President Texas United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "GOVPARTYNJ-25",
-      "pm_event": "new-jersey-governor-election-winner-2025"
+      "kalshi_event": "SENATETX-24",
+      "pm_event": "texas-presidential-election-winner"
+    },
+    {
+      "lat": 45.37,
+      "lng": -69.6,
+      "label": "2024 \u2014 Maine \u2014 President (+4 more)",
+      "elections": 5,
+      "markets": 35,
+      "volume": 20550275.13,
+      "search_query": "President Maine United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYME-24",
+      "pm_event": "congressional-district-2nd-maine-presidential-election-winner"
+    },
+    {
+      "lat": 36.78,
+      "lng": -119.42,
+      "label": "2024 \u2014 CA-13 \u2014 House (+47 more)",
+      "elections": 48,
+      "markets": 128,
+      "volume": 20199731.21,
+      "search_query": "House CA-13 United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "HOUSECA13-24",
+      "pm_event": "ca-13-election-gray-d-vs-duarte-r"
     },
     {
       "lat": 59.91,
@@ -2351,30 +2494,30 @@
       "pm_event": "norway-parliamentary-election-winner"
     },
     {
-      "lat": 36.78,
-      "lng": -119.42,
-      "label": "2024 \u2014 CA-13 \u2014 House (+36 more)",
-      "elections": 37,
-      "markets": 96,
-      "volume": 16211851.4,
-      "search_query": "House CA-13 United States 2024",
+      "lat": 42.17,
+      "lng": -74.95,
+      "label": "2024 \u2014 New York \u2014 President (+25 more)",
+      "elections": 26,
+      "markets": 116,
+      "volume": 15556739.37,
+      "search_query": "President New York United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "HOUSECA13-24",
-      "pm_event": "ca-13-election-gray-d-vs-duarte-r"
+      "kalshi_event": "KXHIGHMOVKH",
+      "pm_event": "new-york-presidential-election-winner-2024"
     },
     {
-      "lat": 27.99,
-      "lng": -81.76,
-      "label": "2024 \u2014 Florida \u2014 President (+25 more)",
-      "elections": 26,
-      "markets": 128,
-      "volume": 12357169.79,
-      "search_query": "President Florida United States 2024",
+      "lat": 46.73,
+      "lng": -94.69,
+      "label": "2024 \u2014 Minnesota \u2014 President (+7 more)",
+      "elections": 8,
+      "markets": 45,
+      "volume": 12254151.28,
+      "search_query": "President Minnesota United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATEFL-24",
-      "pm_event": "will-trump-win-florida-by-8-points"
+      "kalshi_event": "PRESPARTYMN-24",
+      "pm_event": "minnesota-presidential-election-winner"
     },
     {
       "lat": 39.02,
@@ -2388,17 +2531,16 @@
       "has_k": 0
     },
     {
-      "lat": 43.78,
-      "lng": -88.79,
-      "label": "2025 \u2014 Wisconsin \u2014 Supreme Court (+11 more)",
-      "elections": 12,
-      "markets": 34,
-      "volume": 10839692.56,
-      "search_query": "Supreme Court Wisconsin United States 2025",
+      "lat": 40.63,
+      "lng": -89.4,
+      "label": "2024 \u2014 Illinois \u2014 President (+9 more)",
+      "elections": 10,
+      "markets": 69,
+      "volume": 9847958.33,
+      "search_query": "President Illinois United States 2024",
       "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXWISCOTUS-25",
-      "pm_event": "wisconsin-supreme-court-election-susan-crawford-vs-brad-schimel"
+      "has_k": 0,
+      "pm_event": "illinois-presidential-election-winner"
     },
     {
       "lat": 38.72,
@@ -2414,30 +2556,29 @@
       "pm_event": "next-prime-minister-of-portugal-after-the-2025-election"
     },
     {
-      "lat": 38.8,
-      "lng": -116.42,
-      "label": "2024 \u2014 Nevada \u2014 Senate (+6 more)",
-      "elections": 7,
-      "markets": 22,
-      "volume": 8686382.56,
-      "search_query": "Senate Nevada United States 2024",
+      "lat": 41.49,
+      "lng": -99.9,
+      "label": "2024 \u2014 Nebraska \u2014 Senate (+5 more)",
+      "elections": 6,
+      "markets": 48,
+      "volume": 8774612.54,
+      "search_query": "Senate Nebraska United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATENV-24",
-      "pm_event": "nevada-us-senate-election-winner"
+      "kalshi_event": "SENATENE-24",
+      "pm_event": "nebraska-us-senate-election-winner"
     },
     {
-      "lat": 37.43,
-      "lng": -78.66,
-      "label": "2025 \u2014 Virginia \u2014 Attorney General (+13 more)",
-      "elections": 14,
-      "markets": 90,
-      "volume": 7601746.24,
-      "search_query": "Attorney General Virginia United States 2025",
+      "lat": 50.45,
+      "lng": 30.52,
+      "label": "2024 \u2014 Ukraine \u2014 President (+4 more)",
+      "elections": 5,
+      "markets": 10,
+      "volume": 7621044.23,
+      "search_query": "President Ukraine 2024",
       "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "GOVPARTYVA-25",
-      "pm_event": "virginia-attorney-general-election-winner-2025"
+      "has_k": 0,
+      "pm_event": "zelenskyy-out-as-ukraine-president-before-july"
     },
     {
       "lat": 53.9,
@@ -2450,18 +2591,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "belarus-presidential-election"
-    },
-    {
-      "lat": 50.45,
-      "lng": 30.52,
-      "label": "2024 \u2014 Ukraine \u2014 President (+3 more)",
-      "elections": 4,
-      "markets": 9,
-      "volume": 7475702.89,
-      "search_query": "President Ukraine 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "zelenskyy-out-as-ukraine-president-before-july"
     },
     {
       "lat": 51.51,
@@ -2477,19 +2606,6 @@
       "pm_event": "starmer-out-as-uk-prime-minister-in-2024"
     },
     {
-      "lat": 41.49,
-      "lng": -99.9,
-      "label": "2024 \u2014 Nebraska \u2014 Senate (+5 more)",
-      "elections": 6,
-      "markets": 35,
-      "volume": 6756410.82,
-      "search_query": "Senate Nebraska United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "SENATENE-24",
-      "pm_event": "nebraska-us-senate-election-winner"
-    },
-    {
       "lat": 48.86,
       "lng": 2.35,
       "label": "2025 \u2014 France \u2014 President (+3 more)",
@@ -2503,17 +2619,17 @@
       "pm_event": "first-leader-out-of-power-in-2025"
     },
     {
-      "lat": 31.97,
-      "lng": -99.9,
-      "label": "2024 \u2014 Texas \u2014 Senate (+23 more)",
-      "elections": 24,
-      "markets": 88,
-      "volume": 6174251.65,
-      "search_query": "Senate Texas United States 2024",
+      "lat": 33.84,
+      "lng": -81.16,
+      "label": "2024 \u2014 South Carolina \u2014 President (+2 more)",
+      "elections": 3,
+      "markets": 28,
+      "volume": 6163078.34,
+      "search_query": "President South Carolina United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATETX-24",
-      "pm_event": "texas-us-senate-election-winner"
+      "kalshi_event": "PRESPARTYSC-24",
+      "pm_event": "trump-margin-of-victory-in-south-carolina-primary"
     },
     {
       "lat": 14.07,
@@ -2527,6 +2643,19 @@
       "has_k": 1,
       "kalshi_event": "KXHONDURASPRES-25",
       "pm_event": "turnout-in-2025-honduran-general-election"
+    },
+    {
+      "lat": 39.55,
+      "lng": -105.78,
+      "label": "2024 \u2014 Colorado \u2014 President (+5 more)",
+      "elections": 6,
+      "markets": 33,
+      "volume": 6120399.96,
+      "search_query": "President Colorado United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYCO-24",
+      "pm_event": "colorado-presidential-election-winner"
     },
     {
       "lat": 39.93,
@@ -2566,6 +2695,32 @@
       "pm_event": "tunisia-presidential-election-winner"
     },
     {
+      "lat": 46.8,
+      "lng": -110.36,
+      "label": "2024 \u2014 Montana \u2014 Senate (+1 more)",
+      "elections": 2,
+      "markets": 19,
+      "volume": 5474697.37,
+      "search_query": "Senate Montana United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "SENATEMT-24",
+      "pm_event": "montana-us-senate-election-winner"
+    },
+    {
+      "lat": 34.52,
+      "lng": -105.87,
+      "label": "2024 \u2014 New Mexico \u2014 President (+3 more)",
+      "elections": 4,
+      "markets": 15,
+      "volume": 5269444.93,
+      "search_query": "President New Mexico United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "CLOSESTSTATE-24",
+      "pm_event": "new-mexico-presidential-election-winner-2024"
+    },
+    {
       "lat": -0.18,
       "lng": -78.47,
       "label": "2025 \u2014 Ecuador \u2014 President (+3 more)",
@@ -2592,6 +2747,19 @@
       "pm_event": "first-leader-out-of-power-in-2025"
     },
     {
+      "lat": 19.9,
+      "lng": -155.58,
+      "label": "2024 \u2014 Hawaii \u2014 President",
+      "elections": 1,
+      "markets": 10,
+      "volume": 5151098.28,
+      "search_query": "President Hawaii United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYHI-24",
+      "pm_event": "hawaii-presidential-election-winner"
+    },
+    {
       "lat": 45.81,
       "lng": 15.98,
       "label": "Croatia \u2014 President (+1 more)",
@@ -2603,6 +2771,19 @@
       "has_k": 1,
       "kalshi_event": "KXPRESCROATIA",
       "pm_event": "croatia-presidential-election"
+    },
+    {
+      "lat": 64.2,
+      "lng": -152.49,
+      "label": "2024 \u2014 Alaska \u2014 President (+3 more)",
+      "elections": 4,
+      "markets": 21,
+      "volume": 5049857.14,
+      "search_query": "President Alaska United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXDJTFLAK-24",
+      "pm_event": "alaska-presidential-election-winner"
     },
     {
       "lat": 25.03,
@@ -2617,25 +2798,12 @@
       "pm_event": "taiwan-presidential-election-who-will-win"
     },
     {
-      "lat": 46.8,
-      "lng": -110.36,
-      "label": "2024 \u2014 Montana \u2014 Senate (+1 more)",
-      "elections": 2,
-      "markets": 14,
-      "volume": 5006463.53,
-      "search_query": "Senate Montana United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "SENATEMT-24",
-      "pm_event": "montana-us-senate-election-winner"
-    },
-    {
       "lat": 35.52,
       "lng": -86.58,
-      "label": "2025 \u2014 TN-7 \u2014 House (+4 more)",
-      "elections": 5,
-      "markets": 47,
-      "volume": 4137558.29,
+      "label": "2025 \u2014 TN-7 \u2014 House (+5 more)",
+      "elections": 6,
+      "markets": 52,
+      "volume": 4436091.79,
       "search_query": "House TN-7 United States 2025",
       "has_pm": 1,
       "has_k": 1,
@@ -2668,43 +2836,95 @@
       "pm_event": "minneapolis-mayoral-election-665"
     },
     {
-      "lat": 45.37,
-      "lng": -69.6,
-      "label": "2024 \u2014 ME-2 \u2014 President (+4 more)",
-      "elections": 5,
-      "markets": 21,
-      "volume": 3300553.86,
-      "search_query": "President ME-2 United States 2024",
+      "lat": 38.46,
+      "lng": -92.29,
+      "label": "2024 \u2014 Missouri \u2014 President (+2 more)",
+      "elections": 3,
+      "markets": 30,
+      "volume": 3306643.85,
+      "search_query": "President Missouri United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "HOUSEME2-24",
-      "pm_event": "congressional-district-2nd-maine-presidential-election-winner"
+      "kalshi_event": "SENATEMO-24",
+      "pm_event": "missouri-presidential-election-winner"
     },
     {
-      "lat": 44.31,
-      "lng": -85.6,
-      "label": "2024 \u2014 Michigan \u2014 Senate (+8 more)",
-      "elections": 9,
-      "markets": 43,
-      "volume": 3254062.12,
-      "search_query": "Senate Michigan United States 2024",
+      "lat": 37.67,
+      "lng": -84.67,
+      "label": "2024 \u2014 Kentucky \u2014 President (+5 more)",
+      "elections": 6,
+      "markets": 27,
+      "volume": 2803783.37,
+      "search_query": "President Kentucky United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATEMI-24",
-      "pm_event": "michigan-us-senate-election-winner"
+      "kalshi_event": "PRESPARTYKY-24",
+      "pm_event": "kentucky-presidential-election-winner"
     },
     {
-      "lat": 42.17,
-      "lng": -74.95,
-      "label": "2024 \u2014 New York \u2014 Governor (+25 more)",
-      "elections": 26,
-      "markets": 109,
-      "volume": 2231534.02,
-      "search_query": "Governor New York United States 2024",
+      "lat": 42.41,
+      "lng": -71.38,
+      "label": "2024 \u2014 Massachusetts \u2014 Senate (+2 more)",
+      "elections": 3,
+      "markets": 24,
+      "volume": 2699210.22,
+      "search_query": "Senate Massachusetts United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "KXGOVNYNOMD-25",
-      "pm_event": "nyc-mayoral-dem-primary-andrew-cuomo-mov"
+      "kalshi_event": "KXHIGHMOVKH",
+      "pm_event": "wisconsin-supreme-court-election-susan-crawford-margin-of-victory"
+    },
+    {
+      "lat": 44.56,
+      "lng": -72.58,
+      "label": "2024 \u2014 Vermont \u2014 President (+2 more)",
+      "elections": 3,
+      "markets": 19,
+      "volume": 2634747.8,
+      "search_query": "President Vermont United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYVT-24",
+      "pm_event": "which-state-will-kamala-win-by-the-largest-margin"
+    },
+    {
+      "lat": 39.05,
+      "lng": -76.64,
+      "label": "2024 \u2014 Maryland \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 14,
+      "volume": 2546531.83,
+      "search_query": "President Maryland United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "SENATEMD-24",
+      "pm_event": "maryland-presidential-election-winner"
+    },
+    {
+      "lat": 43.08,
+      "lng": -107.29,
+      "label": "2024 \u2014 Wyoming \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 15,
+      "volume": 2498294.03,
+      "search_query": "President Wyoming United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXHIGHMOVDJT",
+      "pm_event": "wyoming-presidential-election-winner"
+    },
+    {
+      "lat": 34.8,
+      "lng": -92.2,
+      "label": "2024 \u2014 Arkansas \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 13,
+      "volume": 2179718.61,
+      "search_query": "President Arkansas United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYAR-24",
+      "pm_event": "arkansas-presidential-election-winner"
     },
     {
       "lat": 19.43,
@@ -2718,19 +2938,6 @@
       "has_k": 1,
       "kalshi_event": "KXLEADERSOUT-27JAN01",
       "pm_event": "mexican-presidential-election-who-will-win"
-    },
-    {
-      "lat": 35.76,
-      "lng": -79.02,
-      "label": "2024 \u2014 North Carolina \u2014 Governor (+8 more)",
-      "elections": 9,
-      "markets": 31,
-      "volume": 2045782.18,
-      "search_query": "Governor North Carolina United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "GOVPARTYNC-24",
-      "pm_event": "north-carolina-governor-election-winner"
     },
     {
       "lat": 64.17,
@@ -2758,18 +2965,6 @@
       "pm_event": "namibia-presidential-election"
     },
     {
-      "lat": 42.41,
-      "lng": -71.38,
-      "label": "2024 \u2014 Massachusetts \u2014 Senate (+2 more)",
-      "elections": 3,
-      "markets": 18,
-      "volume": 1947439.49,
-      "search_query": "Senate Massachusetts United States 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "wisconsin-supreme-court-election-susan-crawford-margin-of-victory"
-    },
-    {
       "lat": 31.77,
       "lng": 35.22,
       "label": "2025 \u2014 Israel \u2014 Prime Minister (+3 more)",
@@ -2783,17 +2978,17 @@
       "pm_event": "first-leader-out-of-power-in-2025"
     },
     {
-      "lat": 46.73,
-      "lng": -94.69,
-      "label": "2024 \u2014 MN-5 \u2014 House (+7 more)",
-      "elections": 8,
-      "markets": 34,
-      "volume": 1882122.54,
-      "search_query": "House MN-5 United States 2024",
+      "lat": 47.75,
+      "lng": -120.74,
+      "label": "2024 \u2014 Washington \u2014 President (+6 more)",
+      "elections": 7,
+      "markets": 30,
+      "volume": 1898524.58,
+      "search_query": "President Washington United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATEMN-24",
-      "pm_event": "mn-5-democratic-primary-winner"
+      "kalshi_event": "PRESPARTYDC-24",
+      "pm_event": "washington-presidential-election-winner"
     },
     {
       "lat": 21.03,
@@ -2870,17 +3065,30 @@
       "pm_event": "which-party-wins-most-seats-in-quebec"
     },
     {
-      "lat": 39.05,
-      "lng": -76.64,
-      "label": "2024 \u2014 Maryland \u2014 Senate (+1 more)",
-      "elections": 2,
-      "markets": 9,
-      "volume": 1452280.45,
-      "search_query": "Senate Maryland United States 2024",
+      "lat": 47.55,
+      "lng": -101.0,
+      "label": "2024 \u2014 North Dakota \u2014 President",
+      "elections": 1,
+      "markets": 17,
+      "volume": 1532833.29,
+      "search_query": "President North Dakota United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATEMD-24",
-      "pm_event": "maryland-us-senate-election-winner"
+      "kalshi_event": "PRESPARTYND-24",
+      "pm_event": "north-dakota-presidential-election-winner"
+    },
+    {
+      "lat": 39.01,
+      "lng": -98.48,
+      "label": "2024 \u2014 Kansas \u2014 President (+3 more)",
+      "elections": 4,
+      "markets": 11,
+      "volume": 1397564.35,
+      "search_query": "President Kansas United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYKS-24",
+      "pm_event": "kansas-presidential-election-winner"
     },
     {
       "lat": 28.61,
@@ -2895,6 +3103,19 @@
       "pm_event": "india-election-modi-reelected"
     },
     {
+      "lat": 43.8,
+      "lng": -120.55,
+      "label": "2024 \u2014 Oregon \u2014 President (+3 more)",
+      "elections": 4,
+      "markets": 14,
+      "volume": 1268764.85,
+      "search_query": "President Oregon United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYOR-24",
+      "pm_event": "oregon-presidential-election-winner"
+    },
+    {
       "lat": 34.05,
       "lng": -118.24,
       "label": "2022 \u2014 Los Angeles \u2014 Mayor (+1 more)",
@@ -2906,6 +3127,19 @@
       "has_k": 1,
       "kalshi_event": "KXAOCENDORSE",
       "pm_event": "karen-bass-out-as-mayor-of-la-before-july"
+    },
+    {
+      "lat": 38.91,
+      "lng": -75.53,
+      "label": "2024 \u2014 Delaware \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 25,
+      "volume": 1191736.04,
+      "search_query": "President Delaware United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "GOVPARTYDE-24",
+      "pm_event": "delaware-presidential-election-winner-2024"
     },
     {
       "lat": 3.87,
@@ -2946,6 +3180,32 @@
       "pm_event": "uruguay-presidential-election-winner"
     },
     {
+      "lat": 40.27,
+      "lng": -86.13,
+      "label": "2024 \u2014 Indiana \u2014 President (+4 more)",
+      "elections": 5,
+      "markets": 18,
+      "volume": 934748.01,
+      "search_query": "President Indiana United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "GOVPARTYIN-24",
+      "pm_event": "indiana-presidential-election-winner"
+    },
+    {
+      "lat": 41.6,
+      "lng": -72.76,
+      "label": "2024 \u2014 Connecticut \u2014 President (+4 more)",
+      "elections": 5,
+      "markets": 14,
+      "volume": 929950.72,
+      "search_query": "President Connecticut United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYCT-24",
+      "pm_event": "connecticut-presidential-election-winner"
+    },
+    {
       "lat": 37.98,
       "lng": 23.73,
       "label": "Greece \u2014 President (+2 more)",
@@ -2971,17 +3231,30 @@
       "pm_event": "singapore-parliamentary-election-winner"
     },
     {
-      "lat": 64.2,
-      "lng": -152.49,
-      "label": "2024 \u2014 AK-1 \u2014 House (+3 more)",
-      "elections": 4,
-      "markets": 10,
-      "volume": 873323.23,
-      "search_query": "House AK-1 United States 2024",
+      "lat": 39.32,
+      "lng": -111.09,
+      "label": "2024 \u2014 Utah \u2014 President (+7 more)",
+      "elections": 8,
+      "markets": 37,
+      "volume": 896669.69,
+      "search_query": "President Utah United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "HOUSEAKAL-24",
-      "pm_event": "ak-1-election-peltola-d-vs-begich-r"
+      "kalshi_event": "PRESPARTYUT-24",
+      "pm_event": "utah-presidential-election-winner"
+    },
+    {
+      "lat": 32.36,
+      "lng": -86.3,
+      "label": "2024 \u2014 Alabama \u2014 President (+3 more)",
+      "elections": 4,
+      "markets": 16,
+      "volume": 878424.51,
+      "search_query": "President Alabama United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYAL-24",
+      "pm_event": "alabama-presidential-election-winner"
     },
     {
       "lat": 55.76,
@@ -2996,17 +3269,17 @@
       "pm_event": "will-putin-be-reelected"
     },
     {
-      "lat": 32.68,
-      "lng": -83.22,
-      "label": "2020 \u2014 Georgia \u2014 Senate (+13 more)",
-      "elections": 14,
-      "markets": 50,
-      "volume": 863641.93,
-      "search_query": "Senate Georgia United States 2020",
+      "lat": 32.35,
+      "lng": -89.4,
+      "label": "2024 \u2014 Mississippi \u2014 President (+2 more)",
+      "elections": 3,
+      "markets": 24,
+      "volume": 845792.42,
+      "search_query": "President Mississippi United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "KXGAPUBLICSERVICE3-25NOV04",
-      "pm_event": "georgia-republican-senate-primary-winner"
+      "kalshi_event": "PRESPARTYMS-24",
+      "pm_event": "mississippi-presidential-election-winner"
     },
     {
       "lat": 50.85,
@@ -3033,19 +3306,6 @@
       "pm_event": "which-party-wins-most-seats-in-philippines-election"
     },
     {
-      "lat": 47.75,
-      "lng": -120.74,
-      "label": "2024 \u2014 Washington \u2014 Governor (+5 more)",
-      "elections": 6,
-      "markets": 18,
-      "volume": 702503.33,
-      "search_query": "Governor Washington United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "GOVPARTYWA-24",
-      "pm_event": "washington-governor-election-winner"
-    },
-    {
       "lat": 60.17,
       "lng": 24.94,
       "label": "2024 \u2014 Finland \u2014 President",
@@ -3058,30 +3318,17 @@
       "pm_event": "finland-presidential-election-who-will-win"
     },
     {
-      "lat": 38.46,
-      "lng": -92.29,
-      "label": "2024 \u2014 Missouri \u2014 Senate (+2 more)",
-      "elections": 3,
-      "markets": 26,
-      "volume": 669601.59,
-      "search_query": "Senate Missouri United States 2024",
+      "lat": 43.97,
+      "lng": -99.9,
+      "label": "2024 \u2014 South Dakota \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 6,
+      "volume": 682096.11,
+      "search_query": "President South Dakota United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATEMO-24",
-      "pm_event": "missouri-us-senate-election-winner"
-    },
-    {
-      "lat": 43.19,
-      "lng": -71.57,
-      "label": "2024 \u2014 New Hampshire \u2014 Governor (+3 more)",
-      "elections": 4,
-      "markets": 21,
-      "volume": 599458.83,
-      "search_query": "Governor New Hampshire United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "GOVPARTYNH-24",
-      "pm_event": "new-hampshire-governor-election-winner"
+      "kalshi_event": "PRESPARTYSD-24",
+      "pm_event": "south-dakota-presidential-election-winner"
     },
     {
       "lat": 6.8,
@@ -3109,6 +3356,32 @@
       "pm_event": "ivory-coast-presidential-election"
     },
     {
+      "lat": 41.58,
+      "lng": -71.48,
+      "label": "2024 \u2014 Rhode Island \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 15,
+      "volume": 532396.91,
+      "search_query": "President Rhode Island United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYRI-24",
+      "pm_event": "rhode-island-presidential-election-winner"
+    },
+    {
+      "lat": 35.47,
+      "lng": -97.52,
+      "label": "2024 \u2014 Oklahoma \u2014 President (+2 more)",
+      "elections": 3,
+      "markets": 14,
+      "volume": 532105.84,
+      "search_query": "President Oklahoma United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYOK-24",
+      "pm_event": "which-super-tuesday-states-will-trump-win"
+    },
+    {
       "lat": -21.21,
       "lng": -175.15,
       "label": "Tonga \u2014 Prime Minister",
@@ -3133,44 +3406,6 @@
       "pm_event": "lithuanian-presidential-election-winner"
     },
     {
-      "lat": 38.91,
-      "lng": -75.53,
-      "label": "2024 \u2014 Delaware \u2014 Governor (+1 more)",
-      "elections": 2,
-      "markets": 18,
-      "volume": 506178.68,
-      "search_query": "Governor Delaware United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "GOVPARTYDE-24",
-      "pm_event": "delaware-us-senate-election-winner"
-    },
-    {
-      "lat": 39.55,
-      "lng": -105.78,
-      "label": "2024 \u2014 CO-8 \u2014 House (+4 more)",
-      "elections": 5,
-      "markets": 24,
-      "volume": 503515.92,
-      "search_query": "House CO-8 United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "HOUSECO8-24",
-      "pm_event": "co-8-election-caraveo-d-vs-evans-r"
-    },
-    {
-      "lat": 19.9,
-      "lng": -155.58,
-      "label": "2024 \u2014 Hawaii \u2014 Senate",
-      "elections": 1,
-      "markets": 3,
-      "volume": 492183.24,
-      "search_query": "Senate Hawaii United States 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "hawaii-us-senate-election-winner"
-    },
-    {
       "lat": 5.56,
       "lng": -0.19,
       "label": "2024 \u2014 Ghana \u2014 President (+1 more)",
@@ -3186,10 +3421,10 @@
     {
       "lat": 38.6,
       "lng": -80.45,
-      "label": "2024 \u2014 West Virginia \u2014 Governor (+1 more)",
-      "elections": 2,
-      "markets": 14,
-      "volume": 449259.54,
+      "label": "2024 \u2014 West Virginia \u2014 Governor (+2 more)",
+      "elections": 3,
+      "markets": 15,
+      "volume": 449447.89,
       "search_query": "Governor West Virginia United States 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -3235,32 +3470,6 @@
       "pm_event": "malawi-presidential-election-981"
     },
     {
-      "lat": 40.27,
-      "lng": -86.13,
-      "label": "2024 \u2014 Indiana \u2014 Governor (+4 more)",
-      "elections": 5,
-      "markets": 15,
-      "volume": 425562.68,
-      "search_query": "Governor Indiana United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "GOVPARTYIN-24",
-      "pm_event": "indiana-governor-election-winner"
-    },
-    {
-      "lat": 39.32,
-      "lng": -111.09,
-      "label": "2024 \u2014 Utah \u2014 Governor (+7 more)",
-      "elections": 8,
-      "markets": 31,
-      "volume": 414767.1,
-      "search_query": "Governor Utah United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "SENATEUT-24",
-      "pm_event": "utah-governor-election-winner"
-    },
-    {
       "lat": 41.72,
       "lng": 44.79,
       "label": "2024 \u2014 Georgia \u2014 Parliament",
@@ -3271,18 +3480,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "will-gd-win-a-majority-in-georgia-parliamentary-election"
-    },
-    {
-      "lat": 44.56,
-      "lng": -72.58,
-      "label": "2024 \u2014 Vermont \u2014 Senate (+2 more)",
-      "elections": 3,
-      "markets": 10,
-      "volume": 386870.56,
-      "search_query": "Senate Vermont United States 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "vermont-us-senate-election-winner"
     },
     {
       "lat": 37.8,
@@ -3298,6 +3495,19 @@
       "pm_event": "oakland-mayoral-special-election"
     },
     {
+      "lat": 30.98,
+      "lng": -91.96,
+      "label": "2024 \u2014 Louisiana \u2014 President (+1 more)",
+      "elections": 2,
+      "markets": 16,
+      "volume": 383799.21,
+      "search_query": "President Louisiana United States 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "PRESPARTYLA-24",
+      "pm_event": "louisiana-presidential-election-winner"
+    },
+    {
       "lat": 64.15,
       "lng": -21.94,
       "label": "Iceland \u2014 Parliament",
@@ -3310,17 +3520,17 @@
       "pm_event": "iceland-legislative-election"
     },
     {
-      "lat": 32.35,
-      "lng": -89.4,
-      "label": "2024 \u2014 Mississippi \u2014 Senate (+2 more)",
-      "elections": 3,
+      "lat": 44.07,
+      "lng": -114.74,
+      "label": "2024 \u2014 Idaho \u2014 President",
+      "elections": 1,
       "markets": 15,
-      "volume": 360630.9,
-      "search_query": "Senate Mississippi United States 2024",
+      "volume": 348999.37,
+      "search_query": "President Idaho United States 2024",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "SENATEMS-24",
-      "pm_event": "mississippi-us-senate-election-winner"
+      "kalshi_event": "KXHIGHMOVDJT",
+      "pm_event": "idaho-presidential-election-winner"
     },
     {
       "lat": 11.86,
@@ -3385,6 +3595,18 @@
       "pm_event": "detroit-mayoral-election"
     },
     {
+      "lat": 9.93,
+      "lng": -84.08,
+      "label": "2024 \u2014 Costa Rica \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 280492.63,
+      "search_query": "President Costa Rica 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "will-any-presidential-candidate-win-outright-in-the-first-round-of-costa-ricas-presidential-election"
+    },
+    {
       "lat": -6.21,
       "lng": 106.85,
       "label": "2024 \u2014 Indonesia \u2014 President",
@@ -3407,18 +3629,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "next-president-of-iran"
-    },
-    {
-      "lat": 37.67,
-      "lng": -84.67,
-      "label": "2023 \u2014 Kentucky \u2014 Governor (+5 more)",
-      "elections": 6,
-      "markets": 22,
-      "volume": 240000.83,
-      "search_query": "Governor Kentucky United States 2023",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "will-mitch-mcconnell-resign-from-the-senate-before-his-term-ends"
     },
     {
       "lat": -25.75,
@@ -3495,18 +3705,6 @@
       "pm_event": "sri-lanka-presidential-election-winner"
     },
     {
-      "lat": 41.6,
-      "lng": -72.76,
-      "label": "2024 \u2014 Connecticut \u2014 Senate (+2 more)",
-      "elections": 3,
-      "markets": 5,
-      "volume": 175545.99,
-      "search_query": "Senate Connecticut United States 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "connecticut-us-senate-election-winner"
-    },
-    {
       "lat": 50.08,
       "lng": 14.44,
       "label": "2025 \u2014 Czech Republic \u2014 Parliament (+3 more)",
@@ -3518,19 +3716,6 @@
       "has_k": 1,
       "kalshi_event": "KXCZECHPARTY-25",
       "pm_event": "will-the-winner-of-czech-parliamentary-election-form-a-government"
-    },
-    {
-      "lat": 47.55,
-      "lng": -101.0,
-      "label": "2024 \u2014 North Dakota \u2014 Governor",
-      "elections": 1,
-      "markets": 10,
-      "volume": 163620.15,
-      "search_query": "Governor North Dakota United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "SENATEND-24",
-      "pm_event": "north-dakota-governor-election-winner"
     },
     {
       "lat": -3.38,
@@ -3592,42 +3777,6 @@
       "pm_event": "arvalo-inaugurated-in-guatemala-in-january"
     },
     {
-      "lat": 32.36,
-      "lng": -86.3,
-      "label": "2024 \u2014 Alabama \u2014 President (+2 more)",
-      "elections": 3,
-      "markets": 8,
-      "volume": 129827.43,
-      "search_query": "President Alabama United States 2024",
-      "has_pm": 1,
-      "has_k": 0
-    },
-    {
-      "lat": 43.8,
-      "lng": -120.55,
-      "label": "2024 \u2014 OR-5 \u2014 House (+3 more)",
-      "elections": 4,
-      "markets": 9,
-      "volume": 127619.85,
-      "search_query": "House OR-5 United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "HOUSEOR5-24",
-      "pm_event": "or-05-election-bynum-d-vs-chavez-deremer-r"
-    },
-    {
-      "lat": 34.52,
-      "lng": -105.87,
-      "label": "2024 \u2014 New Mexico \u2014 Senate (+3 more)",
-      "elections": 4,
-      "markets": 6,
-      "volume": 124326.23,
-      "search_query": "Senate New Mexico United States 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "new-mexico-us-senate-election-winner"
-    },
-    {
       "lat": 4.71,
       "lng": -74.07,
       "label": "2022 \u2014 Colombia \u2014 President (+1 more)",
@@ -3675,18 +3824,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "slovakia-presidential-election-winner"
-    },
-    {
-      "lat": 41.58,
-      "lng": -71.48,
-      "label": "2024 \u2014 Rhode Island \u2014 Senate (+1 more)",
-      "elections": 2,
-      "markets": 8,
-      "volume": 111990.36,
-      "search_query": "Senate Rhode Island United States 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "rhode-island-us-senate-election-winner"
     },
     {
       "lat": 42.89,
@@ -3738,42 +3875,6 @@
       "pm_event": "central-african-republic-national-assembly-election-winner"
     },
     {
-      "lat": 43.08,
-      "lng": -107.29,
-      "label": "2024 \u2014 Wyoming \u2014 Senate (+1 more)",
-      "elections": 2,
-      "markets": 6,
-      "volume": 91291.48,
-      "search_query": "Senate Wyoming United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "SENATEWY-24",
-      "pm_event": "wyoming-us-senate-election-winner"
-    },
-    {
-      "lat": 39.01,
-      "lng": -98.48,
-      "label": "2024 \u2014 Kansas \u2014 Senate (+3 more)",
-      "elections": 4,
-      "markets": 6,
-      "volume": 90001.31,
-      "search_query": "Senate Kansas United States 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "kansas-democratic-senate-primary-winner"
-    },
-    {
-      "lat": 35.47,
-      "lng": -97.52,
-      "label": "2024 \u2014 Oklahoma \u2014 President (+2 more)",
-      "elections": 3,
-      "markets": 6,
-      "volume": 80882.18,
-      "search_query": "President Oklahoma United States 2024",
-      "has_pm": 1,
-      "has_k": 0
-    },
-    {
       "lat": 14.72,
       "lng": -17.47,
       "label": "2024 \u2014 Senegal \u2014 President",
@@ -3784,17 +3885,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "senegal-presidential-election-winner"
-    },
-    {
-      "lat": 34.8,
-      "lng": -92.2,
-      "label": "2024 \u2014 Arkansas \u2014 President (+1 more)",
-      "elections": 2,
-      "markets": 5,
-      "volume": 70903.92,
-      "search_query": "President Arkansas United States 2024",
-      "has_pm": 1,
-      "has_k": 0
     },
     {
       "lat": 50.84,
@@ -3819,19 +3909,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "2025-gabonese-presidential-election-winner"
-    },
-    {
-      "lat": 30.98,
-      "lng": -91.96,
-      "label": "2024 \u2014 Louisiana \u2014 Senate (+1 more)",
-      "elections": 2,
-      "markets": 11,
-      "volume": 48245.72,
-      "search_query": "Senate Louisiana United States 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXSENATELA-26NOV",
-      "pm_event": "louisiana-republican-senate-primary-winner-889"
     },
     {
       "lat": 33.75,
@@ -3978,17 +4055,6 @@
       "pm_event": "charlotte-mayoral-election"
     },
     {
-      "lat": 33.84,
-      "lng": -81.16,
-      "label": "2024 \u2014 SC-1 \u2014 House (+1 more)",
-      "elections": 2,
-      "markets": 12,
-      "volume": 20601.96,
-      "search_query": "House SC-1 United States 2024",
-      "has_pm": 1,
-      "has_k": 0
-    },
-    {
       "lat": 40.44,
       "lng": -80.0,
       "label": "2025 \u2014 Pittsburgh \u2014 Mayor",
@@ -4049,16 +4115,16 @@
       "kalshi_event": "KXMAYORFORTW-25"
     },
     {
-      "lat": 40.63,
-      "lng": -89.4,
-      "label": "2024 \u2014 Illinois \u2014 Senate (+9 more)",
-      "elections": 10,
-      "markets": 66,
-      "volume": 13389.1,
-      "search_query": "Senate Illinois United States 2024",
+      "lat": 47.5,
+      "lng": 19.04,
+      "label": "2023 \u2014 Hungary \u2014 Prime Minister",
+      "elections": 1,
+      "markets": 1,
+      "volume": 13805.25,
+      "search_query": "Prime Minister Hungary 2023",
       "has_pm": 1,
       "has_k": 0,
-      "pm_event": "illinois-republican-senate-primary-winner"
+      "pm_event": "will-orbn-flip-magyar-for-next-hungary-pm-by-jan-31"
     },
     {
       "lat": 41.5,
@@ -4096,41 +4162,6 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "next-prime-minister-of-kosovo"
-    },
-    {
-      "lat": 9.93,
-      "lng": -84.08,
-      "label": "2024 \u2014 Costa Rica \u2014 President",
-      "elections": 1,
-      "markets": 1,
-      "volume": 9386.21,
-      "search_query": "President Costa Rica 2024",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "will-any-presidential-candidate-win-outright-in-the-first-round-of-costa-ricas-presidential-election"
-    },
-    {
-      "lat": 47.5,
-      "lng": 19.04,
-      "label": "2023 \u2014 Hungary \u2014 Prime Minister",
-      "elections": 1,
-      "markets": 1,
-      "volume": 8003.15,
-      "search_query": "Prime Minister Hungary 2023",
-      "has_pm": 1,
-      "has_k": 0,
-      "pm_event": "will-orbn-flip-magyar-for-next-hungary-pm-by-jan-31"
-    },
-    {
-      "lat": 44.07,
-      "lng": -114.74,
-      "label": "2024 \u2014 Idaho \u2014 President",
-      "elections": 1,
-      "markets": 8,
-      "volume": 7561.58,
-      "search_query": "President Idaho United States 2024",
-      "has_pm": 1,
-      "has_k": 0
     },
     {
       "lat": 23.11,
@@ -4322,17 +4353,6 @@
       "has_pm": 0,
       "has_k": 1,
       "kalshi_event": "KXMAYORCIN-25"
-    },
-    {
-      "lat": 43.97,
-      "lng": -99.9,
-      "label": "2024 \u2014 SD-AL \u2014 House",
-      "elections": 1,
-      "markets": 1,
-      "volume": 3.13,
-      "search_query": "House SD-AL United States 2024",
-      "has_pm": 1,
-      "has_k": 0
     }
   ]
 }
