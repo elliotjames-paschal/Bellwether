@@ -459,6 +459,116 @@ a:hover {
     50% { opacity: 0.5; }
 }
 
+/* Live Research Banner - Bloomberg-style dark metrics strip */
+.live-banner {
+    background: var(--gray-900);
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--gray-800);
+}
+
+.live-banner-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+}
+
+.live-banner-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.live-badge-dark {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--live-indicator);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.live-badge-dark::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--live-indicator);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.live-banner-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.02em;
+}
+
+.live-banner-metrics {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.live-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.live-metric-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--white);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.live-metric-label {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+    .live-banner-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .live-banner-metrics {
+        gap: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .live-banner {
+        padding: 16px 24px;
+    }
+
+    .live-banner-metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        width: 100%;
+    }
+
+    .live-metric-value {
+        font-size: 1.125rem;
+    }
+}
+
 /* Sections */
 .section {
     padding: 100px 32px;

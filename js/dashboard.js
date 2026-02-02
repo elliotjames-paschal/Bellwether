@@ -156,13 +156,19 @@ async function loadSummary() {
         }
 
         const insightElectoral = document.getElementById('insight-electoral');
-        if (insightElectoral && data.electoral_markets) {
-            insightElectoral.textContent = data.electoral_markets.toLocaleString();
+        const bannerElectoral = document.getElementById('banner-electoral');
+        if (data.electoral_markets) {
+            const electoralStr = data.electoral_markets.toLocaleString();
+            if (insightElectoral) insightElectoral.textContent = electoralStr;
+            if (bannerElectoral) bannerElectoral.textContent = electoralStr;
         }
 
         const insightBrier = document.getElementById('insight-brier');
-        if (insightBrier && data.combined_brier) {
-            insightBrier.textContent = data.combined_brier.toFixed(2);
+        const bannerBrier = document.getElementById('banner-brier');
+        if (data.combined_brier) {
+            const brierStr = data.combined_brier.toFixed(2);
+            if (insightBrier) insightBrier.textContent = brierStr;
+            if (bannerBrier) bannerBrier.textContent = brierStr;
         }
     } catch (e) {
         console.warn('Could not load summary:', e);
@@ -174,16 +180,20 @@ async function loadInsights() {
         const stats = await fetchJSON('election_winner_stats.json');
 
         const insightAccuracy = document.getElementById('insight-accuracy');
-        if (insightAccuracy && stats.shared_elections) {
+        const bannerAccuracy = document.getElementById('banner-accuracy');
+        if (stats.shared_elections) {
             const src = stats.shared_elections.combined || stats.shared_elections.polymarket;
-            const acc = src.accuracy * 100;
-            insightAccuracy.textContent = acc.toFixed(1) + '%';
+            const accStr = (src.accuracy * 100).toFixed(1) + '%';
+            if (insightAccuracy) insightAccuracy.textContent = accStr;
+            if (bannerAccuracy) bannerAccuracy.textContent = accStr;
         }
 
         const insightCorrelation = document.getElementById('insight-correlation');
-        if (insightCorrelation && stats.head_to_head) {
-            const corr = stats.head_to_head.correlation * 100;
-            insightCorrelation.textContent = corr.toFixed(1) + '%';
+        const bannerCorrelation = document.getElementById('banner-correlation');
+        if (stats.head_to_head) {
+            const corrStr = (stats.head_to_head.correlation * 100).toFixed(1) + '%';
+            if (insightCorrelation) insightCorrelation.textContent = corrStr;
+            if (bannerCorrelation) bannerCorrelation.textContent = corrStr;
         }
 
         const platformStats = await fetchJSON('platform_stats.json');
