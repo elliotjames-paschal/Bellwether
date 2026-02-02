@@ -1,39 +1,39 @@
 {
   "all_elections": {
     "polymarket": {
-      "n": 104,
-      "brier": 0.0845,
-      "accuracy": 0.8654
+      "n": 101,
+      "brier": 0.0811,
+      "accuracy": 0.8713
     },
     "kalshi": {
-      "n": 105,
-      "brier": 0.0999,
-      "accuracy": 0.8857
+      "n": 103,
+      "brier": 0.1003,
+      "accuracy": 0.8835
     }
   },
   "shared_elections": {
     "polymarket": {
-      "n": 72,
-      "brier": 0.1076,
-      "accuracy": 0.8194
+      "n": 71,
+      "brier": 0.1091,
+      "accuracy": 0.8169
     },
     "kalshi": {
-      "n": 72,
-      "brier": 0.1093,
-      "accuracy": 0.875
+      "n": 71,
+      "brier": 0.1108,
+      "accuracy": 0.8732
     },
     "combined": {
-      "n": 70,
-      "brier": 0.1085,
-      "accuracy": 0.8571
+      "n": 69,
+      "brier": 0.1101,
+      "accuracy": 0.8551
     }
   },
   "head_to_head": {
-    "n_shared": 72,
-    "correlation": 0.8862,
-    "pm_wins": 43,
-    "kalshi_wins": 29,
+    "n_shared": 71,
+    "correlation": 0.8855,
+    "pm_wins": 41,
+    "kalshi_wins": 30,
     "ties": 0,
-    "p_value": 0.8614
+    "p_value": 0.8622
   }
 }
