@@ -7,13 +7,13 @@
   ],
   "polymarket": {
     "brier": [
-      0.041,
+      0.0468,
       NaN,
       NaN,
       NaN
     ],
     "count": [
-      1046,
+      1049,
       0,
       0,
       0
@@ -21,7 +21,7 @@
   },
   "kalshi": {
     "brier": [
-      0.0696,
+      0.0701,
       NaN,
       NaN,
       NaN
@@ -35,13 +35,13 @@
   },
   "combined": {
     "brier": [
-      0.0505,
+      0.0545,
       NaN,
       NaN,
       NaN
     ],
     "count": [
-      1566,
+      1569,
       0,
       0,
       0

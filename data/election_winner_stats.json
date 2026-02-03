@@ -1,14 +1,14 @@
 {
   "all_elections": {
     "polymarket": {
-      "n": 101,
-      "brier": 0.0811,
-      "accuracy": 0.8713
+      "n": 100,
+      "brier": 0.0819,
+      "accuracy": 0.87
     },
     "kalshi": {
-      "n": 103,
-      "brier": 0.1003,
-      "accuracy": 0.8835
+      "n": 102,
+      "brier": 0.1013,
+      "accuracy": 0.8824
     }
   },
   "shared_elections": {
