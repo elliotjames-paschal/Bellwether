@@ -753,9 +753,12 @@ function initGlobe(containerId, options) {
         scheduleResume();
     });
 
-    // Scroll-wheel zoom (only in fullscreen/expand mode)
+    // Check if we're on the globe page (dedicated globe view)
+    var isGlobePage = document.body.classList.contains('globe-page');
+
+    // Scroll-wheel zoom (fullscreen mode OR globe page)
     svgNode.addEventListener('wheel', function(evt) {
-        if (!isFullscreen) return;
+        if (!isFullscreen && !isGlobePage) return;
         evt.preventDefault();
         var delta = evt.deltaY > 0 ? -0.08 : 0.08;
         zoomLevel = Math.max(0.5, Math.min(4, zoomLevel + delta));
@@ -778,6 +781,163 @@ function initGlobe(containerId, options) {
         completedElections = electionData.completed || [];
 
         animate();
+
+        // Country coordinates for globe navigation
+        var countryCoords = {
+            'United States': { lng: -98, lat: 39 },
+            'Germany': { lng: 10, lat: 51 },
+            'France': { lng: 2, lat: 47 },
+            'United Kingdom': { lng: -2, lat: 54 },
+            'Brazil': { lng: -48, lat: -15 },
+            'Mexico': { lng: -102, lat: 23 },
+            'India': { lng: 78, lat: 21 },
+            'Japan': { lng: 138, lat: 36 },
+            'Australia': { lng: 134, lat: -25 },
+            'Canada': { lng: -106, lat: 56 },
+            'Italy': { lng: 12, lat: 43 },
+            'Spain': { lng: -4, lat: 40 },
+            'Poland': { lng: 20, lat: 52 },
+            'Portugal': { lng: -8, lat: 39 },
+            'Netherlands': { lng: 5, lat: 52 },
+            'Belgium': { lng: 4, lat: 51 },
+            'Austria': { lng: 14, lat: 47 },
+            'Switzerland': { lng: 8, lat: 47 },
+            'Sweden': { lng: 18, lat: 62 },
+            'Norway': { lng: 10, lat: 62 },
+            'Denmark': { lng: 10, lat: 56 },
+            'Finland': { lng: 26, lat: 64 },
+            'Ireland': { lng: -8, lat: 53 },
+            'Greece': { lng: 22, lat: 39 },
+            'Czech Republic': { lng: 15, lat: 50 },
+            'Czechia': { lng: 15, lat: 50 },
+            'Hungary': { lng: 20, lat: 47 },
+            'Romania': { lng: 25, lat: 46 },
+            'Bulgaria': { lng: 25, lat: 43 },
+            'Ukraine': { lng: 32, lat: 49 },
+            'Russia': { lng: 100, lat: 60 },
+            'Turkey': { lng: 35, lat: 39 },
+            'Israel': { lng: 35, lat: 31 },
+            'South Africa': { lng: 25, lat: -29 },
+            'Nigeria': { lng: 8, lat: 10 },
+            'Egypt': { lng: 30, lat: 27 },
+            'Kenya': { lng: 38, lat: 0 },
+            'Argentina': { lng: -64, lat: -34 },
+            'Chile': { lng: -71, lat: -33 },
+            'Colombia': { lng: -74, lat: 4 },
+            'Peru': { lng: -76, lat: -10 },
+            'Venezuela': { lng: -66, lat: 8 },
+            'Ecuador': { lng: -78, lat: -2 },
+            'Costa Rica': { lng: -84, lat: 10 },
+            'South Korea': { lng: 128, lat: 36 },
+            'Korea': { lng: 128, lat: 36 },
+            'Taiwan': { lng: 121, lat: 24 },
+            'Thailand': { lng: 101, lat: 15 },
+            'Indonesia': { lng: 118, lat: -2 },
+            'Philippines': { lng: 122, lat: 12 },
+            'Vietnam': { lng: 106, lat: 16 },
+            'Malaysia': { lng: 102, lat: 4 },
+            'Singapore': { lng: 104, lat: 1 },
+            'China': { lng: 105, lat: 35 },
+            'New Zealand': { lng: 174, lat: -41 }
+        };
+
+        // Region center coordinates
+        var regionCoords = {
+            'europe': { lng: 15, lat: 50 },
+            'americas': { lng: -80, lat: 15 },
+            'asia': { lng: 100, lat: 30 },
+            'africa': { lng: 20, lat: 5 },
+            'oceania': { lng: 140, lat: -25 },
+            'all': null // Don't move for "all"
+        };
+
+        // Animation for smooth rotation
+        var targetRotation = null;
+        var targetTilt = null;
+        var animatingTo = false;
+
+        function animateToTarget() {
+            if (!animatingTo || targetRotation === null) return;
+
+            var diffR = targetRotation - rotation;
+            var diffT = targetTilt - tilt;
+
+            // Normalize rotation difference to -180 to 180
+            while (diffR > 180) diffR -= 360;
+            while (diffR < -180) diffR += 360;
+
+            // Ease towards target
+            rotation += diffR * 0.08;
+            tilt += diffT * 0.08;
+
+            // Check if close enough
+            if (Math.abs(diffR) < 0.5 && Math.abs(diffT) < 0.5) {
+                rotation = targetRotation;
+                tilt = targetTilt;
+                animatingTo = false;
+                // Schedule resume of auto-rotation after 5 seconds
+                clearTimeout(resumeTimer);
+                resumeTimer = setTimeout(function() {
+                    autoRotate = true;
+                }, 5000);
+            }
+        }
+
+        // Override the animate function to include target animation
+        var originalAnimate = animate;
+        animate = function() {
+            if (animatingTo) {
+                animateToTarget();
+            } else if (autoRotate && !isDragging && !hoveredMarker && !tooltipHovered) {
+                rotation = (rotation + rotationSpeed) % 360;
+                tilt += (DEFAULT_TILT - tilt) * 0.04;
+            }
+            pulse += 0.008;
+            livePulse += 0.04;
+            render();
+            animationId = requestAnimationFrame(animate);
+        };
+
+        // Expose function to rotate globe to a location
+        window.rotateGlobeTo = function(target) {
+            var coords = null;
+
+            // Check if it's a region
+            if (regionCoords[target]) {
+                coords = regionCoords[target];
+            }
+            // Check if it's a country name
+            else if (countryCoords[target]) {
+                coords = countryCoords[target];
+            }
+            // Check if target contains a known country
+            else {
+                for (var country in countryCoords) {
+                    if (target.toLowerCase().includes(country.toLowerCase())) {
+                        coords = countryCoords[country];
+                        break;
+                    }
+                }
+            }
+
+            if (coords) {
+                autoRotate = false;
+                animatingTo = true;
+                // Rotation is negative of longitude to face that location
+                targetRotation = -coords.lng;
+                targetTilt = -coords.lat * 0.5; // Tilt partially towards latitude
+            }
+        };
+
+        // Expose zoom controls
+        window.globeZoomIn = function() {
+            zoomLevel = Math.min(4, zoomLevel + 0.2);
+        };
+
+        window.globeZoomOut = function() {
+            zoomLevel = Math.max(0.5, zoomLevel - 0.2);
+        };
+
     }).catch(function(err) {
         console.error('Globe error:', err);
         container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#9ca3af;font-size:13px;">Globe unavailable</div>';
@@ -787,6 +947,9 @@ function initGlobe(containerId, options) {
         if (animationId) cancelAnimationFrame(animationId);
         clearTimeout(resumeTimer);
         if (tooltip.parentNode) tooltip.parentNode.removeChild(tooltip);
+        delete window.rotateGlobeTo;
+        delete window.globeZoomIn;
+        delete window.globeZoomOut;
     };
 }
 

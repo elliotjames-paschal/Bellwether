@@ -4,63 +4,204 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research - Bellwether</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=20260203d">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-        .research-list {
+        /* Two-column layout */
+        .research-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 32px 80px;
+            align-items: start;
+        }
+
+        /* Left column: Live Analysis */
+        .research-main {
+            min-width: 0; /* Prevent grid blowout */
+        }
+        .research-main-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        /* Right column: Papers Sidebar */
+        .papers-sidebar {
+            position: sticky;
+            top: 80px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .papers-sidebar-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-500);
+            margin-bottom: 16px;
+        }
+        .papers-sidebar-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            padding: 32px 0 0;
         }
-        .research-card-resources {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-            font-size: 0.8125rem;
-        }
-        .research-card-resources a {
-            color: var(--pm-color);
+
+        /* Compact paper card */
+        .paper-card-compact {
+            display: block;
+            background: #fff;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 14px;
             text-decoration: none;
-            font-weight: 500;
+            transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .research-card-resources a:hover {
-            text-decoration: underline;
+        .paper-card-compact:hover {
+            border-color: var(--gray-300);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .research-card-resources .sep {
-            color: var(--gray-300);
-        }
-        .research-card-link-muted {
+        .paper-card-compact-meta {
             display: flex;
             align-items: center;
-            padding: 0 24px;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.6875rem;
+        }
+        .paper-card-compact-badge {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .paper-card-compact-badge.article {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .paper-card-compact-badge.paper {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+        .paper-card-compact-badge.forthcoming {
+            background: var(--gray-100);
+            color: var(--gray-500);
+        }
+        .paper-card-compact-date {
+            color: var(--gray-500);
+        }
+        .paper-card-compact-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+        .paper-card-compact-authors {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+        .paper-card-compact-link {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--pm-color);
+        }
+        .paper-card-compact.disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+        .paper-card-compact.disabled:hover {
+            border-color: var(--gray-200);
+            box-shadow: none;
+        }
+        .paper-card-compact.disabled .paper-card-compact-link {
+            color: var(--gray-400);
+        }
+
+        .papers-sidebar-footer {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .papers-sidebar-footer a {
             font-size: 0.8125rem;
             font-weight: 500;
-            color: var(--gray-400);
-            white-space: nowrap;
-            flex-shrink: 0;
+            color: var(--gray-500);
+            text-decoration: none;
         }
-        .research-pill-forthcoming {
-            color: #9ca3af;
-            background: #f9fafb;
+        .papers-sidebar-footer a:hover {
+            color: var(--gray-700);
+        }
+
+        /* Scrollbar styling for sidebar */
+        .papers-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .papers-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .papers-sidebar::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .research-layout {
+                grid-template-columns: 1fr;
+            }
+            .papers-sidebar {
+                position: static;
+                max-height: none;
+                margin-top: 32px;
+            }
         }
         @media (max-width: 600px) {
-            .research-card-link-muted {
-                padding: 0 24px 16px;
+            .research-layout {
+                padding: 20px;
             }
+        }
+
+        /* Override dashboard styles for research page */
+        .research-main .dashboard-header {
+            display: none; /* Hide duplicate header since we have page header */
+        }
+        .research-main .insights-row {
+            margin-bottom: 24px;
+        }
+        .research-main .dashboard-tabs {
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <nav class="nav">
         <div class="nav-inner">
-            <a href="./" class="nav-logo"><span class="nav-logo-text">Bel<span class="nav-logo-bounce">l</span><span class="nav-logo-rest">wether</span></span></a>
-            <div class="nav-links">
-                <a href="index.html#dashboard">Dashboard</a>
-                <a href="feedback.html">Feedback</a>
-                <a href="research.html">Research</a>
-                <a href="data.html">Data</a>
-                <a href="about.html">About</a>
+            <div class="nav-left">
+                <a href="./" class="nav-logo"><span class="nav-logo-text">Bel<span class="nav-logo-bounce">l</span><span class="nav-logo-rest">wether</span></span></a>
+                <div class="nav-links">
+                    <a href="./">Home</a>
+                    <a href="globe.html">Globe</a>
+                    <a href="research.html" class="active">Research</a>
+                    <a href="data.html">Data</a>
+                    <a href="about.html">About</a>
+                </div>
             </div>
+            <a href="https://www.hoover.org" target="_blank" rel="noopener" class="nav-affiliation">
+                <img src="assets/hoover-tower.svg" alt="" class="nav-affiliation-icon">
+                <span>Hoover Institution</span>
+            </a>
         </div>
     </nav>
     <script>
@@ -74,98 +215,390 @@
     })();
     </script>
 
+    <!-- Hero -->
     <section class="hero">
         <div class="hero-inner">
             <div class="hero-content">
                 <p class="hero-eyebrow">Research</p>
-                <h1>Papers and Articles</h1>
+                <h1><span class="brand-inline">Bell's</span> Research</h1>
                 <p class="hero-description">
-                    <span class="brand-inline" style="white-space: nowrap;">Bell</span>&nbsp;&amp;&nbsp;team collaborate on empirical research on political prediction markets.
+                    Continuous analysis of political prediction markets across Polymarket and Kalshi, plus published papers from the Hall Lab.
                 </p>
             </div>
         </div>
     </section>
 
-    <section class="section">
-        <div class="container container-narrow">
-            <div class="research-list">
-
-                <a href="papers/election-eve-methodology/" class="research-card">
-                    <div class="research-card-accent"></div>
-                    <div class="research-card-body">
-                        <div class="research-card-meta">
-                            <span class="research-pill research-pill-article">Article</span>
-                            <span class="research-card-date">January 2026</span>
-                        </div>
-                        <h3>When You Measure Matters</h3>
-                        <p class="research-card-authors">Elliot Paschal &amp; <span class="brand-inline">Bell</span></p>
-                        <p class="research-card-summary">The field has quietly switched how it samples prediction market prices. The switch biases every accuracy metric in the literature.</p>
-                    </div>
-                    <span class="research-card-link">Read article &rarr;</span>
-                </a>
-
-                <div class="research-card">
-                    <div class="research-card-accent" style="background: #64748b;"></div>
-                    <div class="research-card-body">
-                        <div class="research-card-meta">
-                            <span class="research-pill research-pill-paper">Working Paper</span>
-                            <span class="research-card-date">January 2025</span>
-                        </div>
-                        <h3>How Accurate Are Political Prediction Markets? Evidence from the 2024 U.S. Elections</h3>
-                        <p class="research-card-authors">Andrew B. Hall &amp; Elliot Paschal</p>
-                        <p class="research-card-summary">Comprehensive analysis of Polymarket and Kalshi across 23,000+ markets and $15B in volume from the 2024 elections.</p>
-                        <div class="research-card-resources">
-                            <a href="papers/2024/paper.pdf">PDF</a>
-                            <span class="sep">&middot;</span>
-                            <a href="papers/2024/">Replication</a>
-                            <span class="sep">&middot;</span>
-                            <a href="data.html">Data</a>
-                        </div>
-                    </div>
-                    <a href="papers/2024/paper.pdf" class="research-card-link" style="text-decoration:none;">Read paper &rarr;</a>
-                </div>
-
-                <a href="papers/inside-the-markets/" class="research-card">
-                    <div class="research-card-accent" style="background: var(--gray-300);"></div>
-                    <div class="research-card-body">
-                        <div class="research-card-meta">
-                            <span class="research-pill research-pill-article">Article</span>
-                            <span class="research-card-date">November 2025</span>
-                        </div>
-                        <h3>Inside the Markets Aggregating Political Reality</h3>
-                        <p class="research-card-authors">Andrew B. Hall</p>
-                        <p class="research-card-summary">Examines governance challenges facing prediction markets&#8212;manipulation, discovery, and resolution&#8212;with examples from 2024.</p>
-                    </div>
-                    <span class="research-card-link">Read article &rarr;</span>
-                </a>
-
-                <div class="research-card" style="opacity: 0.7;">
-                    <div class="research-card-accent" style="background: var(--gray-300);"></div>
-                    <div class="research-card-body">
-                        <div class="research-card-meta">
-                            <span class="research-pill research-pill-forthcoming">Forthcoming</span>
-                            <span class="research-card-date">November 2024</span>
-                        </div>
-                        <h3>Partisan Bias in Political Prediction Markets</h3>
-                        <p class="research-card-authors">Andrew B. Hall &amp; Elliot Paschal</p>
-                        <p class="research-card-summary">Examines whether prediction markets systematically favor one party, using calibration data from 6,000+ electoral markets.</p>
-                    </div>
-                    <span class="research-card-link-muted">Coming soon</span>
-                </div>
-
+    <!-- Two-Column Layout -->
+    <div class="research-layout">
+        <!-- Left Column: Live Analysis -->
+        <main class="research-main">
+            <div class="research-main-header">
+                <p class="dashboard-updated">
+                    <span class="live-badge">Live</span> Last update: <span id="update-date">—</span>
+                </p>
             </div>
-        </div>
-    </section>
+
+            <!-- Key Insights Row -->
+            <div class="insights-row">
+                <div class="insight-card">
+                    <div class="insight-value" id="insight-brier">0.08</div>
+                    <div class="insight-label">Combined Brier Score</div>
+                    <div class="insight-context">1 day before election</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-value" id="insight-accuracy">85.9%</div>
+                    <div class="insight-label">Winner Prediction Accuracy</div>
+                    <div class="insight-context">Across both platforms, shared elections</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-value" id="insight-correlation">88.6%</div>
+                    <div class="insight-label">Platform Correlation</div>
+                    <div class="insight-context">Between shared elections</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-value" id="insight-electoral">6,810</div>
+                    <div class="insight-label">Electoral Markets</div>
+                    <div class="insight-context">Election prediction markets</div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" data-tab="aggregate">Aggregate</button>
+                <button class="tab-btn" data-tab="coverage">Coverage</button>
+                <button class="tab-btn" data-tab="accuracy">Accuracy</button>
+                <button class="tab-btn" data-tab="calibration">Calibration</button>
+                <button class="tab-btn" data-tab="bias">Partisan Bias</button>
+                <button class="tab-btn" data-tab="platforms">Platforms</button>
+            </div>
+
+            <!-- Tab: Aggregate Statistics -->
+            <div class="tab-content active" id="tab-aggregate">
+                <div class="tab-intro">
+                    <p>Aggregate statistics across all 15 political market categories, combining data from both Polymarket and Kalshi platforms.</p>
+                </div>
+
+                <div class="subtab-nav">
+                    <button class="subtab-btn active" onclick="switchSubtab('by-category', this)">By Category</button>
+                    <button class="subtab-btn" onclick="switchSubtab('by-election-type', this)">By Election Type</button>
+                </div>
+
+                <div class="subtab-content active" id="subtab-by-category">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Aggregate Statistics by Political Category</h3>
+                                <p class="chart-description">Market counts and trading volume across all political categories (Polymarket + Kalshi combined).</p>
+                            </div>
+                            <div id="table-aggregate" class="chart-stats"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-by-election-type">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Electoral Markets by Election Type</h3>
+                                <p class="chart-description">Breakdown of electoral markets by election type, showing coverage on each platform.</p>
+                            </div>
+                            <div id="table-election-types" class="chart-stats"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Accuracy -->
+            <div class="tab-content" id="tab-accuracy">
+                <div class="tab-intro">
+                    <p>We measure prediction accuracy using the <strong>Brier score</strong>—a metric where 0 is perfect and 1 is worst. Markets consistently achieve scores below 0.10, indicating strong predictive performance.</p>
+                </div>
+
+                <div class="subtab-nav">
+                    <button class="subtab-btn active" onclick="switchSubtab('convergence', this)">Convergence</button>
+                    <button class="subtab-btn" onclick="switchSubtab('accuracy-by-election-type', this)">By Election Type</button>
+                    <button class="subtab-btn" onclick="switchSubtab('accuracy-by-political-category', this)">By Political Category</button>
+                    <button class="subtab-btn" onclick="switchSubtab('accuracy-by-closeness', this)">By Race Closeness</button>
+                </div>
+
+                <div class="subtab-content active" id="subtab-convergence">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Accuracy Improves Near Election Day</h3>
+                                <p class="chart-description">Each line represents a cohort of markets open at least X days before resolution. Markets with longer trading windows (60d cohort) show lower Brier scores, indicating better predictions.</p>
+                            </div>
+                            <div id="chart-convergence" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-accuracy-by-election-type">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>By Election Type</h3>
+                                <p class="chart-description">Brier scores across different election types (top 10 by volume).</p>
+                            </div>
+                            <div id="chart-election-type" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-accuracy-by-political-category">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>By Political Category</h3>
+                                <p class="chart-description">Brier scores across all 15 political market categories.</p>
+                            </div>
+                            <div id="chart-category" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-accuracy-by-closeness">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Accuracy by Race Closeness</h3>
+                                <p class="chart-description">Brier scores by election margin. Close races (&lt; 5% margin) are harder to predict, resulting in higher Brier scores.</p>
+                            </div>
+                            <div id="chart-closeness" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Calibration -->
+            <div class="tab-content" id="tab-calibration">
+                <div class="tab-intro">
+                    <p>A well-calibrated market means predictions match reality—when markets say 70%, outcomes should occur 70% of the time. We use <strong>quantile binning</strong> (equal sample sizes per bin) to ensure reliable estimates across the probability spectrum.</p>
+                </div>
+
+                <div class="subtab-nav">
+                    <button class="subtab-btn active" onclick="switchSubtab('calibration-analysis', this)">Predicted vs Actual</button>
+                    <button class="subtab-btn" onclick="switchSubtab('calibration-distribution', this)">Confidence Spread</button>
+                </div>
+
+                <div class="subtab-content active" id="subtab-calibration-analysis">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Predicted vs Actual Outcomes</h3>
+                                <p class="chart-description">When markets predict 70%, outcomes should occur 70% of the time. Points near the diagonal indicate accurate calibration.</p>
+                            </div>
+                            <div id="chart-calibration" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-calibration-distribution">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Where Markets Place Their Bets</h3>
+                                <p class="chart-description">Markets favor confident predictions near 0% or 100%, with fewer predictions in the uncertain middle ground.</p>
+                            </div>
+                            <div id="chart-calibration-dist" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Partisan Bias -->
+            <div class="tab-content" id="tab-bias">
+                <div class="tab-intro">
+                    <p>Do prediction markets exhibit partisan bias? We analyze whether markets systematically over- or under-predict Republican victories, comparing calibration and regression results across both platforms.</p>
+                </div>
+
+                <div class="subtab-nav">
+                    <button class="subtab-btn active" onclick="switchSubtab('bias-calibration', this)">Calibration</button>
+                    <button class="subtab-btn" onclick="switchSubtab('bias-regression', this)">Regression</button>
+                </div>
+
+                <div class="subtab-content active" id="subtab-bias-calibration">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Republican Win Probability Calibration</h3>
+                                <p class="chart-description">Predicted Republican win probability vs actual Republican win rate. Points above the diagonal indicate markets underestimate Republican chances; below indicates overestimation.</p>
+                            </div>
+                            <div id="chart-partisan-calibration" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-bias-regression">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Partisan Bias Regression</h3>
+                                <p class="chart-description">OLS regression of prediction error on party and platform. Negative coefficients indicate the market was less confident in the winner (underpriced).</p>
+                            </div>
+                            <div id="table-partisan-regression" class="chart-stats"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Platforms -->
+            <div class="tab-content" id="tab-platforms">
+                <div class="tab-intro">
+                    <p>Polymarket and Kalshi often list the same elections, allowing direct comparison. On shared elections, both platforms show remarkably similar predictions with 96.7% correlation.</p>
+                </div>
+
+                <div class="subtab-nav">
+                    <button class="subtab-btn active" onclick="switchSubtab('platform-agreement', this)">Agreement</button>
+                    <button class="subtab-btn" onclick="switchSubtab('platform-comparison', this)">Comparison</button>
+                </div>
+
+                <div class="subtab-content active" id="subtab-platform-agreement">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Platform Agreement</h3>
+                                <p class="chart-description">Each point shows both platforms' final prediction for the winning candidate. Proximity to diagonal = agreement.</p>
+                            </div>
+                            <div id="chart-scatter" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Head-to-Head Results</h3>
+                                <p class="chart-description">Which platform was more accurate on shared elections?</p>
+                            </div>
+                            <div id="chart-head-to-head" class="chart-stats"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-platform-comparison">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Platform Comparison</h3>
+                                <p class="chart-description">Key metrics across both prediction markets.</p>
+                            </div>
+                            <div id="chart-platform-stats" class="chart-stats"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Coverage -->
+            <div class="tab-content" id="tab-coverage">
+                <div class="tab-intro">
+                    <p>We track 23,000+ political prediction markets across both platforms, covering elections, policy, appointments, and more. Electoral markets represent the largest category by both count and volume.</p>
+                </div>
+
+                <div class="subtab-nav">
+                    <button class="subtab-btn active" onclick="switchSubtab('volume-over-time', this)">Volume Over Time</button>
+                    <button class="subtab-btn" onclick="switchSubtab('markets-by-category', this)">Markets by Category</button>
+                    <button class="subtab-btn" onclick="switchSubtab('prediction-vs-volume', this)">Prediction vs Volume</button>
+                </div>
+
+                <div class="subtab-content active" id="subtab-volume-over-time">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Trading Volume Over Time</h3>
+                                <p class="chart-description">Monthly volume in millions USD. November 2024 saw record activity during the US presidential election.</p>
+                            </div>
+                            <div id="chart-volume" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-markets-by-category">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Markets by Category</h3>
+                                <p class="chart-description">Distribution of political markets across 15 categories.</p>
+                            </div>
+                            <div id="chart-distribution" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-prediction-vs-volume">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Prediction Confidence vs Trading Volume</h3>
+                                <p class="chart-description">How trading volume relates to prediction confidence. Points colored by outcome correctness. Use buttons to toggle platforms.</p>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <button class="subtab-btn active" onclick="switchPredVolPlatform('polymarket', this)">Polymarket</button>
+                                <button class="subtab-btn" onclick="switchPredVolPlatform('kalshi', this)">Kalshi</button>
+                            </div>
+                            <div id="chart-pred-volume" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Column: Papers Sidebar -->
+        <aside class="papers-sidebar">
+            <div class="papers-sidebar-header">Papers & Articles</div>
+            <div class="papers-sidebar-list">
+                <a href="papers/election-eve-methodology/" class="paper-card-compact">
+                    <div class="paper-card-compact-meta">
+                        <span class="paper-card-compact-badge article">Article</span>
+                        <span class="paper-card-compact-date">Jan 2026</span>
+                    </div>
+                    <div class="paper-card-compact-title">When You Measure Matters</div>
+                    <div class="paper-card-compact-authors">Elliot Paschal & <span class="brand-inline">Bell</span></div>
+                    <span class="paper-card-compact-link">Read &rarr;</span>
+                </a>
+
+                <a href="papers/2024/paper.pdf" class="paper-card-compact">
+                    <div class="paper-card-compact-meta">
+                        <span class="paper-card-compact-badge paper">Working Paper</span>
+                        <span class="paper-card-compact-date">Jan 2025</span>
+                    </div>
+                    <div class="paper-card-compact-title">How Accurate Are Political Prediction Markets?</div>
+                    <div class="paper-card-compact-authors">Andrew B. Hall & Elliot Paschal</div>
+                    <span class="paper-card-compact-link">Read &rarr;</span>
+                </a>
+
+                <a href="papers/inside-the-markets/" class="paper-card-compact">
+                    <div class="paper-card-compact-meta">
+                        <span class="paper-card-compact-badge article">Article</span>
+                        <span class="paper-card-compact-date">Nov 2025</span>
+                    </div>
+                    <div class="paper-card-compact-title">Inside the Markets Aggregating Political Reality</div>
+                    <div class="paper-card-compact-authors">Andrew B. Hall</div>
+                    <span class="paper-card-compact-link">Read &rarr;</span>
+                </a>
+
+                <div class="paper-card-compact disabled">
+                    <div class="paper-card-compact-meta">
+                        <span class="paper-card-compact-badge forthcoming">Forthcoming</span>
+                        <span class="paper-card-compact-date">2025</span>
+                    </div>
+                    <div class="paper-card-compact-title">Partisan Bias in Political Prediction Markets</div>
+                    <div class="paper-card-compact-authors">Andrew B. Hall & Elliot Paschal</div>
+                    <span class="paper-card-compact-link">Coming soon</span>
+                </div>
+            </div>
+        </aside>
+    </div>
 
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <p>&copy; 2024–2025 Stanford University</p>
+                <p>&copy; 2024–2025 Hall Lab, Stanford University</p>
                 <div class="footer-links">
                     <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
                 </div>
             </div>
         </div>
     </footer>
+
+    <script src="js/dashboard.js?v=20260126a"></script>
 </body>
 </html>

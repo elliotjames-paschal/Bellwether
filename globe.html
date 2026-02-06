@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Globe - Bellwether</title>
+    <link rel="stylesheet" href="css/styles.css?v=20260203n">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* Globe View Styles */
+        body.globe-page {
+            background: #111827;
+            overflow: hidden;
+        }
+
+        .globe-page .nav {
+            background: rgba(17, 24, 39, 0.95);
+            border-bottom: 1px solid #374151;
+        }
+
+        .globe-page .nav-logo {
+            color: #fff;
+        }
+
+        .globe-page .nav-links a {
+            color: #9ca3af;
+        }
+
+        .globe-page .nav-links a:hover,
+        .globe-page .nav-links a.active {
+            color: #fff;
+        }
+
+        .globe-page .nav-affiliation {
+            color: #9ca3af;
+        }
+
+        .globe-page .nav-affiliation:hover {
+            color: #d1d5db;
+        }
+
+        .globe-page .nav-affiliation-icon {
+            filter: invert(1) opacity(0.6);
+        }
+
+        .globe-page .nav-affiliation:hover .nav-affiliation-icon {
+            filter: invert(1) opacity(0.8);
+        }
+
+        /* Also add the logo gradient square for dark mode */
+        .globe-page .nav-logo::before {
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+        }
+
+        .globe-view {
+            display: flex;
+            height: calc(100vh - 57px);
+            background: #111827;
+        }
+
+        .globe-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .globe-main #globe-container {
+            width: 600px !important;
+            height: 600px !important;
+        }
+
+        /* Override globe colors for dark theme */
+        .globe-page .globe-tooltip {
+            background: rgba(31, 41, 55, 0.95) !important;
+            border: 1px solid #374151;
+        }
+
+        /* Hide the explore button in globe view since we're already in it */
+        .globe-main #globe-container button {
+            display: none !important;
+        }
+
+        /* Zoom controls */
+        .globe-zoom-controls {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .globe-zoom-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #4b5563;
+            background: rgba(31, 41, 55, 0.9);
+            color: #d1d5db;
+            font-size: 18px;
+            font-weight: 300;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            backdrop-filter: blur(4px);
+        }
+
+        .globe-zoom-btn:first-child {
+            border-radius: 6px 6px 0 0;
+        }
+
+        .globe-zoom-btn:last-child {
+            border-radius: 0 0 6px 6px;
+            border-top: none;
+        }
+
+        .globe-zoom-btn:hover {
+            background: rgba(55, 65, 81, 0.95);
+            color: #fff;
+        }
+
+        .globe-zoom-btn:active {
+            background: rgba(75, 85, 99, 0.95);
+        }
+
+        /* Floating election labels near globe */
+        .globe-markers {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .globe-marker {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .globe-marker:hover {
+            transform: scale(1.05);
+        }
+
+        .globe-marker-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: globe-dot-pulse 2s ease-in-out infinite;
+        }
+
+        .globe-marker-dot.hot {
+            background: #fbbf24;
+        }
+
+        .globe-marker-dot.normal {
+            background: #60a5fa;
+        }
+
+        @keyframes globe-dot-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .globe-marker-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+            background: rgba(31, 41, 55, 0.9);
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        /* Sidebar */
+        .globe-sidebar {
+            width: 380px;
+            background: #1f2937;
+            border-left: 1px solid #374151;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .globe-sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .globe-search {
+            width: 100%;
+            padding: 10px 14px;
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .globe-search::placeholder {
+            color: #9ca3af;
+        }
+
+        .globe-search:focus {
+            border-color: #60a5fa;
+        }
+
+        .globe-filters {
+            padding: 16px 20px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .globe-filter-group {
+            margin-bottom: 16px;
+        }
+
+        .globe-filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .globe-filter-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .globe-filter-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .globe-filter-pill {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #d1d5db;
+            background: #374151;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .globe-filter-pill:hover {
+            background: #4b5563;
+        }
+
+        .globe-filter-pill.active {
+            background: #fff;
+            color: #111827;
+        }
+
+        /* Elections list */
+        .globe-elections {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+
+        .globe-elections-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .globe-elections-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .globe-elections-sort {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .globe-elections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .globe-election-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 14px;
+            background: rgba(55, 65, 81, 0.5);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .globe-election-item:hover {
+            background: #374151;
+        }
+
+        .globe-election-item.selected {
+            background: #374151;
+            border: 1px solid #60a5fa;
+            margin: -1px;
+        }
+
+        .globe-election-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .globe-election-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .globe-election-flag {
+            font-size: 18px;
+            line-height: 1.2;
+            flex-shrink: 0;
+        }
+
+        .globe-election-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .globe-election-name {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.3;
+            color: #fff;
+        }
+
+        .globe-election-meta {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .globe-election-hot {
+            width: 8px;
+            height: 8px;
+            background: #fbbf24;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: globe-dot-pulse 2s ease-in-out infinite;
+        }
+
+        .globe-election-probability {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .globe-election-probability-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .globe-election-probability-label {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .globe-election-links {
+            display: flex;
+            gap: 6px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(75, 85, 99, 0.4);
+        }
+
+        .globe-election-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 5px;
+            border: 1px solid #4b5563;
+            background: transparent;
+            color: #d1d5db;
+            transition: all 0.15s;
+        }
+
+        .globe-election-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #6b7280;
+            color: #fff;
+        }
+
+        .globe-election-link.pm:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+        }
+
+        .globe-election-link.kalshi:hover {
+            border-color: rgba(52, 211, 153, 0.5);
+        }
+
+        .globe-election-link-arrow {
+            font-size: 9px;
+            opacity: 0.5;
+        }
+
+        /* Footer stats */
+        .globe-sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #374151;
+            background: #1f2937;
+        }
+
+        .globe-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            text-align: center;
+        }
+
+        .globe-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .globe-stat-label {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* Empty state */
+        .globe-elections-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Scrollbar styling */
+        .globe-elections::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .globe-elections::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .globe-elections::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+
+        .globe-elections::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+<body class="globe-page">
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-left">
+                <a href="./" class="nav-logo"><span class="nav-logo-text">Bellwether</span></a>
+                <div class="nav-links">
+                    <a href="./">Home</a>
+                    <a href="globe.html" class="active">Globe</a>
+                    <a href="research.html">Research</a>
+                    <a href="data.html">Data</a>
+                    <a href="about.html">About</a>
+                </div>
+            </div>
+            <a href="https://www.hoover.org" target="_blank" rel="noopener" class="nav-affiliation">
+                <img src="assets/hoover-tower.svg" alt="" class="nav-affiliation-icon">
+                <span>Hoover Institution</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="globe-view">
+        <!-- Globe Area -->
+        <div class="globe-main">
+            <div id="globe-container"></div>
+            <div class="globe-zoom-controls">
+                <button class="globe-zoom-btn" id="zoom-in" title="Zoom in">+</button>
+                <button class="globe-zoom-btn" id="zoom-out" title="Zoom out">−</button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="globe-sidebar">
+            <!-- Search -->
+            <div class="globe-sidebar-header">
+                <input type="text" id="globe-search" class="globe-search" placeholder="Search country, election...">
+            </div>
+
+            <!-- Filters -->
+            <div class="globe-filters">
+                <div class="globe-filter-group">
+                    <div class="globe-filter-label">Election Type</div>
+                    <div class="globe-filter-pills" id="filter-type">
+                        <button class="globe-filter-pill active" data-value="all">All</button>
+                        <button class="globe-filter-pill" data-value="presidential">Presidential</button>
+                        <button class="globe-filter-pill" data-value="parliamentary">Parliamentary</button>
+                        <button class="globe-filter-pill" data-value="referendum">Referendum</button>
+                        <button class="globe-filter-pill" data-value="regional">Regional</button>
+                    </div>
+                </div>
+
+                <div class="globe-filter-group">
+                    <div class="globe-filter-label">Year</div>
+                    <div class="globe-filter-pills" id="filter-time">
+                        <button class="globe-filter-pill" data-value="2025">2025</button>
+                        <button class="globe-filter-pill active" data-value="2026">2026</button>
+                        <button class="globe-filter-pill" data-value="2027">2027</button>
+                        <button class="globe-filter-pill" data-value="2028">2028</button>
+                        <button class="globe-filter-pill" data-value="all">All</button>
+                    </div>
+                </div>
+
+                <div class="globe-filter-group">
+                    <div class="globe-filter-label">Region</div>
+                    <div class="globe-filter-pills" id="filter-region">
+                        <button class="globe-filter-pill active" data-value="all">Global</button>
+                        <button class="globe-filter-pill" data-value="europe">Europe</button>
+                        <button class="globe-filter-pill" data-value="americas">Americas</button>
+                        <button class="globe-filter-pill" data-value="asia">Asia</button>
+                        <button class="globe-filter-pill" data-value="africa">Africa</button>
+                        <button class="globe-filter-pill" data-value="oceania">Oceania</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Elections List -->
+            <div class="globe-elections">
+                <div class="globe-elections-header">
+                    <span class="globe-elections-title">Elections in View (<span id="election-count">0</span>)</span>
+                    <span class="globe-elections-sort">Sorted by volume</span>
+                </div>
+                <div class="globe-elections-list" id="elections-list">
+                    <div class="globe-elections-empty">Loading elections...</div>
+                </div>
+            </div>
+
+            <!-- Footer Stats -->
+            <div class="globe-sidebar-footer">
+                <div class="globe-stats">
+                    <div>
+                        <div class="globe-stat-value" id="stat-elections">—</div>
+                        <div class="globe-stat-label">Elections</div>
+                    </div>
+                    <div>
+                        <div class="globe-stat-value" id="stat-countries">—</div>
+                        <div class="globe-stat-label">Countries</div>
+                    </div>
+                    <div>
+                        <div class="globe-stat-value" id="stat-month">—</div>
+                        <div class="globe-stat-label">In view</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/globe.js?v=20260203c"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        let allElections = [];
+        let filteredElections = [];
+
+        // Filter state
+        let filters = {
+            type: 'all',
+            year: '2026',
+            region: 'all',
+            search: ''
+        };
+
+        // Country name to flag emoji
+        const countryFlags = {
+            'United States': '🇺🇸', 'Germany': '🇩🇪', 'France': '🇫🇷', 'United Kingdom': '🇬🇧', 'Brazil': '🇧🇷',
+            'Mexico': '🇲🇽', 'India': '🇮🇳', 'Japan': '🇯🇵', 'Australia': '🇦🇺', 'Canada': '🇨🇦',
+            'Italy': '🇮🇹', 'Spain': '🇪🇸', 'Netherlands': '🇳🇱', 'Belgium': '🇧🇪', 'Austria': '🇦🇹',
+            'Switzerland': '🇨🇭', 'Poland': '🇵🇱', 'Czech Republic': '🇨🇿', 'Czechia': '🇨🇿', 'Sweden': '🇸🇪', 'Norway': '🇳🇴',
+            'Denmark': '🇩🇰', 'Finland': '🇫🇮', 'Ireland': '🇮🇪', 'Portugal': '🇵🇹', 'Greece': '🇬🇷',
+            'Romania': '🇷🇴', 'Hungary': '🇭🇺', 'Bulgaria': '🇧🇬', 'Croatia': '🇭🇷', 'Slovakia': '🇸🇰',
+            'Slovenia': '🇸🇮', 'Lithuania': '🇱🇹', 'Latvia': '🇱🇻', 'Estonia': '🇪🇪', 'Cyprus': '🇨🇾',
+            'Malta': '🇲🇹', 'Luxembourg': '🇱🇺', 'Israel': '🇮🇱', 'Turkey': '🇹🇷', 'Russia': '🇷🇺',
+            'Ukraine': '🇺🇦', 'Argentina': '🇦🇷', 'Chile': '🇨🇱', 'Colombia': '🇨🇴', 'Peru': '🇵🇪',
+            'Venezuela': '🇻🇪', 'Ecuador': '🇪🇨', 'Uruguay': '🇺🇾', 'Paraguay': '🇵🇾', 'Bolivia': '🇧🇴',
+            'South Korea': '🇰🇷', 'Korea': '🇰🇷', 'Taiwan': '🇹🇼', 'Thailand': '🇹🇭', 'Malaysia': '🇲🇾', 'Singapore': '🇸🇬',
+            'Indonesia': '🇮🇩', 'Philippines': '🇵🇭', 'Vietnam': '🇻🇳', 'South Africa': '🇿🇦', 'Nigeria': '🇳🇬',
+            'Egypt': '🇪🇬', 'Kenya': '🇰🇪', 'Ghana': '🇬🇭', 'Morocco': '🇲🇦', 'Algeria': '🇩🇿',
+            'New Zealand': '🇳🇿', 'Saudi Arabia': '🇸🇦', 'UAE': '🇦🇪', 'Pakistan': '🇵🇰', 'Bangladesh': '🇧🇩',
+            'Costa Rica': '🇨🇷', 'Panama': '🇵🇦', 'Cuba': '🇨🇺', 'Dominican Republic': '🇩🇴',
+            'China': '🇨🇳', 'Hong Kong': '🇭🇰', 'Serbia': '🇷🇸', 'Georgia': '🇬🇪', 'Armenia': '🇦🇲',
+            'Azerbaijan': '🇦🇿', 'Kazakhstan': '🇰🇿', 'Uzbekistan': '🇺🇿', 'Iran': '🇮🇷', 'Iraq': '🇮🇶'
+        };
+
+        // Region mapping
+        const regionMap = {
+            'north_america': 'americas',
+            'south_america': 'americas',
+            'europe': 'europe',
+            'asia': 'asia',
+            'middle_east': 'asia',
+            'africa': 'africa',
+            'oceania': 'oceania'
+        };
+
+        function getFlag(country) {
+            return countryFlags[country] || '🌍';
+        }
+
+        function matchesYear(electionYear, filterYear) {
+            if (filterYear === 'all') return true;
+            return electionYear && electionYear.toString() === filterYear;
+        }
+
+        function applyFilters() {
+            filteredElections = allElections.filter(e => {
+                // Type filter
+                if (filters.type !== 'all') {
+                    const type = (e.type || '').toLowerCase();
+                    if (type !== filters.type) return false;
+                }
+
+                // Year filter
+                if (!matchesYear(e.year, filters.year)) {
+                    return false;
+                }
+
+                // Region filter
+                if (filters.region !== 'all') {
+                    const region = regionMap[e.region] || e.region;
+                    if (region !== filters.region) return false;
+                }
+
+                // Search filter
+                if (filters.search) {
+                    const search = filters.search.toLowerCase();
+                    const label = (e.label || '').toLowerCase();
+                    const country = (e.country || '').toLowerCase();
+                    const location = (e.location || '').toLowerCase();
+                    if (!label.includes(search) && !country.includes(search) && !location.includes(search)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            // Sort by year, then by volume
+            filteredElections.sort((a, b) => {
+                if (a.year !== b.year) return (a.year || 9999) - (b.year || 9999);
+                return (b.total_volume || 0) - (a.total_volume || 0);
+            });
+
+            renderElections();
+            updateStats();
+        }
+
+        function renderElections() {
+            const container = document.getElementById('elections-list');
+            const countEl = document.getElementById('election-count');
+
+            if (!container) return;
+
+            countEl.textContent = filteredElections.length;
+
+            if (filteredElections.length === 0) {
+                container.innerHTML = '<div class="globe-elections-empty">No elections match your filters</div>';
+                return;
+            }
+
+            container.innerHTML = filteredElections.map(e => {
+                const flag = getFlag(e.country);
+                // Price is 0-1 format, convert to percentage
+                const price = e.pm_price || e.k_price;
+                const priceStr = price ? Math.round(price * 100) + '%' : null;
+                const isHot = e.price_change_24h && Math.abs(e.price_change_24h) > 0.05;
+
+                // Build platform links
+                const pmLink = e.pm_url
+                    ? `<a href="${e.pm_url}" target="_blank" rel="noopener" class="globe-election-link pm" onclick="event.stopPropagation()">Polymarket <span class="globe-election-link-arrow">↗</span></a>`
+                    : '';
+                const kLink = e.k_url
+                    ? `<a href="${e.k_url}" target="_blank" rel="noopener" class="globe-election-link kalshi" onclick="event.stopPropagation()">Kalshi <span class="globe-election-link-arrow">↗</span></a>`
+                    : '';
+                const hasLinks = e.pm_url || e.k_url;
+
+                // Get candidate name for frontrunner display
+                const candidate = e.pm_candidate || e.k_candidate || 'Frontrunner';
+
+                return `
+                    <div class="globe-election-item" data-country="${e.country || ''}">
+                        <div class="globe-election-header">
+                            <div class="globe-election-left">
+                                <span class="globe-election-flag">${flag}</span>
+                                <div class="globe-election-info">
+                                    <div class="globe-election-name">${e.label || 'Unknown Election'}</div>
+                                    <div class="globe-election-meta">${e.year || ''}${e.is_completed ? ' · Completed' : ''}</div>
+                                </div>
+                            </div>
+                            ${isHot ? '<div class="globe-election-hot"></div>' : ''}
+                        </div>
+                        ${priceStr ? `
+                        <div class="globe-election-probability">
+                            <span class="globe-election-probability-value">${priceStr}</span>
+                            <span class="globe-election-probability-label">${candidate}</span>
+                        </div>
+                        ` : ''}
+                        ${hasLinks ? `
+                        <div class="globe-election-links">
+                            ${pmLink}${kLink}
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Add click handlers to rotate globe to country and show selected state
+            container.querySelectorAll('.globe-election-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    // Don't trigger if clicking a link
+                    if (e.target.closest('.globe-election-link')) return;
+
+                    // Remove selected from all items
+                    container.querySelectorAll('.globe-election-item').forEach(el => el.classList.remove('selected'));
+                    // Add selected to this item
+                    item.classList.add('selected');
+
+                    const country = item.dataset.country;
+                    if (country && window.rotateGlobeTo) {
+                        window.rotateGlobeTo(country);
+                    }
+                });
+            });
+        }
+
+        function updateStats() {
+            const statElections = document.getElementById('stat-elections');
+            const statCountries = document.getElementById('stat-countries');
+            const statFiltered = document.getElementById('stat-month');
+
+            if (statElections) {
+                statElections.textContent = allElections.length;
+            }
+
+            if (statCountries) {
+                const countries = new Set(allElections.map(e => e.country).filter(Boolean));
+                statCountries.textContent = countries.size;
+            }
+
+            if (statFiltered) {
+                statFiltered.textContent = filteredElections.length;
+            }
+        }
+
+        function setupFilterHandlers() {
+            // Type filter
+            document.querySelectorAll('#filter-type .globe-filter-pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    document.querySelectorAll('#filter-type .globe-filter-pill').forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    filters.type = pill.dataset.value;
+                    applyFilters();
+                });
+            });
+
+            // Year filter
+            document.querySelectorAll('#filter-time .globe-filter-pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    document.querySelectorAll('#filter-time .globe-filter-pill').forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    filters.year = pill.dataset.value;
+                    applyFilters();
+                });
+            });
+
+            // Region filter
+            document.querySelectorAll('#filter-region .globe-filter-pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    document.querySelectorAll('#filter-region .globe-filter-pill').forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    filters.region = pill.dataset.value;
+                    applyFilters();
+                    // Rotate globe to region
+                    if (window.rotateGlobeTo) {
+                        window.rotateGlobeTo(pill.dataset.value);
+                    }
+                });
+            });
+
+            // Search
+            const searchInput = document.getElementById('globe-search');
+            if (searchInput) {
+                let debounceTimer;
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        filters.search = searchInput.value.trim();
+                        applyFilters();
+                        // Rotate globe to first result's country
+                        if (filters.search && filteredElections.length > 0 && window.rotateGlobeTo) {
+                            const firstMatch = filteredElections[0];
+                            if (firstMatch.country) {
+                                window.rotateGlobeTo(firstMatch.country);
+                            }
+                        }
+                    }, 300);
+                });
+            }
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('data/monitor_elections.json');
+                if (!response.ok) throw new Error('Failed to load data');
+                const data = await response.json();
+
+                allElections = data.elections || [];
+                applyFilters();
+            } catch (err) {
+                console.error('Error loading elections:', err);
+                document.getElementById('elections-list').innerHTML =
+                    '<div class="globe-elections-empty">Unable to load elections</div>';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupFilterHandlers();
+            loadData();
+            // Globe is auto-initialized by globe.js when it finds #globe-container
+
+            // Zoom controls
+            const zoomInBtn = document.getElementById('zoom-in');
+            const zoomOutBtn = document.getElementById('zoom-out');
+            if (zoomInBtn) {
+                zoomInBtn.addEventListener('click', () => {
+                    if (window.globeZoomIn) window.globeZoomIn();
+                });
+            }
+            if (zoomOutBtn) {
+                zoomOutBtn.addEventListener('click', () => {
+                    if (window.globeZoomOut) window.globeZoomOut();
+                });
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

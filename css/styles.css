@@ -106,6 +106,12 @@ a:hover {
     align-items: center;
 }
 
+.nav-left {
+    display: flex;
+    align-items: baseline;
+    gap: 32px;
+}
+
 .nav-logo {
     display: flex;
     align-items: center;
@@ -115,6 +121,7 @@ a:hover {
     text-decoration: none;
     color: var(--black);
     letter-spacing: -0.02em;
+    min-width: 95px;
 }
 
 .nav-logo::before {
@@ -131,15 +138,12 @@ a:hover {
 
 .nav-logo-rest {
     display: inline-block;
-    overflow: hidden;
-    max-width: 80px;
     vertical-align: bottom;
     opacity: 1;
-    transition: max-width 0.3s ease, opacity 0.25s ease;
+    transition: opacity 0.25s ease;
 }
 
 .nav.scrolled .nav-logo-rest {
-    max-width: 0;
     opacity: 0;
 }
 
@@ -178,7 +182,8 @@ a:hover {
 
 .nav-links {
     display: flex;
-    gap: 32px;
+    align-items: baseline;
+    gap: 28px;
 }
 
 .nav-links a {
@@ -193,11 +198,37 @@ a:hover {
     color: var(--black);
 }
 
+.nav-affiliation {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--gray-400);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.nav-affiliation:hover {
+    color: var(--gray-600);
+}
+
+.nav-affiliation-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
+    filter: grayscale(100%);
+    transition: opacity 0.15s;
+}
+
+.nav-affiliation:hover .nav-affiliation-icon {
+    opacity: 0.8;
+}
+
 /* Hero */
 .hero {
-    padding: 100px 32px 120px;
+    padding: 100px 32px 180px;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-bottom: 1px solid var(--gray-200);
     overflow: visible;
 }
 
@@ -459,113 +490,73 @@ a:hover {
     50% { opacity: 0.5; }
 }
 
-/* Live Research Banner - Bloomberg-style dark metrics strip */
-.live-banner {
-    background: var(--gray-900);
-    padding: 20px 32px;
-    border-bottom: 1px solid var(--gray-800);
+/* Research Finding - Utilitarian style */
+.research-finding {
+    background: var(--white);
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--gray-200);
 }
 
-.live-banner-inner {
-    max-width: 1080px;
+.research-finding-inner {
+    max-width: 900px;
     margin: 0 auto;
+    padding-left: 16px;
+    border-left: 2px solid var(--pm-color);
+}
+
+.research-finding-quote {
+    font-size: 1rem;
+    font-weight: 450;
+    color: var(--gray-700);
+    line-height: 1.5;
+    margin: 0 0 8px;
+}
+
+.research-finding-meta {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 32px;
-}
-
-.live-banner-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
-
-.live-badge-dark {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    color: var(--live-indicator);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-}
-
-.live-badge-dark::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    background: var(--live-indicator);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
-
-.live-banner-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--white);
-    letter-spacing: 0.02em;
-}
-
-.live-banner-metrics {
-    display: flex;
-    align-items: center;
-    gap: 40px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
-.live-metric {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-}
-
-.live-metric-value {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--white);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-}
-
-.live-metric-label {
-    font-size: 0.6875rem;
-    font-weight: 500;
+.research-finding-stat {
+    font-size: 0.75rem;
     color: var(--gray-500);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
 }
 
-@media (max-width: 900px) {
-    .live-banner-inner {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-
-    .live-banner-metrics {
-        gap: 24px;
-    }
+.research-finding-divider {
+    color: var(--gray-300);
+    font-size: 0.75rem;
 }
 
-@media (max-width: 600px) {
-    .live-banner {
-        padding: 16px 24px;
+.stat-num {
+    font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.research-finding-link {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--pm-color);
+    text-decoration: none;
+}
+
+.research-finding-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .research-finding {
+        padding: 16px 20px;
     }
 
-    .live-banner-metrics {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        width: 100%;
+    .research-finding-inner {
+        padding-left: 12px;
     }
 
-    .live-metric-value {
-        font-size: 1.125rem;
+    .research-finding-quote {
+        font-size: 0.9375rem;
     }
 }
 
@@ -1411,7 +1402,15 @@ a:hover {
     }
 
     .nav-links {
+        gap: 16px;
+    }
+
+    .nav-left {
         gap: 20px;
+    }
+
+    .nav-affiliation {
+        display: none;
     }
 
     .footer-content {
@@ -1646,4 +1645,1012 @@ a:hover {
 .has-tooltip:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
+}
+
+/* Market Monitor Section - Utilitarian */
+.monitor-section {
+    background: var(--white);
+    padding: 32px 32px 48px;
+}
+
+.monitor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.monitor-header-left h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.monitor-live-dot {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.monitor-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.875rem;
+    color: var(--gray-500);
+}
+
+.monitor-status {
+    color: var(--gray-600);
+}
+
+.monitor-timestamp {
+    color: var(--gray-400);
+}
+
+/* Filter Row */
+.monitor-filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.monitor-filter {
+    height: 42px;
+    padding: 0 32px 0 14px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: var(--gray-700);
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+}
+
+.monitor-filter:hover {
+    border-color: var(--gray-300);
+}
+
+.monitor-filter:focus {
+    outline: none;
+    border-color: var(--gray-400);
+}
+
+.monitor-filter-search {
+    height: 42px;
+    padding: 0 14px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: var(--gray-700);
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    width: 140px;
+    margin-left: auto;
+}
+
+.monitor-filter-search::placeholder {
+    color: var(--gray-400);
+}
+
+.monitor-filter-search:focus {
+    outline: none;
+    border-color: var(--gray-400);
+}
+
+.monitor-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: 20px;
+}
+
+.monitor-tab {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.monitor-tab:hover {
+    color: var(--gray-700);
+}
+
+.monitor-tab.active {
+    color: var(--gray-900);
+    border-bottom-color: var(--gray-900);
+}
+
+.monitor-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    padding: 2px 7px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    border-radius: 4px;
+    background: var(--gray-100);
+    color: var(--gray-500);
+}
+
+.monitor-tab.active .monitor-tab-count {
+    background: var(--gray-800);
+    color: var(--white);
+}
+
+/* Grid Layout */
+.monitor-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+}
+
+.monitor-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--gray-200);
+    border: 1px solid var(--gray-200);
+}
+
+/* Market Card - Bloomberg Terminal Style */
+.market-card {
+    background: var(--white);
+    border: none;
+    border-radius: 0;
+    padding: 14px 16px;
+    transition: background 0.1s;
+}
+
+.market-card:hover {
+    background: var(--gray-50);
+}
+
+.market-card-header {
+    margin-bottom: 6px;
+}
+
+.market-card-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+
+.market-card-note {
+    font-size: 0.625rem;
+    color: var(--gray-400);
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--gray-100);
+}
+
+.market-card-thin {
+    font-size: 0.6875rem;
+    color: var(--gray-400);
+    margin-top: 6px;
+}
+
+/* Price Row */
+.market-card-prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.price-box {
+    text-align: center;
+    padding: 8px 6px 6px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 1px;
+    text-decoration: none;
+    display: block;
+    min-width: 0;
+    border-top: 2px solid var(--gray-300);
+}
+
+a.price-box.clickable {
+    cursor: pointer;
+    transition: all 0.1s;
+    position: relative;
+}
+
+a.price-box.clickable::after {
+    content: "↗";
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 0.5rem;
+    color: var(--gray-300);
+    transition: color 0.1s;
+}
+
+a.price-box.clickable:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-300);
+}
+
+a.price-box.clickable:hover::after {
+    color: var(--gray-500);
+}
+
+.price-box-label {
+    font-size: 0.625rem;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.price-box-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.price-box-value.pm { color: var(--pm-color); }
+.price-box-value.kalshi { color: var(--kalshi-color); }
+.price-box-value.spread { color: var(--gray-600); }
+.price-box-value.spread.aligned { color: var(--gray-600); }
+.price-box-value.spread.divergent { color: var(--gray-600); }
+
+/* Platform-specific top borders */
+.price-box:has(.price-box-value.pm) {
+    border-top-color: var(--pm-color);
+}
+.price-box:has(.price-box-value.kalshi) {
+    border-top-color: var(--kalshi-color);
+}
+
+/* Platform Links - View links under prices */
+.platform-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 4px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--gray-400);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.platform-link:hover {
+    text-decoration: underline;
+}
+
+.platform-link .link-arrow {
+    font-size: 0.625rem;
+}
+
+.pm-link:hover {
+    color: var(--pm-color);
+}
+
+.k-link:hover {
+    color: var(--kalshi-color);
+}
+
+/* Card layout variants */
+.market-card-prices.three-col {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.market-card-prices.single-col {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.market-card-prices.single-col .price-box {
+    min-width: 100px;
+    max-width: 120px;
+}
+
+/* Candidate subtitle */
+.market-card-candidate {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--gray-600);
+    margin-top: 4px;
+}
+
+/* Sparkline */
+.market-card-sparkline {
+    height: 20px;
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+    padding: 0;
+    margin-bottom: 8px;
+    background: transparent;
+}
+
+.sparkline-bar {
+    flex: 1;
+    background: var(--gray-300);
+    border-radius: 0;
+    min-height: 1px;
+}
+
+/* Footer */
+.market-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.market-card-change {
+    font-weight: 600;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+}
+
+.market-card-change.positive { color: #16a34a; }
+.market-card-change.negative { color: #dc2626; }
+.market-card-change.neutral { color: var(--gray-400); }
+
+.market-card-volume {
+    color: var(--gray-400);
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+}
+
+.market-card-countdown {
+    color: #b45309;
+    font-weight: 600;
+}
+
+/* Sidebar - Utilitarian */
+.monitor-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.sidebar-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.sidebar-card-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.sidebar-card-eyebrow {
+    font-size: 0.6875rem;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.sidebar-card-desc {
+    margin: 0 0 10px;
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+}
+
+.sidebar-card-link {
+    font-size: 0.8125rem;
+    color: var(--pm-color);
+    text-decoration: none;
+}
+
+.sidebar-card-link:hover {
+    text-decoration: underline;
+}
+
+.sidebar-election-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 0.75rem;
+}
+
+.sidebar-election-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.sidebar-election-item:first-child {
+    padding-top: 0;
+}
+
+.sidebar-election-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gray-600);
+}
+
+.sidebar-election-days {
+    color: var(--gray-400);
+    font-size: 0.6875rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+}
+
+/* Featured Research Card */
+.sidebar-card-featured {
+    background: var(--gray-900);
+    border-color: var(--gray-800);
+}
+
+.sidebar-card-featured .sidebar-card-eyebrow {
+    color: var(--gray-500);
+}
+
+.sidebar-card-featured .sidebar-card-title {
+    color: var(--white);
+    margin-bottom: 8px;
+    text-transform: none;
+    font-size: 0.9375rem;
+}
+
+.sidebar-card-featured .sidebar-card-desc {
+    color: var(--gray-400);
+    font-size: 0.8125rem;
+}
+
+.sidebar-card-featured .sidebar-card-link {
+    color: #93c5fd;
+    font-size: 0.8125rem;
+}
+
+/* Load More */
+.monitor-load-more {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.monitor-load-more button {
+    padding: 10px 24px;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.monitor-load-more button:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-300);
+}
+
+/* Empty State */
+.monitor-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--gray-400);
+    font-size: 0.8125rem;
+    grid-column: 1 / -1;
+    background: var(--white);
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .monitor-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .monitor-sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .sidebar-card {
+        flex: 1;
+        min-width: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .monitor-section {
+        padding: 24px 16px 32px;
+    }
+
+    .monitor-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .monitor-header-left h2 {
+        font-size: 1.375rem;
+    }
+
+    .monitor-cards {
+        grid-template-columns: 1fr;
+        gap: 1px;
+    }
+
+    .monitor-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .monitor-tab {
+        padding: 10px 14px;
+        white-space: nowrap;
+        font-size: 0.8125rem;
+    }
+
+    .market-card {
+        padding: 12px 14px;
+    }
+
+    .market-card-title {
+        font-size: 0.875rem;
+    }
+
+    .price-box-value {
+        font-size: 1.5rem;
+    }
+
+    .sidebar-card {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .market-card-prices {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .market-card-prices .price-box:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ============================================================================
+   ELECTION DETAIL MODAL - Bloomberg Terminal Style
+   ============================================================================ */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.modal-overlay.visible {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--white);
+    border-radius: 2px;
+    max-width: 900px;
+    width: 100%;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    border: 1px solid var(--gray-300);
+}
+
+/* Modal Header */
+.modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--gray-100);
+    border-bottom: 2px solid var(--gray-300);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.modal-header-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.modal-meta {
+    font-size: 0.6875rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    color: var(--gray-500);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.modal-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin: 0 0 2px;
+    line-height: 1.3;
+}
+
+.modal-candidate {
+    font-size: 0.8125rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.modal-close {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--gray-300);
+    background: var(--white);
+    border-radius: 2px;
+    font-size: 1.125rem;
+    color: var(--gray-500);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.1s;
+}
+
+.modal-close:hover {
+    background: var(--gray-200);
+    border-color: var(--gray-400);
+    color: var(--gray-700);
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 20px;
+    background: var(--white);
+}
+
+/* Price Comparison Row */
+.modal-prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--gray-200);
+    border: 1px solid var(--gray-200);
+    margin-bottom: 20px;
+}
+
+.modal-prices.two-col {
+    grid-template-columns: 1fr 1fr;
+    max-width: 400px;
+}
+
+.modal-prices.single-col {
+    grid-template-columns: 1fr;
+    max-width: 200px;
+}
+
+.modal-price-box {
+    text-align: center;
+    padding: 14px 12px;
+    border-radius: 0;
+    border: none;
+    background: var(--white);
+}
+
+.modal-price-box.pm {
+    border-top: 3px solid var(--pm-color);
+}
+
+.modal-price-box.kalshi {
+    border-top: 3px solid var(--kalshi-color);
+}
+
+.modal-price-box.spread {
+    border-top: 3px solid var(--gray-400);
+}
+
+.modal-price-box.spread.divergent {
+    border-top-color: #f59e0b;
+}
+
+.modal-price-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.modal-price-box.pm .modal-price-label { color: var(--pm-color); }
+.modal-price-box.kalshi .modal-price-label { color: var(--kalshi-color); }
+.modal-price-box.spread .modal-price-label { color: var(--gray-500); }
+
+.modal-price-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.modal-price-box.pm .modal-price-value { color: var(--pm-color); }
+.modal-price-box.kalshi .modal-price-value { color: var(--kalshi-color); }
+.modal-price-box.spread .modal-price-value { color: var(--gray-600); }
+.modal-price-box.spread.divergent .modal-price-value { color: #b45309; }
+
+.modal-price-sub {
+    font-size: 0.625rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    color: var(--gray-400);
+}
+
+/* Platform Links Section */
+.modal-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--gray-200);
+    border: 1px solid var(--gray-200);
+    margin-bottom: 20px;
+}
+
+.modal-links.single {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+}
+
+.modal-link-box {
+    background: var(--white);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    transition: background 0.1s;
+}
+
+.modal-link-box:hover {
+    background: var(--gray-50);
+}
+
+.modal-link-box.pm {
+    border-left: 3px solid var(--pm-color);
+}
+
+.modal-link-box.kalshi {
+    border-left: 3px solid var(--kalshi-color);
+}
+
+.modal-link-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.modal-link-platform {
+    font-size: 0.6875rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.modal-link-box.pm .modal-link-platform { color: var(--pm-color); }
+.modal-link-box.kalshi .modal-link-platform { color: var(--kalshi-color); }
+
+.modal-link-text {
+    font-size: 0.8125rem;
+    color: var(--gray-600);
+}
+
+.modal-link-arrow {
+    font-size: 1rem;
+    color: var(--gray-400);
+}
+
+.modal-link-box:hover .modal-link-arrow {
+    color: var(--gray-600);
+}
+
+/* Embed Section - for Polymarket only */
+.modal-embeds {
+    margin-bottom: 20px;
+}
+
+.modal-embeds-header {
+    font-size: 0.625rem;
+    font-weight: 700;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.modal-embeds-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.modal-embeds-grid.single-col {
+    grid-template-columns: 1fr;
+}
+
+.modal-embed-wrapper {
+    border: 1px solid var(--gray-200);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.modal-embed-header {
+    background: var(--gray-800);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-embed-header span {
+    font-size: 0.6875rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-weight: 600;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.modal-embed-header a {
+    font-size: 0.625rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    color: var(--gray-400);
+    text-decoration: none;
+    transition: color 0.1s;
+}
+
+.modal-embed-header a:hover {
+    color: var(--white);
+}
+
+.modal-embed-frame {
+    background: var(--gray-50);
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-embed-frame iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+}
+
+.modal-embed-placeholder {
+    text-align: center;
+    color: var(--gray-400);
+    padding: 40px 20px;
+}
+
+.modal-embed-placeholder-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.modal-embed-placeholder-text {
+    font-size: 0.75rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+}
+
+/* Single Platform Notice */
+.modal-single-notice {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-left: 3px solid var(--gray-400);
+    border-radius: 0;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.modal-single-notice-icon {
+    color: var(--gray-400);
+    font-size: 0.875rem;
+    line-height: 1;
+}
+
+.modal-single-notice-text {
+    font-size: 0.75rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    color: var(--gray-500);
+    line-height: 1.4;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal-overlay {
+        padding: 12px;
+    }
+
+    .modal-header {
+        padding: 14px 16px;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .modal-title {
+        font-size: 0.9375rem;
+    }
+
+    .modal-prices {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .modal-prices .modal-price-box:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .modal-links {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-embeds-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .modal-price-value {
+        font-size: 1.375rem;
+    }
+}
+
+/* Make cards clickable */
+.market-card.clickable {
+    cursor: pointer;
+}
+
+.market-card.clickable:hover {
+    border-color: var(--gray-400);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
