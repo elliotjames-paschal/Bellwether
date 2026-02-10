@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Bell shape - Bellwether brand color -->
+  <path d="M16 4C16 4 12 4 12 8V10C8 11 6 14 6 18V22H26V18C26 14 24 11 20 10V8C20 4 16 4 16 4Z" fill="#6366f1"/>
+  <!-- Bell bottom curve -->
+  <rect x="5" y="22" width="22" height="2" rx="1" fill="#6366f1"/>
+  <!-- Clapper -->
+  <circle cx="16" cy="27" r="2.5" fill="#6366f1"/>
+</svg>
