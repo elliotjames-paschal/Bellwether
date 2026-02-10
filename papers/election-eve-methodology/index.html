@@ -186,6 +186,23 @@
             height: 16px;
         }
 
+        .article-figure {
+            margin: 32px 0;
+            text-align: center;
+        }
+        .article-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .article-figure figcaption {
+            margin-top: 12px;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
         @media (max-width: 600px) {
             .article-title {
                 font-size: 1.75rem;
@@ -250,19 +267,12 @@
                 Recent applied work increasingly relies on resolution-relative prices, often without explicit discussion of the implications. A methodological note on truncation timing and what it changes.
             </p>
 
-            <div class="article-author" style="gap: 16px;">
+            <div class="article-author">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="author-avatar">EP</div>
+                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--pm-color), var(--kalshi-color)); font-size: 0.875rem; letter-spacing: -0.02em;">B</div>
                     <div class="author-info">
-                        <span class="author-name">Elliot Paschal</span>
-                        <span class="author-title">Research Fellow, Stanford University</span>
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--pm-color), var(--kalshi-color)); font-size: 0.75rem; letter-spacing: -0.02em;">B</div>
-                    <div class="author-info">
-                        <span class="author-name">Bell <span style="font-weight: 400; color: var(--gray-500); font-size: 0.8125rem;">1.0-preview</span></span>
-                        <span class="author-title">Bellwether Research Model</span>
+                        <span class="author-name">Bell Team</span>
+                        <span class="author-title">Bellwether Research</span>
                     </div>
                 </div>
             </div>
@@ -410,6 +420,15 @@
                 This pattern is inherent to any analysis that uses resolution-relative timestamps on platforms with different settlement procedures. Results are sensitive to the truncation choice, even when forecast quality is held constant.
             </p>
 
+            <p>
+                Figure 1 shows this empirically. Using 23,776 resolved political markets from Polymarket and Kalshi, we compare calibration curves for the same markets measured two ways: truncated prices (sampled before outcomes are known) versus resolution prices (the true last traded price before settlement). For electoral markets, we use the election eve price&mdash;00:00 UTC on election day, before any polls close. For non-electoral markets&mdash;policy announcements, court decisions, economic releases&mdash;we truncate relative to trading close with platform-specific offsets that account for each platform's typical settlement lag. The resolution prices appear dramatically better calibrated&mdash;a mean absolute error of 0.006 versus 0.013&mdash;but this is largely mechanical. The background distributions tell the story: resolution prices pile up at the extremes (0 and 1) because by that point, outcomes are known and prices have converged. Truncated prices show the actual distribution of market beliefs before resolution.
+            </p>
+
+            <figure class="article-figure">
+                <img src="../../assets/calibration_when_you_measure_matters.png" alt="Calibration comparison showing truncated vs resolution prices">
+                <figcaption><strong>Figure 1.</strong> Calibration curves for truncated (election eve) versus resolution prices across 23,776 political markets. The background histograms show the distribution of prices: resolution prices cluster at 0 and 1, reflecting post-outcome convergence rather than forecast uncertainty.</figcaption>
+            </figure>
+
             <h2>What almost no research does</h2>
 
             <p>
@@ -461,7 +480,7 @@
             <h2>Limitations</h2>
 
             <p>
-                UTC midnight is somewhat arbitrary. One could argue for 6 hours before polls open, or the moment of the last pre-election poll. For non-U.S. elections where voting begins at different local times, the gap between UTC midnight and the first returns varies. And for non-electoral markets&mdash;policy announcements, court decisions, economic data releases&mdash;there is no natural "election day" to anchor to. We use resolution-relative offsets for those contracts, with platform-specific adjustments documented on our <a href="../../data.html">data page</a>.
+                UTC midnight is somewhat arbitrary. One could argue for 6 hours before polls open, or the moment of the last pre-election poll. For non-U.S. elections where voting begins at different local times, the gap between UTC midnight and the first returns varies. And for non-electoral markets&mdash;policy announcements, court decisions, economic data releases&mdash;there is no natural "election day" to anchor to. For these contracts, we truncate relative to each platform's trading close time, subtracting the typical settlement lag: 24 hours for Polymarket (which typically closes trading a day after the event) and 12 hours for Kalshi (which settles faster). This aims to capture the final prediction price before the outcome becomes known, though the exact timing varies by contract type.
             </p>
 
             <p>

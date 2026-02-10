@@ -122,13 +122,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadVolumeTimeseries();
     await loadPartisanCalibration();
     await loadPartisanRegression();
+    await loadTraderPartisanshipDistribution();
+    await loadTraderAccuracyDistribution();
+    await loadTraderPartisanshipActualVsPerfect();
     await loadCalibrationByCloseness();
     await loadPredictionVsVolume();
+    await loadLiquidityByCategory();
+    await loadLiquidityPlatformComparison();
+    await loadSpreadVsVolume();
+    await loadLiquidityTimeseries();
 });
 
 
 async function fetchJSON(filename) {
-    const cacheBuster = new Date().toISOString().slice(0, 10); // Daily cache bust
+    const cacheBuster = Date.now(); // Force reload every time
     const response = await fetch(`data/${filename}?v=${cacheBuster}`);
     if (!response.ok) throw new Error(`Failed to load ${filename}`);
     return response.json();
@@ -981,73 +988,86 @@ async function loadVolumeTimeseries() {
 // PARTISAN BIAS CHARTS
 // ============================================================================
 
+let calibrationData = null;
+
+function renderCalibrationChart(platform) {
+    if (!calibrationData) return;
+
+    const platformConfig = {
+        polymarket: { name: 'Polymarket', color: COLORS.pm, colorSoft: COLORS_SOFT.pm },
+        kalshi: { name: 'Kalshi', color: COLORS.kalshi, colorSoft: COLORS_SOFT.kalshi }
+    };
+
+    const cfg = platformConfig[platform];
+    const platformData = calibrationData[platform];
+    if (!platformData || !cfg) return;
+
+    // Perfect calibration line
+    const perfect = {
+        x: [0, 1], y: [0, 1],
+        mode: 'lines',
+        name: 'Perfect Calibration',
+        line: { color: COLORS.gray, dash: 'dash', width: 2 },
+        hoverinfo: 'skip'
+    };
+
+    const bins = platformData.bins;
+    const dataTrace = {
+        x: bins.map(b => b.predicted),
+        y: bins.map(b => b.actual),
+        mode: 'markers',
+        name: `${cfg.name} (n=${platformData.n_elections})`,
+        marker: {
+            size: bins.map(b => Math.max(8, Math.sqrt(b.count) * 5)),
+            color: cfg.colorSoft,
+            line: { color: cfg.color, width: 1.5 }
+        },
+        text: bins.map(b => `n=${b.count}`),
+        hovertemplate: `${cfg.name}<br>Predicted R: %{x:.0%}<br>Actual R: %{y:.0%}<br>%{text}<extra></extra>`
+    };
+
+    const layout = {
+        ...LAYOUT_DEFAULTS,
+        xaxis: {
+            title: 'Predicted Republican Win Probability',
+            range: [0, 1],
+            tickformat: '.0%',
+            gridcolor: COLORS.line,
+            zeroline: false,
+            tickvals: [0, 0.2, 0.4, 0.6, 0.8, 1.0]
+        },
+        yaxis: {
+            title: 'Actual Republican Win Rate',
+            range: [0, 1],
+            tickformat: '.0%',
+            gridcolor: COLORS.line,
+            zeroline: false,
+            tickvals: [0, 0.2, 0.4, 0.6, 0.8, 1.0]
+        },
+        legend: {
+            orientation: 'h',
+            y: -0.15,
+            x: 0.5,
+            xanchor: 'center',
+            font: { size: 11 }
+        },
+        margin: { l: 70, r: 30, t: 20, b: 80 }
+    };
+
+    Plotly.newPlot('chart-partisan-calibration', [perfect, dataTrace], layout, CONFIG);
+}
+
+function switchCalibrationPlatform(platform, btn) {
+    // Update button states
+    btn.parentElement.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCalibrationChart(platform);
+}
+
 async function loadPartisanCalibration() {
     try {
-        const data = await fetchJSON('partisan_bias_calibration.json');
-
-        // Perfect calibration line
-        const perfect = {
-            x: [0, 1], y: [0, 1],
-            mode: 'lines',
-            name: 'Perfect Calibration',
-            line: { color: COLORS.gray, dash: 'dash', width: 2 },
-            hoverinfo: 'skip'
-        };
-
-        const traces = [perfect];
-
-        const platformConfig = {
-            polymarket: { name: 'Polymarket', color: COLORS.pm, colorSoft: COLORS_SOFT.pm },
-            kalshi: { name: 'Kalshi', color: COLORS.kalshi, colorSoft: COLORS_SOFT.kalshi }
-        };
-
-        for (const [key, cfg] of Object.entries(platformConfig)) {
-            if (!data[key]) continue;
-            const bins = data[key].bins;
-            traces.push({
-                x: bins.map(b => b.predicted),
-                y: bins.map(b => b.actual),
-                mode: 'markers',
-                name: `${cfg.name} (n=${data[key].n_elections})`,
-                marker: {
-                    size: bins.map(b => Math.max(8, Math.sqrt(b.count) * 5)),
-                    color: cfg.colorSoft,
-                    line: { color: cfg.color, width: 1.5 }
-                },
-                text: bins.map(b => `n=${b.count}`),
-                hovertemplate: `${cfg.name}<br>Predicted R: %{x:.0%}<br>Actual R: %{y:.0%}<br>%{text}<extra></extra>`
-            });
-        }
-
-        const layout = {
-            ...LAYOUT_DEFAULTS,
-            xaxis: {
-                title: 'Predicted Republican Win Probability',
-                range: [0, 1],
-                tickformat: '.0%',
-                gridcolor: COLORS.line,
-                zeroline: false,
-                tickvals: [0, 0.2, 0.4, 0.6, 0.8, 1.0]
-            },
-            yaxis: {
-                title: 'Actual Republican Win Rate',
-                range: [0, 1],
-                tickformat: '.0%',
-                gridcolor: COLORS.line,
-                zeroline: false,
-                tickvals: [0, 0.2, 0.4, 0.6, 0.8, 1.0]
-            },
-            legend: {
-                orientation: 'h',
-                y: -0.15,
-                x: 0.5,
-                xanchor: 'center',
-                font: { size: 11 }
-            },
-            margin: { l: 70, r: 30, t: 20, b: 80 }
-        };
-
-        Plotly.newPlot('chart-partisan-calibration', traces, layout, CONFIG);
+        calibrationData = await fetchJSON('partisan_bias_calibration.json');
+        renderCalibrationChart('polymarket');
     } catch (e) {
         console.warn('Could not load partisan calibration:', e);
         showError('chart-partisan-calibration');
@@ -1123,6 +1143,266 @@ async function loadPartisanRegression() {
         console.warn('Could not load partisan regression:', e);
         showError('table-partisan-regression');
     }
+}
+
+// Store partisanship data globally for toggle
+let partisanshipData = null;
+
+async function loadTraderPartisanshipDistribution() {
+    try {
+        partisanshipData = await fetchJSON('trader_partisanship_distribution.json');
+        renderPartisanshipChart('republican');
+
+        // Populate election outcomes box
+        const outcomesBox = document.getElementById('election-outcomes-box');
+        if (outcomesBox && partisanshipData.election_outcomes) {
+            const outcomes = partisanshipData.election_outcomes;
+            outcomesBox.innerHTML = `
+                <div class="label">Actual Election Outcomes (by count, n=${outcomes.n_elections}):</div>
+                <div class="values">
+                    <span><span class="dem-pct">Democrats won ${outcomes.dem_pct}%</span></span>
+                    <span><span class="rep-pct">Republicans won ${outcomes.rep_pct}%</span></span>
+                </div>
+            `;
+            outcomesBox.style.display = 'block';
+        }
+    } catch (e) {
+        console.warn('Could not load trader partisanship distribution:', e);
+        showError('chart-trader-partisanship');
+    }
+}
+
+function renderPartisanshipChart(party) {
+    if (!partisanshipData) return;
+
+    const isRep = party === 'republican';
+    const partyData = isRep ? partisanshipData.republican_bettors : partisanshipData.democrat_bettors;
+    const partyColor = isRep ? '#ef4444' : '#2563eb';
+    const partyLabel = isRep ? 'Pro-Republican' : 'Pro-Democrat';
+
+    // Define colors for each bucket
+    const bucketStyles = {
+        'Total': { color: '#6b7280', fill: 'rgba(107, 114, 128, 0.2)' },        // gray (all traders)
+        '2-5 trades': { color: '#8b5cf6', fill: 'rgba(139, 92, 246, 0.25)' },   // purple
+        '6+ trades': { color: '#10b981', fill: 'rgba(16, 185, 129, 0.25)' },    // green
+    };
+
+    // Create traces for each bucket
+    const traces = [];
+    const bucketOrder = ['Total', '2-5 trades', '6+ trades'];
+
+    for (const bucket of bucketOrder) {
+        const bucketData = partyData.by_trade_count[bucket];
+        if (bucketData) {
+            const style = bucketStyles[bucket];
+            traces.push({
+                x: bucketData.x,
+                y: bucketData.y,
+                type: 'scatter',
+                mode: 'lines',
+                name: `${bucket} (n=${bucketData.n.toLocaleString()})`,
+                fill: 'tozeroy',
+                fillcolor: style.fill,
+                line: { color: style.color, width: 2 },
+                hovertemplate: `${bucket}: %{x:.1f}% (mean=${bucketData.mean}%)<extra></extra>`
+            });
+        }
+    }
+
+    const layout = {
+        ...LAYOUT_DEFAULTS,
+        showlegend: true,
+        xaxis: {
+            title: `% of Volume Betting ${isRep ? 'Republican' : 'Democrat'}`,
+            range: [0, 100],
+            gridcolor: COLORS.line,
+            zeroline: false
+        },
+        yaxis: {
+            title: 'Density',
+            gridcolor: COLORS.line,
+            zeroline: false
+        },
+        margin: { l: 70, r: 30, t: 20, b: 80 },
+        legend: {
+            orientation: 'h',
+            y: -0.15,
+            x: 0.5,
+            xanchor: 'center',
+            font: { size: 10 }
+        },
+        annotations: [
+            { x: 0.98, y: 0.98, xref: 'paper', yref: 'paper', text: `${partyLabel}: n=${partyData.n.toLocaleString()}, overall mean=${partyData.overall_mean}%`, showarrow: false, font: { size: 11, color: partyColor }, bgcolor: 'rgba(255,255,255,0.8)' }
+        ]
+    };
+
+    Plotly.newPlot('chart-trader-partisanship', traces, layout, CONFIG);
+}
+
+function switchPartisanshipParty(party, btn) {
+    const container = btn.parentElement;
+    container.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPartisanshipChart(party);
+}
+
+async function loadTraderAccuracyDistribution() {
+    try {
+        const data = await fetchJSON('trader_accuracy_distribution.json');
+
+        // Define colors for each bucket
+        const bucketStyles = {
+            '1 trade': { color: '#f59e0b', fill: 'rgba(245, 158, 11, 0.25)' },      // amber
+            '2-5 trades': { color: '#8b5cf6', fill: 'rgba(139, 92, 246, 0.25)' },   // purple
+            '6+ trades': { color: '#10b981', fill: 'rgba(16, 185, 129, 0.25)' },    // green
+        };
+
+        // Create traces for each bucket
+        const traces = [];
+        const bucketOrder = ['1 trade', '2-5 trades', '6+ trades'];
+
+        for (const bucket of bucketOrder) {
+            const bucketData = data.by_trade_count[bucket];
+            if (bucketData) {
+                const style = bucketStyles[bucket];
+                traces.push({
+                    x: bucketData.x,
+                    y: bucketData.y,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: `${bucket} (n=${bucketData.n.toLocaleString()}, mean=${bucketData.mean}%)`,
+                    fill: 'tozeroy',
+                    fillcolor: style.fill,
+                    line: { color: style.color, width: 2 },
+                    hovertemplate: `${bucket}: %{x:.1f}%<extra></extra>`
+                });
+            }
+        }
+
+        const layout = {
+            ...LAYOUT_DEFAULTS,
+            showlegend: true,
+            xaxis: {
+                title: '% Money Bet Correctly',
+                range: [0, 100],
+                gridcolor: COLORS.line,
+                zeroline: false
+            },
+            yaxis: {
+                title: 'Density',
+                gridcolor: COLORS.line,
+                zeroline: false
+            },
+            margin: { l: 70, r: 30, t: 20, b: 80 },
+            legend: {
+                orientation: 'h',
+                y: -0.15,
+                x: 0.5,
+                xanchor: 'center',
+                font: { size: 10 }
+            },
+            shapes: [
+                { type: 'line', x0: 50, x1: 50, y0: 0, y1: 1, yref: 'paper', line: { color: COLORS.gray, dash: 'dash', width: 2 } }
+            ],
+            annotations: [
+                { x: 50, y: 1.02, yref: 'paper', text: '50% (random)', showarrow: false, font: { size: 10, color: COLORS.gray } }
+            ]
+        };
+
+        Plotly.newPlot('chart-trader-accuracy', traces, layout, CONFIG);
+    } catch (e) {
+        console.warn('Could not load trader accuracy distribution:', e);
+        showError('chart-trader-accuracy');
+    }
+}
+
+// Store actual vs perfect data globally for toggle
+let actualVsPerfectData = null;
+
+async function loadTraderPartisanshipActualVsPerfect() {
+    try {
+        actualVsPerfectData = await fetchJSON('trader_partisanship_actual_vs_perfect.json');
+        renderActualVsPerfectChart('republican');
+    } catch (e) {
+        console.warn('Could not load trader partisanship actual vs perfect:', e);
+        showError('chart-trader-actual-vs-perfect');
+    }
+}
+
+function renderActualVsPerfectChart(party) {
+    if (!actualVsPerfectData) return;
+
+    const isRep = party === 'republican';
+    const partyData = isRep ? actualVsPerfectData.republican_bettors : actualVsPerfectData.democrat_bettors;
+    const partyLabel = isRep ? 'Pro-Republican' : 'Pro-Democrat';
+    const axisLabel = isRep ? '% Volume for Republican' : '% Volume for Democrat';
+
+    if (!partyData) return;
+
+    // Actual KDE (filled)
+    const actualTrace = {
+        x: partyData.actual.x,
+        y: partyData.actual.y,
+        type: 'scatter',
+        mode: 'lines',
+        name: `Actual (mean=${partyData.actual.mean}%)`,
+        fill: 'tozeroy',
+        fillcolor: 'rgba(37, 99, 235, 0.3)',
+        line: { color: '#2563eb', width: 2 },
+        hovertemplate: 'Actual: %{x:.1f}%<extra></extra>'
+    };
+
+    // Counterfactual KDE (filled)
+    const cfTrace = {
+        x: partyData.counterfactual.x,
+        y: partyData.counterfactual.y,
+        type: 'scatter',
+        mode: 'lines',
+        name: `If All Correct (mean=${partyData.counterfactual.mean}%)`,
+        fill: 'tozeroy',
+        fillcolor: 'rgba(16, 185, 129, 0.3)',
+        line: { color: '#10b981', width: 2 },
+        hovertemplate: 'If Correct: %{x:.1f}%<extra></extra>'
+    };
+
+    const layout = {
+        ...LAYOUT_DEFAULTS,
+        xaxis: {
+            title: axisLabel,
+            range: [0, 100],
+            gridcolor: COLORS.line,
+            zeroline: false
+        },
+        yaxis: {
+            title: 'Density',
+            gridcolor: COLORS.line,
+            zeroline: false
+        },
+        margin: { l: 70, r: 30, t: 20, b: 80 },
+        legend: {
+            orientation: 'h',
+            y: -0.15,
+            x: 0.5,
+            xanchor: 'center',
+            font: { size: 11 }
+        },
+        shapes: [
+            { type: 'line', x0: partyData.actual.mean, x1: partyData.actual.mean, y0: 0, y1: 1, yref: 'paper', line: { color: '#2563eb', dash: 'dash', width: 2 } },
+            { type: 'line', x0: partyData.counterfactual.mean, x1: partyData.counterfactual.mean, y0: 0, y1: 1, yref: 'paper', line: { color: '#10b981', dash: 'dash', width: 2 } }
+        ],
+        annotations: [
+            { x: 0.98, y: 0.98, xref: 'paper', yref: 'paper', text: `${partyLabel}: n=${partyData.n.toLocaleString()}, shift=${partyData.shift > 0 ? '+' : ''}${partyData.shift}pp`, showarrow: false, font: { size: 11, color: COLORS.dark }, bgcolor: 'rgba(255,255,255,0.8)', borderpad: 4 }
+        ]
+    };
+
+    Plotly.newPlot('chart-trader-actual-vs-perfect', [cfTrace, actualTrace], layout, CONFIG);
+}
+
+function switchActualVsPerfectParty(party, btn) {
+    const container = btn.parentElement;
+    container.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderActualVsPerfectChart(party);
 }
 
 async function loadCalibrationByCloseness() {
@@ -1277,7 +1557,7 @@ function renderPredVolumeChart(platform) {
 function switchPredVolPlatform(platform, btn) {
     // Update button states within the same container
     const container = btn.parentElement;
-    container.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+    container.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     renderPredVolumeChart(platform);
 }
@@ -1418,6 +1698,21 @@ const CHART_META = {
         title: 'Prediction vs Volume',
         slug: 'pred-volume',
         description: 'How trading volume relates to prediction confidence'
+    },
+    'chart-trader-partisanship': {
+        title: 'Distribution of Trader Partisanship',
+        slug: 'trader-partisanship',
+        description: 'How traders distribute their bets between Republican and Democrat candidates'
+    },
+    'chart-trader-accuracy': {
+        title: 'Distribution of Trader Accuracy',
+        slug: 'trader-accuracy',
+        description: 'Distribution of trader accuracy in predicting election outcomes'
+    },
+    'chart-trader-actual-vs-perfect': {
+        title: 'Trader Partisanship: Actual vs Perfect',
+        slug: 'trader-actual-vs-perfect',
+        description: 'Comparing actual trader partisanship with counterfactual if all bets were correct'
     }
 };
 
@@ -1611,6 +1906,335 @@ function initShareButtons() {
 
         header.appendChild(shareContainer);
     });
+}
+
+// ============================================================================
+// LIQUIDITY CHARTS
+// ============================================================================
+
+async function loadLiquidityByCategory() {
+    try {
+        const data = await fetchJSON('liquidity_by_category.json');
+
+        // Sort by spread (tightest first for horizontal bar - reverse for display)
+        const indices = data.categories.map((_, i) => i);
+
+        // Spread chart
+        const pmSpread = {
+            y: data.categories,
+            x: data.polymarket.spread,
+            name: 'Polymarket',
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: COLORS_SOFT.pm },
+            hovertemplate: '%{y}: %{x:.1f}%<extra>Polymarket</extra>'
+        };
+
+        const kalshiSpread = {
+            y: data.categories,
+            x: data.kalshi.spread,
+            name: 'Kalshi',
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: COLORS_SOFT.kalshi },
+            hovertemplate: '%{y}: %{x:.1f}%<extra>Kalshi</extra>'
+        };
+
+        const spreadLayout = {
+            ...LAYOUT_DEFAULTS,
+            barmode: 'group',
+            bargap: 0.2,
+            xaxis: { title: 'Median Relative Spread (%)', gridcolor: COLORS.line, zeroline: false },
+            yaxis: { automargin: true },
+            margin: { l: 140, r: 20, t: 30, b: 50 },
+            annotations: [{
+                x: 0.98, y: 0.02,
+                xref: 'paper', yref: 'paper',
+                text: `n = ${data.total_markets.toLocaleString()} markets`,
+                showarrow: false,
+                font: { size: 11, color: COLORS.text }
+            }]
+        };
+
+        Plotly.newPlot('chart-spread-category', [pmSpread, kalshiSpread], spreadLayout, CONFIG);
+
+        // Depth chart
+        const pmDepth = {
+            y: data.categories,
+            x: data.polymarket.depth,
+            name: 'Polymarket',
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: COLORS_SOFT.pm },
+            hovertemplate: '%{y}: %{x:,.0f}<extra>Polymarket</extra>'
+        };
+
+        const kalshiDepth = {
+            y: data.categories,
+            x: data.kalshi.depth,
+            name: 'Kalshi',
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: COLORS_SOFT.kalshi },
+            hovertemplate: '%{y}: %{x:,.0f}<extra>Kalshi</extra>'
+        };
+
+        const depthLayout = {
+            ...LAYOUT_DEFAULTS,
+            barmode: 'group',
+            bargap: 0.2,
+            xaxis: { title: 'Median Depth (contracts)', type: 'log', gridcolor: COLORS.line, zeroline: false },
+            yaxis: { automargin: true },
+            margin: { l: 140, r: 20, t: 30, b: 50 }
+        };
+
+        Plotly.newPlot('chart-depth-category', [pmDepth, kalshiDepth], depthLayout, CONFIG);
+    } catch (e) {
+        console.warn('Could not load liquidity by category:', e);
+        showError('chart-spread-category');
+        showError('chart-depth-category');
+    }
+}
+
+async function loadLiquidityPlatformComparison() {
+    try {
+        const data = await fetchJSON('liquidity_platform_comparison.json');
+
+        // Spread distribution
+        const pmSpreadHist = {
+            x: data.spread.bins,
+            y: data.spread.polymarket,
+            name: `Polymarket (n=${data.spread.pm_count.toLocaleString()})`,
+            type: 'bar',
+            marker: { color: COLORS_SOFT.pm },
+            opacity: 0.7
+        };
+
+        const kSpreadHist = {
+            x: data.spread.bins,
+            y: data.spread.kalshi,
+            name: `Kalshi (n=${data.spread.k_count.toLocaleString()})`,
+            type: 'bar',
+            marker: { color: COLORS_SOFT.kalshi },
+            opacity: 0.7
+        };
+
+        const spreadLayout = {
+            ...LAYOUT_DEFAULTS,
+            barmode: 'overlay',
+            xaxis: { title: 'Relative Spread (%)', gridcolor: COLORS.line, zeroline: false, range: [0, 30] },
+            yaxis: { title: 'Number of Markets', gridcolor: COLORS.line, zeroline: false },
+            margin: { l: 60, r: 20, t: 30, b: 50 },
+            shapes: [
+                { type: 'line', x0: data.spread.pm_median, x1: data.spread.pm_median, y0: 0, y1: 1, yref: 'paper', line: { color: COLORS.pm, dash: 'dash', width: 2 } },
+                { type: 'line', x0: data.spread.k_median, x1: data.spread.k_median, y0: 0, y1: 1, yref: 'paper', line: { color: COLORS.kalshi, dash: 'dash', width: 2 } }
+            ],
+            annotations: [
+                { x: data.spread.pm_median, y: 1.05, yref: 'paper', text: `PM: ${data.spread.pm_median}%`, showarrow: false, font: { size: 10, color: COLORS.pm } },
+                { x: data.spread.k_median, y: 1.05, yref: 'paper', text: `K: ${data.spread.k_median}%`, showarrow: false, font: { size: 10, color: COLORS.kalshi } }
+            ]
+        };
+
+        Plotly.newPlot('chart-liquidity-spread-dist', [pmSpreadHist, kSpreadHist], spreadLayout, CONFIG);
+
+        // Depth distribution (log scale x-axis)
+        const depthBinsLog = data.depth.bins.map(b => Math.log10(Math.max(1, b)));
+
+        const pmDepthHist = {
+            x: depthBinsLog,
+            y: data.depth.polymarket,
+            name: `Polymarket (n=${data.depth.pm_count.toLocaleString()})`,
+            type: 'bar',
+            marker: { color: COLORS_SOFT.pm },
+            opacity: 0.7
+        };
+
+        const kDepthHist = {
+            x: depthBinsLog,
+            y: data.depth.kalshi,
+            name: `Kalshi (n=${data.depth.k_count.toLocaleString()})`,
+            type: 'bar',
+            marker: { color: COLORS_SOFT.kalshi },
+            opacity: 0.7
+        };
+
+        const depthLayout = {
+            ...LAYOUT_DEFAULTS,
+            barmode: 'overlay',
+            xaxis: {
+                title: 'Depth (contracts, log scale)',
+                gridcolor: COLORS.line,
+                zeroline: false,
+                tickvals: [0, 1, 2, 3, 4, 5, 6],
+                ticktext: ['1', '10', '100', '1K', '10K', '100K', '1M']
+            },
+            yaxis: { title: 'Number of Markets', gridcolor: COLORS.line, zeroline: false },
+            margin: { l: 60, r: 20, t: 30, b: 50 },
+            annotations: [
+                { x: 0.98, y: 0.98, xref: 'paper', yref: 'paper', text: `PM median: ${data.depth.pm_median.toLocaleString()}`, showarrow: false, font: { size: 10, color: COLORS.pm }, bgcolor: 'rgba(255,255,255,0.8)' },
+                { x: 0.98, y: 0.90, xref: 'paper', yref: 'paper', text: `K median: ${data.depth.k_median.toLocaleString()}`, showarrow: false, font: { size: 10, color: COLORS.kalshi }, bgcolor: 'rgba(255,255,255,0.8)' }
+            ]
+        };
+
+        Plotly.newPlot('chart-liquidity-depth-dist', [pmDepthHist, kDepthHist], depthLayout, CONFIG);
+    } catch (e) {
+        console.warn('Could not load liquidity platform comparison:', e);
+        showError('chart-liquidity-spread-dist');
+        showError('chart-liquidity-depth-dist');
+    }
+}
+
+// Store liquidity scatter data globally for platform switching
+let _liquidityScatterData = null;
+
+async function loadSpreadVsVolume() {
+    try {
+        _liquidityScatterData = await fetchJSON('liquidity_spread_vs_volume.json');
+        renderLiquidityScatter('polymarket');
+    } catch (e) {
+        console.warn('Could not load spread vs volume:', e);
+        showError('chart-spread-volume');
+    }
+}
+
+function renderLiquidityScatter(platform) {
+    const data = _liquidityScatterData;
+    if (!data || !data[platform]) {
+        showError('chart-spread-volume');
+        return;
+    }
+
+    const plat = data[platform];
+
+    const scatter = {
+        x: plat.points.map(p => p.volume),
+        y: plat.points.map(p => p.spread),
+        mode: 'markers',
+        name: 'Markets',
+        marker: {
+            size: 5,
+            color: platform === 'polymarket' ? COLORS_SOFT.pm : COLORS_SOFT.kalshi,
+            opacity: 0.5
+        },
+        text: plat.points.map(p => p.category),
+        hovertemplate: '%{text}<br>Volume: $%{x:,.0f}<br>Spread: %{y:.1f}%<extra></extra>'
+    };
+
+    const trend = {
+        x: plat.trend.volume,
+        y: plat.trend.spread,
+        mode: 'lines+markers',
+        name: 'Median Trend',
+        line: { color: COLORS.dark, width: 2.5 },
+        marker: { size: 5, color: COLORS.dark }
+    };
+
+    const layout = {
+        ...LAYOUT_DEFAULTS,
+        xaxis: { title: 'Volume (USD)', type: 'log', gridcolor: COLORS.line, zeroline: false },
+        yaxis: { title: 'Relative Spread (%)', gridcolor: COLORS.line, zeroline: false, range: [0, Math.min(50, Math.max(...plat.points.map(p => p.spread)) * 1.1)] },
+        margin: { l: 60, r: 20, t: 30, b: 50 },
+        showlegend: false,
+        annotations: [{
+            x: 0.98, y: 0.98,
+            xref: 'paper', yref: 'paper',
+            text: `r = ${plat.correlation.toFixed(3)} (n=${plat.n.toLocaleString()})`,
+            showarrow: false,
+            font: { size: 12, color: COLORS.dark },
+            bgcolor: 'rgba(255,255,255,0.8)',
+            borderpad: 4
+        }]
+    };
+
+    Plotly.newPlot('chart-spread-volume', [scatter, trend], layout, CONFIG);
+}
+
+function switchLiquidityPlatform(platform, btn) {
+    const container = btn.parentElement;
+    container.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLiquidityScatter(platform);
+}
+
+let liquidityTimeseriesData = null;
+
+function renderLiquidityTimeseries(metric) {
+    if (!liquidityTimeseriesData) return;
+
+    const data = liquidityTimeseriesData;
+
+    // Filter out null values for each platform
+    const pmX = [], pmY = [];
+    const kX = [], kY = [];
+
+    data.dates.forEach((date, i) => {
+        if (data.polymarket[metric][i] !== null) {
+            pmX.push(date);
+            pmY.push(data.polymarket[metric][i]);
+        }
+        if (data.kalshi[metric][i] !== null) {
+            kX.push(date);
+            kY.push(data.kalshi[metric][i]);
+        }
+    });
+
+    const pmTrace = {
+        x: pmX,
+        y: pmY,
+        mode: 'lines',
+        name: 'Polymarket',
+        line: { color: COLORS_SOFT.pm, width: 2 }
+    };
+
+    const kTrace = {
+        x: kX,
+        y: kY,
+        mode: 'lines+markers',
+        name: 'Kalshi',
+        line: { color: COLORS_SOFT.kalshi, width: 2 },
+        marker: { size: 6 }
+    };
+
+    const yAxisConfig = metric === 'spread'
+        ? { title: 'Median Relative Spread (%)', gridcolor: COLORS.line, zeroline: false }
+        : { title: 'Median Depth (contracts)', gridcolor: COLORS.line, zeroline: false, type: 'log' };
+
+    const layout = {
+        ...LAYOUT_DEFAULTS,
+        xaxis: { title: 'Date', gridcolor: COLORS.line, zeroline: false },
+        yaxis: yAxisConfig,
+        margin: { l: 70, r: 20, t: 30, b: 50 },
+        legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(255,255,255,0.8)' },
+        hovermode: 'x unified'
+    };
+
+    Plotly.newPlot('chart-liquidity-timeseries', [pmTrace, kTrace], layout, CONFIG);
+}
+
+function switchLiquidityTimeseriesMetric(metric, btn) {
+    btn.parentElement.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLiquidityTimeseries(metric);
+
+    // Update description
+    const descEl = document.getElementById('liquidity-timeseries-description');
+    if (descEl) {
+        if (metric === 'spread') {
+            descEl.textContent = 'Daily median relative spread (%) across all active markets. Lower spreads indicate tighter, more liquid markets. Data available from Oct 2025.';
+        } else {
+            descEl.textContent = 'Daily median order book depth (contracts) across all active markets. Higher depth means more liquidity available at posted prices. Data available from Oct 2025.';
+        }
+    }
+}
+
+async function loadLiquidityTimeseries() {
+    try {
+        liquidityTimeseriesData = await fetchJSON('liquidity_timeseries.json');
+        renderLiquidityTimeseries('spread');
+    } catch (e) {
+        console.warn('Could not load liquidity timeseries:', e);
+        showError('chart-liquidity-timeseries');
+    }
 }
 
 // Initialize on DOM ready

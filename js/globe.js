@@ -529,7 +529,7 @@ function initGlobe(containerId, options) {
 
         // Completed elections (hoverable dots)
         completedElections.forEach(function(e, idx) {
-            if (!isVisible(e.lng, e.lat)) return;
+            if (!e.lat || !e.lng || !isVisible(e.lng, e.lat)) return;
             var coords = projection([e.lng, e.lat]);
             if (!coords) return;
 
@@ -547,7 +547,7 @@ function initGlobe(containerId, options) {
 
         // Live elections (pulsing rings + solid dots)
         liveElections.forEach(function(e, idx) {
-            if (!isVisible(e.lng, e.lat)) return;
+            if (!e.lat || !e.lng || !isVisible(e.lng, e.lat)) return;
             var coords = projection([e.lng, e.lat]);
             if (!coords) return;
 
