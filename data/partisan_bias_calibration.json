@@ -17,27 +17,27 @@
         "count": 9
       },
       {
-        "predicted": 0.1644,
+        "predicted": 0.1595,
         "actual": 0.1111,
         "count": 9
       },
       {
-        "predicted": 0.3126,
+        "predicted": 0.2892,
         "actual": 0.3333,
         "count": 9
       },
       {
-        "predicted": 0.5064,
+        "predicted": 0.489,
         "actual": 0.5556,
         "count": 9
       },
       {
-        "predicted": 0.6367,
-        "actual": 0.8889,
+        "predicted": 0.6229,
+        "actual": 0.7778,
         "count": 9
       },
       {
-        "predicted": 0.8308,
+        "predicted": 0.8162,
         "actual": 0.8889,
         "count": 9
       },

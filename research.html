@@ -268,6 +268,7 @@
                 <button class="tab-btn" data-tab="coverage">Coverage</button>
                 <button class="tab-btn" data-tab="accuracy">Accuracy</button>
                 <button class="tab-btn" data-tab="calibration">Calibration</button>
+                <button class="tab-btn" data-tab="liquidity">Liquidity</button>
                 <button class="tab-btn" data-tab="bias">Partisan Bias</button>
                 <button class="tab-btn" data-tab="platforms">Platforms</button>
             </div>
@@ -406,6 +407,98 @@
                 </div>
             </div>
 
+            <!-- Tab: Liquidity -->
+            <div class="tab-content" id="tab-liquidity">
+                <div class="tab-intro">
+                    <p>Market liquidity analysis based on historical orderbook data. Tighter spreads and deeper books indicate more liquid markets where traders can execute with less slippage.</p>
+                </div>
+
+                <div class="subtab-nav">
+                    <button class="subtab-btn active" onclick="switchSubtab('spread-by-category', this)">Spread by Category</button>
+                    <button class="subtab-btn" onclick="switchSubtab('depth-by-category', this)">Depth by Category</button>
+                    <button class="subtab-btn" onclick="switchSubtab('liquidity-platforms', this)">Platform Comparison</button>
+                    <button class="subtab-btn" onclick="switchSubtab('spread-vs-volume', this)">Spread vs Volume</button>
+                    <button class="subtab-btn" onclick="switchSubtab('liquidity-over-time', this)">Over Time</button>
+                </div>
+
+                <div class="subtab-content active" id="subtab-spread-by-category">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Bid-Ask Spread by Category</h3>
+                                <p class="chart-description">Median relative spread (%) by political category. Lower spreads indicate tighter markets with better liquidity.</p>
+                            </div>
+                            <div id="chart-spread-category" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-depth-by-category">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Order Book Depth by Category</h3>
+                                <p class="chart-description">Median total depth (contracts) by political category. Higher depth means more liquidity available at posted prices.</p>
+                            </div>
+                            <div id="chart-depth-category" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-liquidity-platforms">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Spread Distribution by Platform</h3>
+                                <p class="chart-description">Distribution of relative spreads across platforms. Which platform offers tighter markets?</p>
+                            </div>
+                            <div id="chart-liquidity-spread-dist" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Depth Distribution by Platform</h3>
+                                <p class="chart-description">Distribution of order book depth across platforms (log scale).</p>
+                            </div>
+                            <div id="chart-liquidity-depth-dist" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-spread-vs-volume">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Spread vs Trading Volume</h3>
+                                <p class="chart-description">Do higher-volume markets have tighter spreads? Each point represents a market.</p>
+                            </div>
+                            <div class="chart-toggle-group">
+                                <button class="chart-toggle-btn active" onclick="switchLiquidityPlatform('polymarket', this)">Polymarket</button>
+                                <button class="chart-toggle-btn" onclick="switchLiquidityPlatform('kalshi', this)">Kalshi</button>
+                            </div>
+                            <div id="chart-spread-volume" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-liquidity-over-time">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Liquidity Over Time</h3>
+                                <p class="chart-description" id="liquidity-timeseries-description">Daily median relative spread (%) across all active markets. Lower spreads indicate tighter, more liquid markets. Data available from Oct 2025.</p>
+                            </div>
+                            <div class="chart-toggle-group">
+                                <button class="chart-toggle-btn active" onclick="switchLiquidityTimeseriesMetric('spread', this)">Bid-Ask Spread</button>
+                                <button class="chart-toggle-btn" onclick="switchLiquidityTimeseriesMetric('depth', this)">Order Book Depth</button>
+                            </div>
+                            <div id="chart-liquidity-timeseries" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tab: Partisan Bias -->
             <div class="tab-content" id="tab-bias">
                 <div class="tab-intro">
@@ -415,6 +508,9 @@
                 <div class="subtab-nav">
                     <button class="subtab-btn active" onclick="switchSubtab('bias-calibration', this)">Calibration</button>
                     <button class="subtab-btn" onclick="switchSubtab('bias-regression', this)">Regression</button>
+                    <button class="subtab-btn" onclick="switchSubtab('trader-partisanship', this)">Trader Partisanship</button>
+                    <button class="subtab-btn" onclick="switchSubtab('trader-accuracy', this)">Trader Accuracy</button>
+                    <button class="subtab-btn" onclick="switchSubtab('trader-actual-vs-perfect', this)">Actual vs Perfect</button>
                 </div>
 
                 <div class="subtab-content active" id="subtab-bias-calibration">
@@ -423,6 +519,10 @@
                             <div class="chart-header">
                                 <h3>Republican Win Probability Calibration</h3>
                                 <p class="chart-description">Predicted Republican win probability vs actual Republican win rate. Points above the diagonal indicate markets underestimate Republican chances; below indicates overestimation.</p>
+                            </div>
+                            <div class="chart-toggle-group">
+                                <button class="chart-toggle-btn active" onclick="switchCalibrationPlatform('polymarket', this)">Polymarket</button>
+                                <button class="chart-toggle-btn" onclick="switchCalibrationPlatform('kalshi', this)">Kalshi</button>
                             </div>
                             <div id="chart-partisan-calibration" class="chart chart-tall"></div>
                         </div>
@@ -437,6 +537,51 @@
                                 <p class="chart-description">OLS regression of prediction error on party and platform. Negative coefficients indicate the market was less confident in the winner (underpriced).</p>
                             </div>
                             <div id="table-partisan-regression" class="chart-stats"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-trader-partisanship">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Distribution of Trader Partisanship</h3>
+                                <p class="chart-description">Among traders who bet for a party, what % of their volume was on that party? Broken down by trading activity. Polymarket only.</p>
+                            </div>
+                            <div class="chart-toggle-group">
+                                <button class="chart-toggle-btn active" onclick="switchPartisanshipParty('republican', this)">Pro-Republican</button>
+                                <button class="chart-toggle-btn" onclick="switchPartisanshipParty('democrat', this)">Pro-Democrat</button>
+                            </div>
+                            <div id="chart-trader-partisanship" class="chart chart-tall"></div>
+                            <div id="election-outcomes-box" class="election-outcomes-box" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-trader-accuracy">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Distribution of Trader Accuracy</h3>
+                                <p class="chart-description">For each wallet, what % of their money was bet correctly? Broken down by trading activity level. One-time traders cluster at extremes (0% or 100%); active traders show more varied distributions. Polymarket only.</p>
+                            </div>
+                            <div id="chart-trader-accuracy" class="chart chart-tall"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subtab-content" id="subtab-trader-actual-vs-perfect">
+                    <div class="chart-row">
+                        <div class="chart-card chart-card-wide">
+                            <div class="chart-header">
+                                <h3>Trader Partisanship: Actual vs Perfect</h3>
+                                <p class="chart-description">What if all incorrect bets were flipped to the winning side? Compares actual partisanship with counterfactual. Filtered to traders with 2+ trades. Polymarket only.</p>
+                            </div>
+                            <div class="chart-toggle-group">
+                                <button class="chart-toggle-btn active" onclick="switchActualVsPerfectParty('republican', this)">Pro-Republican</button>
+                                <button class="chart-toggle-btn" onclick="switchActualVsPerfectParty('democrat', this)">Pro-Democrat</button>
+                            </div>
+                            <div id="chart-trader-actual-vs-perfect" class="chart chart-tall"></div>
                         </div>
                     </div>
                 </div>
@@ -530,9 +675,9 @@
                                 <h3>Prediction Confidence vs Trading Volume</h3>
                                 <p class="chart-description">How trading volume relates to prediction confidence. Points colored by outcome correctness. Use buttons to toggle platforms.</p>
                             </div>
-                            <div style="margin-bottom: 8px;">
-                                <button class="subtab-btn active" onclick="switchPredVolPlatform('polymarket', this)">Polymarket</button>
-                                <button class="subtab-btn" onclick="switchPredVolPlatform('kalshi', this)">Kalshi</button>
+                            <div class="chart-toggle-group">
+                                <button class="chart-toggle-btn active" onclick="switchPredVolPlatform('polymarket', this)">Polymarket</button>
+                                <button class="chart-toggle-btn" onclick="switchPredVolPlatform('kalshi', this)">Kalshi</button>
                             </div>
                             <div id="chart-pred-volume" class="chart chart-tall"></div>
                         </div>
@@ -551,7 +696,7 @@
                         <span class="paper-card-compact-date">Jan 2026</span>
                     </div>
                     <div class="paper-card-compact-title">When You Measure Matters</div>
-                    <div class="paper-card-compact-authors">Elliot Paschal & <span class="brand-inline">Bell</span></div>
+                    <div class="paper-card-compact-authors"><span class="brand-inline">Bell</span> Team</div>
                     <span class="paper-card-compact-link">Read &rarr;</span>
                 </a>
 
@@ -599,6 +744,6 @@
         </div>
     </footer>
 
-    <script src="js/dashboard.js?v=20260126a"></script>
+    <script src="js/dashboard.js?v=20260207b"></script>
 </body>
 </html>
