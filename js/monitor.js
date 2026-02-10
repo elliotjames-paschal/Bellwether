@@ -1,36 +1,30 @@
 /**
- * Market Monitor - Election markets with dual-platform display
+ * Market Monitor - Elections + All Political Markets
+ *
+ * Elections: Cross-platform comparison (PM vs Kalshi)
+ * Non-electoral: Individual market cards per platform
  */
 
 (function() {
     'use strict';
 
     let monitorData = null;
-    let allElections = [];
-    let filteredElections = [];
+    let allMarkets = [];
+    let filteredMarkets = [];
     let currentView = 'biggest_moves';
-    let displayCount = 10;
-    const CARDS_PER_PAGE = 10;
+    let displayCount = 8;
+    const CARDS_PER_PAGE = 8;
 
     // Filter state
     let filters = {
-        type: 'all',
-        region: 'all',
+        category: 'all',
+        platform: 'all',
         search: ''
     };
 
-    // Type options for elections
-    const TYPE_OPTIONS = [
-        { value: 'all', label: 'All Types' },
-        { value: 'presidential', label: 'Presidential' },
-        { value: 'parliamentary', label: 'Parliamentary' },
-        { value: 'senate', label: 'Senate' },
-        { value: 'house', label: 'House' },
-        { value: 'governor', label: 'Governor' },
-        { value: 'mayoral', label: 'Mayoral' },
-        { value: 'primary', label: 'Primary' },
-        { value: 'other', label: 'Other' },
-    ];
+    // Review mode state
+    let reviewMode = false;
+    let selectedMarkets = new Set();
 
     // Format currency
     function formatVolume(value) {
@@ -63,22 +57,19 @@
         return { text: pts.toFixed(0), pts: pts };
     }
 
-    // Format election title as: Country, Location, Office, Year
-    function formatElectionTitle(e) {
-        const parts = [];
-        if (e.country) parts.push(e.country);
-        if (e.location && e.location !== e.country) parts.push(e.location);
-        if (e.office) parts.push(e.office);
-        if (e.year) parts.push(e.year);
-        return parts.length > 0 ? parts.join(', ') : (e.label || 'Unknown Election');
-    }
-
     // Get spread status
     function getSpreadStatus(pts) {
         if (pts === null) return { class: '', note: '' };
         if (pts < 3) return { class: 'aligned', note: 'Platforms aligned' };
         if (pts <= 5) return { class: '', note: '' };
         return { class: 'divergent', note: 'Notable divergence' };
+    }
+
+    // Truncate text
+    function truncate(text, maxLen = 80) {
+        if (!text) return 'Unknown';
+        if (text.length <= maxLen) return text;
+        return text.substring(0, maxLen).trim() + '...';
     }
 
     // Format relative time
@@ -101,20 +92,20 @@
         }
     }
 
-    // Render a single election card
-    function renderCard(e, index) {
+    // =========================================================================
+    // CARD RENDERING
+    // =========================================================================
+
+    // Render election card (cross-platform comparison)
+    function renderElectionCard(e, index) {
         const change = formatChange(e.price_change_24h);
         const spread = formatSpread(e.pm_price, e.k_price);
         const spreadStatus = getSpreadStatus(spread.pts);
         const cardClass = index === 0 ? 'market-card is-featured clickable' : 'market-card clickable';
 
-        // Candidate subtitle (shows which candidate the price is for)
-        const candidate = e.pm_candidate || e.k_candidate || '';
-        const candidateHtml = candidate
-            ? `<div class="market-card-candidate">${candidate}</div>`
-            : '';
+        // Use question as title, fall back to label
+        const title = e.pm_question || e.k_question || e.label || 'Unknown market';
 
-        // Price boxes (no links - clicking card opens modal)
         const pmPrice = formatPrice(e.pm_price);
         const kPrice = formatPrice(e.k_price);
 
@@ -128,121 +119,112 @@
             <div class="price-box-value kalshi">${kPrice}</div>
         </div>`;
 
-        // Spread box
         const spreadClass = spreadStatus.class ? `spread ${spreadStatus.class}` : 'spread';
         const spreadBox = `<div class="price-box">
             <div class="price-box-label">Spread</div>
             <div class="price-box-value ${spreadClass}">${spread.text}</div>
         </div>`;
 
-        // Layout: 3-column for matched, single-column for single-platform
         let pricesHtml;
         if (e.has_both) {
-            pricesHtml = `<div class="market-card-prices three-col">
-                ${pmBox}
-                ${kBox}
-                ${spreadBox}
-            </div>`;
+            pricesHtml = `<div class="market-card-prices three-col">${pmBox}${kBox}${spreadBox}</div>`;
         } else if (e.has_pm) {
-            // Single platform - PM only (single column layout)
-            pricesHtml = `<div class="market-card-prices single-col">
-                ${pmBox}
-            </div>`;
+            pricesHtml = `<div class="market-card-prices single-col">${pmBox}</div>`;
         } else {
-            // Single platform - Kalshi only (single column layout)
-            pricesHtml = `<div class="market-card-prices single-col">
-                ${kBox}
-            </div>`;
+            pricesHtml = `<div class="market-card-prices single-col">${kBox}</div>`;
         }
 
-        // Note for divergence
-        let noteHtml = '';
-        if (spreadStatus.note) {
-            noteHtml = `<div class="market-card-note">${spreadStatus.note}</div>`;
-        }
+        let noteHtml = spreadStatus.note ? `<div class="market-card-note">${spreadStatus.note}</div>` : '';
 
-        // Thin market indicator
-        let thinMarketHtml = '';
-        if (e.total_volume < 5000) {
-            thinMarketHtml = `<div class="market-card-thin">Thin market</div>`;
-        }
-
-        // Change display
         const changeArrow = change.raw > 0 ? '↑' : change.raw < 0 ? '↓' : '';
         const changeText = change.raw !== 0 ? `${changeArrow} ${change.text} (24h)` : change.text;
 
-        const electionTitle = formatElectionTitle(e);
+        // Image thumbnail (PM only)
+        const imageHtml = e.image ? `<div class="market-card-image"><img src="${e.image}" alt="" loading="lazy"></div>` : '';
+        const headerClass = e.image ? 'market-card-header has-image' : 'market-card-header';
 
         return `
-            <div class="${cardClass}" data-election-key="${e.key}">
-                <div class="market-card-header">
-                    <div class="market-card-title">${electionTitle}</div>
-                    ${candidateHtml}
+            <div class="${cardClass}" data-market-key="${e.key}">
+                <div class="${headerClass}">
+                    ${imageHtml}
+                    <div class="market-card-header-text">
+                        <div class="market-card-badges">
+                            <span class="category-tag">${e.category_display || 'Electoral'}</span>
+                        </div>
+                        <div class="market-card-title">${truncate(title, 100)}</div>
+                    </div>
                 </div>
-
                 ${pricesHtml}
-
                 <div class="market-card-footer">
                     <span class="market-card-change ${change.class}">${changeText}</span>
                     <span class="market-card-volume">${formatVolume(e.total_volume)}</span>
                 </div>
                 ${noteHtml}
-                ${thinMarketHtml}
             </div>
         `;
+    }
+
+    // Render individual market card (non-electoral)
+    function renderMarketCard(m, index) {
+        const change = formatChange(m.price_change_24h);
+        const cardClass = index === 0 ? 'market-card is-featured clickable' : 'market-card clickable';
+        const platformClass = m.platform === 'Polymarket' ? 'pm' : 'kalshi';
+        const platformLabel = m.platform === 'Polymarket' ? 'PM' : 'K';
+
+        const changeArrow = change.raw > 0 ? '↑' : change.raw < 0 ? '↓' : '';
+        const changeText = change.raw !== 0 ? `${changeArrow} ${change.text}` : change.text;
+
+        // Image thumbnail (PM only)
+        const imageHtml = m.image ? `<div class="market-card-image"><img src="${m.image}" alt="" loading="lazy"></div>` : '';
+        const headerClass = m.image ? 'market-card-header has-image' : 'market-card-header';
+
+        return `
+            <div class="${cardClass}" data-market-key="${m.key}">
+                <div class="${headerClass}">
+                    ${imageHtml}
+                    <div class="market-card-header-text">
+                        <div class="market-card-badges">
+                            <span class="platform-badge ${platformClass}">${platformLabel}</span>
+                            <span class="category-tag">${m.category_display || 'Other'}</span>
+                        </div>
+                        <div class="market-card-title">${truncate(m.label, 100)}</div>
+                    </div>
+                </div>
+                <div class="market-card-prices single-col">
+                    <div class="price-box">
+                        <div class="price-box-label">Price</div>
+                        <div class="price-box-value ${platformClass}">${formatPrice(m.price)}</div>
+                    </div>
+                </div>
+                <div class="market-card-footer">
+                    <span class="market-card-change ${change.class}">${changeText}</span>
+                    <span class="market-card-volume">${formatVolume(m.volume || m.total_volume)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    // Render card based on entry type
+    function renderCard(entry, index) {
+        if (entry.entry_type === 'market') {
+            return renderMarketCard(entry, index);
+        }
+        return renderElectionCard(entry, index);
     }
 
     // =========================================================================
     // MODAL FUNCTIONALITY
     // =========================================================================
 
-    // Get country flag emoji (simple mapping)
-    function getCountryFlag(country) {
-        const flags = {
-            'United States': '🇺🇸',
-            'United Kingdom': '🇬🇧',
-            'Canada': '🇨🇦',
-            'Germany': '🇩🇪',
-            'France': '🇫🇷',
-            'Australia': '🇦🇺',
-            'Brazil': '🇧🇷',
-            'Mexico': '🇲🇽',
-            'Japan': '🇯🇵',
-            'India': '🇮🇳',
-            'South Korea': '🇰🇷',
-            'Italy': '🇮🇹',
-            'Spain': '🇪🇸',
-            'Poland': '🇵🇱',
-            'Argentina': '🇦🇷',
-            'Colombia': '🇨🇴',
-            'Chile': '🇨🇱',
-            'Peru': '🇵🇪',
-            'Israel': '🇮🇱',
-            'Turkey': '🇹🇷',
-            'South Africa': '🇿🇦',
-            'Nigeria': '🇳🇬',
-            'New Zealand': '🇳🇿',
-        };
-        return flags[country] || '🌍';
-    }
-
-    // Render modal content for an election
-    function renderModalContent(e) {
+    function renderElectionModal(e) {
         const spread = formatSpread(e.pm_price, e.k_price);
         const spreadStatus = getSpreadStatus(spread.pts);
-        const flag = getCountryFlag(e.country);
-        const candidate = e.pm_candidate || e.k_candidate || '';
-        const electionTitle = formatElectionTitle(e);
+        const title = e.pm_question || e.k_question || e.label || 'Unknown market';
 
-        // Meta line (just flag since title has the details)
-        const metaLine = flag;
-
-        // Price boxes
         let pricesHtml = '';
         let pricesClass = '';
 
         if (e.has_both) {
-            pricesClass = '';
             const spreadDivergent = spreadStatus.class === 'divergent' ? ' divergent' : '';
             pricesHtml = `
                 <div class="modal-price-box pm">
@@ -281,162 +263,136 @@
             `;
         }
 
-        // Single platform notice
-        let singleNotice = '';
-        if (!e.has_both) {
-            const platform = e.has_pm ? 'Polymarket' : 'Kalshi';
-            const otherPlatform = e.has_pm ? 'Kalshi' : 'Polymarket';
-            singleNotice = `
-                <div class="modal-single-notice">
-                    <span class="modal-single-notice-icon">ℹ️</span>
-                    <span class="modal-single-notice-text">
-                        This market is only available on ${platform}.
-                        Bell can't calculate cross-platform divergence for single-platform markets.
-                    </span>
-                </div>
-            `;
-        }
-
-        // Platform links (clickable boxes to open in new tab)
+        // Links
         let linksHtml = '';
         const linksClass = (e.has_pm && e.has_k) ? '' : ' single';
 
-        if (e.has_pm || e.has_k) {
-            let pmLink = '';
-            let kLink = '';
+        let pmLink = '', kLink = '';
+        if (e.has_pm && e.pm_url) {
+            pmLink = `<a href="${e.pm_url}" target="_blank" rel="noopener" class="modal-link-box pm">
+                <div class="modal-link-info"><span class="modal-link-platform">Polymarket</span><span class="modal-link-text">View market details & trade</span></div>
+                <span class="modal-link-arrow">↗</span></a>`;
+        }
+        if (e.has_k && e.k_url) {
+            kLink = `<a href="${e.k_url}" target="_blank" rel="noopener" class="modal-link-box kalshi">
+                <div class="modal-link-info"><span class="modal-link-platform">Kalshi</span><span class="modal-link-text">View market details & trade</span></div>
+                <span class="modal-link-arrow">↗</span></a>`;
+        }
+        if (pmLink || kLink) {
+            linksHtml = `<div class="modal-links${linksClass}">${pmLink}${kLink}</div>`;
+        }
 
-            if (e.has_pm && e.pm_url) {
-                pmLink = `
-                    <a href="${e.pm_url}" target="_blank" rel="noopener" class="modal-link-box pm">
-                        <div class="modal-link-info">
-                            <span class="modal-link-platform">Polymarket</span>
-                            <span class="modal-link-text">View market details & trade</span>
-                        </div>
-                        <span class="modal-link-arrow">↗</span>
-                    </a>
-                `;
-            }
-
-            if (e.has_k && e.k_url) {
-                kLink = `
-                    <a href="${e.k_url}" target="_blank" rel="noopener" class="modal-link-box kalshi">
-                        <div class="modal-link-info">
-                            <span class="modal-link-platform">Kalshi</span>
-                            <span class="modal-link-text">View market details & trade</span>
-                        </div>
-                        <span class="modal-link-arrow">↗</span>
-                    </a>
-                `;
-            }
-
-            linksHtml = `
-                <div class="modal-links${linksClass}">
-                    ${pmLink}
-                    ${kLink}
+        // Embed (PM only)
+        let embedHtml = '';
+        if (e.has_pm && e.pm_embed_url) {
+            embedHtml = `<div class="modal-embeds">
+                <div class="modal-embeds-header">Live Chart</div>
+                <div class="modal-embed-wrapper full-width">
+                    <div class="modal-embed-header"><span>Polymarket</span><a href="${e.pm_url || '#'}" target="_blank" rel="noopener">Open ↗</a></div>
+                    <div class="modal-embed-frame"><iframe src="${e.pm_embed_url}" loading="lazy"></iframe></div>
                 </div>
-            `;
+            </div>`;
         }
 
-        // Build embed URLs
-        let pmEmbedUrl = e.pm_embed_url;
-        let kEmbedUrl = e.k_embed_url;
-
-        // Kalshi: construct embed URL from k_url if not provided
-        // Uses events-categorical format with light color scheme
-        if (!kEmbedUrl && e.k_url) {
-            const kMatch = e.k_url.match(/\/events\/([A-Z0-9-]+)/i);
-            if (kMatch) {
-                kEmbedUrl = `https://kalshi.com/external-widget/events-categorical/${kMatch[1]}?color_scheme=light&widget_size=large&period=all`;
-            }
-        }
-
-        // Embeds for both platforms
-        let embedsHtml = '';
-        if (pmEmbedUrl || kEmbedUrl) {
-            let pmEmbed = '';
-            let kEmbed = '';
-
-            if (e.has_pm && pmEmbedUrl) {
-                pmEmbed = `
-                    <div class="modal-embed-wrapper">
-                        <div class="modal-embed-header">
-                            <span>Polymarket</span>
-                            <a href="${e.pm_url || '#'}" target="_blank" rel="noopener">Open ↗</a>
-                        </div>
-                        <div class="modal-embed-frame">
-                            <iframe src="${pmEmbedUrl}" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (e.has_k && kEmbedUrl) {
-                kEmbed = `
-                    <div class="modal-embed-wrapper">
-                        <div class="modal-embed-header">
-                            <span>Kalshi</span>
-                            <a href="${e.k_url || '#'}" target="_blank" rel="noopener">Open ↗</a>
-                        </div>
-                        <div class="modal-embed-frame">
-                            <iframe src="${kEmbedUrl}" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
-                        </div>
-                    </div>
-                `;
-            }
-
-            embedsHtml = `
-                <div class="modal-embeds">
-                    <div class="modal-embeds-header">Live Charts</div>
-                    <div class="modal-embeds-grid" style="grid-template-columns: ${pmEmbed && kEmbed ? '1fr 1fr' : '1fr'};">
-                        ${pmEmbed}
-                        ${kEmbed}
-                    </div>
-                </div>
-            `;
-        }
+        // Modal image
+        const modalImageHtml = e.image ? `<div class="modal-image"><img src="${e.image}" alt=""></div>` : '';
 
         return `
             <div class="modal-header">
+                ${modalImageHtml}
                 <div class="modal-header-info">
-                    <div class="modal-meta">${metaLine}</div>
-                    <h2 class="modal-title">${electionTitle}</h2>
-                    ${candidate ? `<div class="modal-candidate">${candidate}</div>` : ''}
+                    <div class="modal-meta"><span class="category-tag">${e.category_display || 'Electoral'}</span></div>
+                    <h2 class="modal-title">${title}</h2>
                 </div>
                 <button class="modal-close" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
-                ${singleNotice}
-                <div class="modal-prices${pricesClass}">
-                    ${pricesHtml}
-                </div>
+                <div class="modal-prices${pricesClass}">${pricesHtml}</div>
                 ${linksHtml}
-                ${embedsHtml}
+                ${embedHtml}
             </div>
         `;
     }
 
-    // Open modal for an election
-    function openModal(electionKey) {
-        const election = allElections.find(e => e.key === electionKey);
-        if (!election) return;
+    function renderMarketModal(m) {
+        const platformClass = m.platform === 'Polymarket' ? 'pm' : 'kalshi';
+        const change = formatChange(m.price_change_24h);
+
+        const pricesHtml = `
+            <div class="modal-price-box ${platformClass}">
+                <div class="modal-price-label">${m.platform}</div>
+                <div class="modal-price-value">${formatPrice(m.price)}</div>
+                <div class="modal-price-sub">${formatVolume(m.volume || m.total_volume)} volume</div>
+            </div>
+        `;
+
+        let linkHtml = '';
+        if (m.url) {
+            linkHtml = `<div class="modal-links single">
+                <a href="${m.url}" target="_blank" rel="noopener" class="modal-link-box ${platformClass}">
+                    <div class="modal-link-info"><span class="modal-link-platform">${m.platform}</span><span class="modal-link-text">View market details & trade</span></div>
+                    <span class="modal-link-arrow">↗</span>
+                </a>
+            </div>`;
+        }
+
+        let embedHtml = '';
+        if (m.embed_url && m.platform === 'Polymarket') {
+            embedHtml = `<div class="modal-embeds">
+                <div class="modal-embeds-header">Live Chart</div>
+                <div class="modal-embed-wrapper full-width">
+                    <div class="modal-embed-header"><span>Polymarket</span><a href="${m.url || '#'}" target="_blank" rel="noopener">Open ↗</a></div>
+                    <div class="modal-embed-frame"><iframe src="${m.embed_url}" loading="lazy"></iframe></div>
+                </div>
+            </div>`;
+        }
+
+        const changeArrow = change.raw > 0 ? '↑' : change.raw < 0 ? '↓' : '';
+        const changeDisplay = change.raw !== 0 ? `${changeArrow} ${change.text} (24h)` : '';
+
+        // Modal image
+        const modalImageHtml = m.image ? `<div class="modal-image"><img src="${m.image}" alt=""></div>` : '';
+
+        return `
+            <div class="modal-header">
+                ${modalImageHtml}
+                <div class="modal-header-info">
+                    <div class="modal-meta">
+                        <span class="platform-badge ${platformClass}">${m.platform === 'Polymarket' ? 'PM' : 'K'}</span>
+                        <span class="category-tag">${m.category_display || 'Other'}</span>
+                        ${changeDisplay ? `<span class="modal-change ${change.class}">${changeDisplay}</span>` : ''}
+                    </div>
+                    <h2 class="modal-title">${m.label}</h2>
+                </div>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-prices single-col">${pricesHtml}</div>
+                ${linkHtml}
+                ${embedHtml}
+            </div>
+        `;
+    }
+
+    function openModal(marketKey) {
+        const entry = allMarkets.find(m => m.key === marketKey);
+        if (!entry) return;
 
         const modal = document.getElementById('election-modal');
         const modalContent = document.getElementById('election-modal-content');
-
         if (!modal || !modalContent) return;
 
-        modalContent.innerHTML = renderModalContent(election);
+        modalContent.innerHTML = entry.entry_type === 'market'
+            ? renderMarketModal(entry)
+            : renderElectionModal(entry);
+
         modal.classList.add('visible');
         document.body.style.overflow = 'hidden';
 
-        // Set up close button
         const closeBtn = modalContent.querySelector('.modal-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', closeModal);
-        }
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
     }
 
-    // Close modal
     function closeModal() {
         const modal = document.getElementById('election-modal');
         if (modal) {
@@ -445,45 +401,47 @@
         }
     }
 
-    // Set up card click handlers (called after rendering)
     function setupCardClickHandlers() {
         document.querySelectorAll('.market-card.clickable').forEach(card => {
             card.addEventListener('click', (e) => {
-                // Don't open modal if clicking a link
                 if (e.target.tagName === 'A') return;
-                const key = card.dataset.electionKey;
+                const key = card.dataset.marketKey;
                 if (key) openModal(key);
             });
         });
     }
 
-    // Apply filters to elections
+    // =========================================================================
+    // FILTERING & SORTING
+    // =========================================================================
+
     function applyFilters() {
-        filteredElections = allElections.filter(e => {
-            // Only show elections with at least one platform
-            if (!e.has_pm && !e.has_k) {
-                return false;
+        filteredMarkets = allMarkets.filter(m => {
+            // Category filter
+            if (filters.category !== 'all') {
+                const cat = m.category_display || 'Other';
+                if (cat !== filters.category) return false;
             }
 
-            // Type filter
-            if (filters.type !== 'all' && e.type !== filters.type) {
-                return false;
-            }
-
-            // Region filter
-            if (filters.region !== 'all' && e.region !== filters.region) {
-                return false;
+            // Platform filter
+            if (filters.platform !== 'all') {
+                if (m.entry_type === 'election') {
+                    // For elections, filter by which platforms are available
+                    if (filters.platform === 'polymarket' && !m.has_pm) return false;
+                    if (filters.platform === 'kalshi' && !m.has_k) return false;
+                } else {
+                    // For individual markets
+                    const platform = (m.platform || '').toLowerCase();
+                    if (platform !== filters.platform) return false;
+                }
             }
 
             // Search filter
             if (filters.search) {
                 const search = filters.search.toLowerCase();
-                const label = (e.label || '').toLowerCase();
-                const country = (e.country || '').toLowerCase();
-                const location = (e.location || '').toLowerCase();
-                if (!label.includes(search) && !country.includes(search) && !location.includes(search)) {
-                    return false;
-                }
+                const label = (m.label || '').toLowerCase();
+                const question = (m.pm_question || m.k_question || '').toLowerCase();
+                if (!label.includes(search) && !question.includes(search)) return false;
             }
 
             return true;
@@ -492,20 +450,24 @@
         updateTabCounts();
     }
 
-    // Sort elections by current view
-    function getSortedElections() {
-        let sorted = [...filteredElections];
+    function getSortedMarkets() {
+        let sorted = [...filteredMarkets];
 
         switch (currentView) {
             case 'biggest_moves':
-                sorted = sorted.filter(e => e.price_change_24h !== null);
+                sorted = sorted.filter(m => m.price_change_24h !== null);
                 sorted.sort((a, b) => Math.abs(b.price_change_24h || 0) - Math.abs(a.price_change_24h || 0));
                 break;
             case 'highest_volume':
-                sorted.sort((a, b) => (b.total_volume || 0) - (a.total_volume || 0));
+                sorted.sort((a, b) => (b.total_volume || b.volume || 0) - (a.total_volume || a.volume || 0));
                 break;
             case 'divergences':
-                sorted = sorted.filter(e => e.has_both && e.spread !== null && e.spread > 0.05);
+                // Only elections with both platforms and spread > 5%
+                // Check for entry_type === 'election' OR old format (has_both with pm_price/k_price)
+                sorted = sorted.filter(m => {
+                    const isElection = m.entry_type === 'election' || (m.has_both && m.pm_price !== undefined);
+                    return isElection && m.has_both && m.spread !== null && m.spread > 0.05;
+                });
                 sorted.sort((a, b) => (b.spread || 0) - (a.spread || 0));
                 break;
         }
@@ -513,76 +475,76 @@
         return sorted;
     }
 
-    // Render cards
     function renderCards() {
         const container = document.getElementById('monitor-cards');
         const loadMoreBtn = document.getElementById('monitor-load-more');
-
         if (!container) return;
 
-        const sorted = getSortedElections();
+        const sorted = getSortedMarkets();
 
         if (sorted.length === 0) {
-            const emptyMessages = {
-                'biggest_moves': 'No significant price movements matching these filters',
-                'highest_volume': 'No active elections matching these filters',
-                'divergences': 'No platform divergences detected matching these filters'
-            };
-            container.innerHTML = `<div class="monitor-empty">${emptyMessages[currentView] || 'No elections found'}</div>`;
+            container.innerHTML = `<div class="monitor-empty">No markets found matching these filters</div>`;
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
             return;
         }
 
         const toShow = sorted.slice(0, displayCount);
-        container.innerHTML = toShow.map((e, i) => renderCard(e, i)).join('');
+        container.innerHTML = toShow.map((m, i) => renderCard(m, i)).join('');
 
-        // Set up click handlers for the cards
         setupCardClickHandlers();
+
+        // Re-add checkboxes if in review mode
+        if (reviewMode) {
+            addCheckboxesToCards();
+        }
 
         if (loadMoreBtn) {
             loadMoreBtn.style.display = sorted.length > displayCount ? 'block' : 'none';
         }
     }
 
-    // Update tab counts
     function updateTabCounts() {
         const movesCount = document.getElementById('tab-count-moves');
         const volumeCount = document.getElementById('tab-count-volume');
         const divergencesCount = document.getElementById('tab-count-divergences');
 
-        const withChange = filteredElections.filter(e => e.price_change_24h !== null);
-        const divergences = filteredElections.filter(e => e.has_both && e.spread !== null && e.spread > 0.05);
+        const withChange = filteredMarkets.filter(m => m.price_change_24h !== null);
+        const withVolume = filteredMarkets.filter(m => m.total_volume > 0 || m.volume > 0);
+        const divergences = filteredMarkets.filter(m => {
+            const isElection = m.entry_type === 'election' || (m.has_both && m.pm_price !== undefined);
+            return isElection && m.has_both && m.spread !== null && m.spread > 0.05;
+        });
 
         if (movesCount) movesCount.textContent = withChange.length;
-        if (volumeCount) volumeCount.textContent = filteredElections.length;
+        if (volumeCount) volumeCount.textContent = withVolume.length;
         if (divergencesCount) divergencesCount.textContent = divergences.length;
     }
 
-    // Update election count
-    function updateElectionCount() {
+    function updateMarketCount() {
         const countEl = document.getElementById('monitor-market-count');
-        if (countEl) {
-            countEl.textContent = filteredElections.length.toLocaleString();
-        }
+        if (countEl) countEl.textContent = filteredMarkets.length.toLocaleString();
     }
 
-    // Update sidebar
-    function updateSidebar() {
-        if (!monitorData) return;
+    function populateCategoryFilter() {
+        const categorySelect = document.getElementById('filter-category');
+        if (!categorySelect || !monitorData) return;
 
-        // Divergence summary
-        const divergenceSummary = document.getElementById('divergence-summary');
-        if (divergenceSummary) {
-            const divergences = filteredElections.filter(e => e.has_both && e.spread !== null && e.spread > 0.05);
-            if (divergences.length > 0) {
-                divergenceSummary.textContent = `Bell flagged ${divergences.length} election${divergences.length !== 1 ? 's' : ''} where Polymarket and Kalshi disagree by more than 5 points.`;
-            } else {
-                divergenceSummary.textContent = 'No significant disagreements between platforms right now.';
-            }
-        }
+        const categories = new Set();
+        allMarkets.forEach(m => {
+            if (m.category_display) categories.add(m.category_display);
+        });
+
+        const sorted = Array.from(categories).sort();
+
+        let optionsHtml = '<option value="all">All Categories</option>';
+        sorted.forEach(cat => {
+            const count = allMarkets.filter(m => m.category_display === cat).length;
+            optionsHtml += `<option value="${cat}">${cat} (${count})</option>`;
+        });
+
+        categorySelect.innerHTML = optionsHtml;
     }
 
-    // Switch view
     function switchView(view) {
         currentView = view;
         displayCount = CARDS_PER_PAGE;
@@ -594,49 +556,46 @@
         renderCards();
     }
 
-    // Load more
     function loadMore() {
         displayCount += CARDS_PER_PAGE;
         renderCards();
     }
 
-    // Handle filter change
     function onFilterChange() {
-        const typeSelect = document.getElementById('filter-type');
-        const regionSelect = document.getElementById('filter-region');
+        const categorySelect = document.getElementById('filter-category');
+        const platformSelect = document.getElementById('filter-platform');
         const searchInput = document.getElementById('filter-search');
 
-        filters.type = typeSelect ? typeSelect.value : 'all';
-        filters.region = regionSelect ? regionSelect.value : 'all';
+        filters.category = categorySelect ? categorySelect.value : 'all';
+        filters.platform = platformSelect ? platformSelect.value : 'all';
         filters.search = searchInput ? searchInput.value.trim() : '';
 
-        // Reset display count
         displayCount = CARDS_PER_PAGE;
 
-        // Re-apply filters and render
         applyFilters();
-        updateElectionCount();
-        updateSidebar();
+        updateMarketCount();
         renderCards();
     }
 
-    // Load monitor data
+    // =========================================================================
+    // INITIALIZATION
+    // =========================================================================
+
     async function loadMonitorData() {
         try {
-            const response = await fetch('data/monitor_elections.json');
+            const response = await fetch('data/active_markets.json');
             if (!response.ok) throw new Error('Failed to load monitor data');
             monitorData = await response.json();
 
-            allElections = monitorData.elections || [];
-            filteredElections = [...allElections];
+            allMarkets = monitorData.markets || monitorData.elections || [];
+            filteredMarkets = [...allMarkets];
 
+            populateCategoryFilter();
             applyFilters();
-            updateElectionCount();
+            updateMarketCount();
             updateTabCounts();
-            updateSidebar();
             renderCards();
 
-            // Update timestamp
             const timestampEl = document.getElementById('monitor-last-update');
             if (timestampEl && monitorData.generated_at) {
                 timestampEl.textContent = formatRelativeTime(monitorData.generated_at);
@@ -645,39 +604,25 @@
             console.error('Error loading monitor data:', err);
             const container = document.getElementById('monitor-cards');
             if (container) {
-                container.innerHTML = '<div class="monitor-empty">Unable to load election data. Please refresh the page.</div>';
+                container.innerHTML = '<div class="monitor-empty">Unable to load market data. Please refresh the page.</div>';
             }
         }
     }
 
-    // Initialize
     function init() {
-        // Set up tab click handlers
         document.querySelectorAll('.monitor-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                switchView(tab.dataset.view);
-            });
+            tab.addEventListener('click', () => switchView(tab.dataset.view));
         });
 
-        // Set up load more button
         const loadMoreBtn = document.getElementById('load-more-btn');
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener('click', loadMore);
-        }
+        if (loadMoreBtn) loadMoreBtn.addEventListener('click', loadMore);
 
-        // Set up filter handlers
-        const typeSelect = document.getElementById('filter-type');
-        const regionSelect = document.getElementById('filter-region');
+        const categorySelect = document.getElementById('filter-category');
+        const platformSelect = document.getElementById('filter-platform');
         const searchInput = document.getElementById('filter-search');
 
-        if (typeSelect) {
-            typeSelect.addEventListener('change', onFilterChange);
-        }
-
-        if (regionSelect) {
-            regionSelect.addEventListener('change', onFilterChange);
-        }
-
+        if (categorySelect) categorySelect.addEventListener('change', onFilterChange);
+        if (platformSelect) platformSelect.addEventListener('change', onFilterChange);
         if (searchInput) {
             let debounceTimer;
             searchInput.addEventListener('input', () => {
@@ -686,28 +631,222 @@
             });
         }
 
-        // Set up modal close on overlay click
         const modal = document.getElementById('election-modal');
         if (modal) {
             modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal();
-                }
+                if (e.target === modal) closeModal();
             });
         }
 
-        // Set up modal close on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
+                closeFeedbackModal();
             }
         });
 
-        // Load data
+        // Initialize review mode
+        initReviewMode();
+
         loadMonitorData();
     }
 
-    // Run on DOM ready
+    // =============================================================================
+    // REVIEW MODE - Data Quality Feedback
+    // =============================================================================
+
+    function initReviewMode() {
+        const startBtn = document.getElementById('start-review-btn');
+        const cancelBtn = document.getElementById('cancel-review-btn');
+        const submitBtn = document.getElementById('submit-review-btn');
+        const feedbackModal = document.getElementById('feedback-modal');
+        const feedbackCloseBtn = document.getElementById('feedback-modal-close');
+        const feedbackCancelBtn = document.getElementById('feedback-cancel-btn');
+        const feedbackSubmitBtn = document.getElementById('feedback-submit-btn');
+
+        if (startBtn) {
+            startBtn.addEventListener('click', enterReviewMode);
+        }
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', exitReviewMode);
+        }
+
+        if (submitBtn) {
+            submitBtn.addEventListener('click', openFeedbackModal);
+        }
+
+        if (feedbackModal) {
+            feedbackModal.addEventListener('click', (e) => {
+                if (e.target === feedbackModal) closeFeedbackModal();
+            });
+        }
+
+        if (feedbackCloseBtn) {
+            feedbackCloseBtn.addEventListener('click', closeFeedbackModal);
+        }
+
+        if (feedbackCancelBtn) {
+            feedbackCancelBtn.addEventListener('click', closeFeedbackModal);
+        }
+
+        if (feedbackSubmitBtn) {
+            feedbackSubmitBtn.addEventListener('click', submitFeedback);
+        }
+    }
+
+    function enterReviewMode() {
+        reviewMode = true;
+        selectedMarkets.clear();
+        document.body.classList.add('review-mode');
+        updateSelectedCount();
+        addCheckboxesToCards();
+    }
+
+    function exitReviewMode() {
+        reviewMode = false;
+        selectedMarkets.clear();
+        document.body.classList.remove('review-mode');
+        removeCheckboxesFromCards();
+    }
+
+    function addCheckboxesToCards() {
+        const cards = document.querySelectorAll('.market-card');
+        cards.forEach(card => {
+            if (card.querySelector('.market-card-checkbox')) return;
+
+            const checkbox = document.createElement('div');
+            checkbox.className = 'market-card-checkbox';
+            checkbox.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleCardSelection(card, checkbox);
+            });
+            card.appendChild(checkbox);
+        });
+    }
+
+    function removeCheckboxesFromCards() {
+        const checkboxes = document.querySelectorAll('.market-card-checkbox');
+        checkboxes.forEach(cb => cb.remove());
+        const cards = document.querySelectorAll('.market-card.selected');
+        cards.forEach(card => card.classList.remove('selected'));
+    }
+
+    function toggleCardSelection(card, checkbox) {
+        const key = card.dataset.marketKey;
+        if (!key) return;
+
+        if (selectedMarkets.has(key)) {
+            selectedMarkets.delete(key);
+            checkbox.classList.remove('checked');
+            card.classList.remove('selected');
+        } else {
+            selectedMarkets.add(key);
+            checkbox.classList.add('checked');
+            card.classList.add('selected');
+        }
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        const countEl = document.getElementById('selected-count');
+        const submitBtn = document.getElementById('submit-review-btn');
+        if (countEl) countEl.textContent = selectedMarkets.size;
+        if (submitBtn) submitBtn.disabled = selectedMarkets.size === 0;
+    }
+
+    function openFeedbackModal() {
+        const modal = document.getElementById('feedback-modal');
+        const countEl = document.getElementById('feedback-count');
+        if (countEl) countEl.textContent = selectedMarkets.size;
+        if (modal) modal.classList.add('visible');
+        // Reset form
+        const radios = document.querySelectorAll('input[name="feedback-type"]');
+        radios.forEach(r => r.checked = false);
+        const notes = document.getElementById('feedback-notes-input');
+        if (notes) notes.value = '';
+    }
+
+    function closeFeedbackModal() {
+        const modal = document.getElementById('feedback-modal');
+        if (modal) modal.classList.remove('visible');
+    }
+
+    function submitFeedback() {
+        const feedbackType = document.querySelector('input[name="feedback-type"]:checked');
+        const notes = document.getElementById('feedback-notes-input');
+
+        if (!feedbackType) {
+            showToast('Please select a feedback type');
+            return;
+        }
+
+        if (!notes || !notes.value.trim()) {
+            showToast('Please add a note');
+            return;
+        }
+
+        // Gather selected market data
+        const marketKeys = Array.from(selectedMarkets);
+        const marketData = marketKeys.map(key => {
+            const market = allMarkets.find(m => m.key === key);
+            return market ? {
+                key: market.key,
+                label: market.label,
+                platform: market.platform || (market.has_both ? 'Both' : market.has_pm ? 'Polymarket' : 'Kalshi'),
+                category: market.category_display || market.category
+            } : { key };
+        });
+
+        const payload = {
+            timestamp: new Date().toISOString(),
+            feedbackType: feedbackType.value,
+            notes: notes ? notes.value : '',
+            markets: marketData
+        };
+
+        // Submit to Google Form (we'll use a webhook/form URL)
+        submitToGoogleForm(payload);
+
+        closeFeedbackModal();
+        exitReviewMode();
+        showToast('Thanks! Your feedback has been submitted.');
+    }
+
+    function submitToGoogleForm(payload) {
+        // Google Apps Script Web App URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgU7PdbBeNHtTdayn8pqb99JEsEc3JXfxKP5yXxHzuzXm5zQXm-nnNg6xa9G6zrixVnQ/exec';
+
+        // Store locally as backup
+        const existing = JSON.parse(localStorage.getItem('marketFeedback') || '[]');
+        existing.push(payload);
+        localStorage.setItem('marketFeedback', JSON.stringify(existing));
+
+        console.log('Feedback submitted:', payload);
+
+        // Submit to Google Sheet if URL is configured
+        if (GOOGLE_SCRIPT_URL) {
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(err => console.error('Failed to submit to Google Sheet:', err));
+        }
+    }
+
+    function showToast(message) {
+        let toast = document.querySelector('.toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'toast';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

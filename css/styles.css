@@ -372,21 +372,21 @@ a:hover {
 
 .stat-card {
     background: var(--white);
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(37, 99, 235, 0.08);
-    border: 1px solid rgba(37, 99, 235, 0.15);
-    transition: all 0.2s ease;
+    box-shadow: none;
+    border: 1px solid var(--gray-200);
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .stat-card:hover {
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1), 0 0 0 1px rgba(37, 99, 235, 0.12);
-    transform: translateY(-1px);
+    border-color: var(--gray-300);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .stat-card-inner {
     background: var(--white);
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 20px 24px;
     display: flex;
     flex-direction: column;
@@ -972,6 +972,46 @@ a:hover {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
+/* Chart toggle buttons (more visible than subtab-btn) */
+.chart-toggle-group {
+    display: inline-flex;
+    gap: 0;
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.chart-toggle-btn {
+    padding: 6px 16px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--gray-600);
+    background: var(--gray-100);
+    border: none;
+    border-right: 1px solid var(--gray-300);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.chart-toggle-btn:last-child {
+    border-right: none;
+}
+
+.chart-toggle-btn:hover {
+    background: var(--gray-200);
+    color: var(--gray-800);
+}
+
+.chart-toggle-btn.active {
+    background: var(--gray-800);
+    color: var(--white);
+}
+
+.chart-toggle-btn.active:hover {
+    background: var(--gray-700);
+}
+
 .subtab-content {
     display: none;
 }
@@ -1019,6 +1059,37 @@ a:hover {
     font-size: 0.8125rem;
     color: var(--gray-500);
     margin: 0;
+}
+
+.election-outcomes-box {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--gray-100);
+    border-radius: 6px;
+    border-left: 3px solid var(--gray-400);
+    font-size: 0.875rem;
+    color: var(--gray-700);
+}
+
+.election-outcomes-box .label {
+    font-weight: 500;
+    color: var(--gray-600);
+    margin-bottom: 0.25rem;
+}
+
+.election-outcomes-box .values {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.election-outcomes-box .dem-pct {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.election-outcomes-box .rep-pct {
+    color: #ef4444;
+    font-weight: 600;
 }
 
 .chart {
@@ -1734,7 +1805,7 @@ a:hover {
     background: var(--white);
     border: 1px solid var(--gray-200);
     border-radius: 4px;
-    width: 140px;
+    width: 280px;
     margin-left: auto;
 }
 
@@ -1808,26 +1879,96 @@ a:hover {
 .monitor-cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    background: var(--gray-200);
-    border: 1px solid var(--gray-200);
+    gap: 10px;
+    background: transparent;
+    border: none;
 }
 
-/* Market Card - Bloomberg Terminal Style */
+/* Market Card - Political Intelligence Style */
 .market-card {
     background: var(--white);
-    border: none;
-    border-radius: 0;
+    border: 1px solid var(--gray-200);
+    border-radius: 3px;
     padding: 14px 16px;
-    transition: background 0.1s;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .market-card:hover {
-    background: var(--gray-50);
+    border-color: var(--gray-300);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .market-card-header {
     margin-bottom: 6px;
+}
+
+.market-card-header.has-image {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.market-card-image {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+}
+
+.market-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.market-card-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.market-card-badges {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.platform-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.platform-badge.pm {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #7dd3fc;
+}
+
+.platform-badge.kalshi {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fcd34d;
+}
+
+.category-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    font-size: 0.625rem;
+    font-weight: 500;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    border-radius: 2px;
+    border: 1px solid var(--gray-200);
 }
 
 .market-card-title {
@@ -2205,7 +2346,7 @@ a.price-box.clickable:hover::after {
 
     .monitor-cards {
         grid-template-columns: 1fr;
-        gap: 1px;
+        gap: 8px;
     }
 
     .monitor-tabs {
@@ -2289,19 +2430,43 @@ a.price-box.clickable:hover::after {
     gap: 16px;
 }
 
+.modal-image {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+}
+
+.modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .modal-header-info {
     flex: 1;
     min-width: 0;
 }
 
 .modal-meta {
-    font-size: 0.6875rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
-    color: var(--gray-500);
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
 }
+
+.modal-change {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.modal-change.positive { color: #16a34a; }
+.modal-change.negative { color: #dc2626; }
+.modal-change.neutral { color: var(--gray-400); }
 
 .modal-title {
     font-size: 1rem;
@@ -2387,7 +2552,7 @@ a.price-box.clickable:hover::after {
 }
 
 .modal-price-box.spread.divergent {
-    border-top-color: #f59e0b;
+    border-top-color: var(--gray-400);
 }
 
 .modal-price-label {
@@ -2414,7 +2579,7 @@ a.price-box.clickable:hover::after {
 .modal-price-box.pm .modal-price-value { color: var(--pm-color); }
 .modal-price-box.kalshi .modal-price-value { color: var(--kalshi-color); }
 .modal-price-box.spread .modal-price-value { color: var(--gray-600); }
-.modal-price-box.spread.divergent .modal-price-value { color: #b45309; }
+.modal-price-box.spread.divergent .modal-price-value { color: var(--gray-600); }
 
 .modal-price-sub {
     font-size: 0.625rem;
@@ -2552,16 +2717,27 @@ a.price-box.clickable:hover::after {
 
 .modal-embed-frame {
     background: var(--gray-50);
-    min-height: 400px;
+    min-height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    border-radius: 0 0 8px 8px;
 }
 
 .modal-embed-frame iframe {
     width: 100%;
-    height: 400px;
+    height: 350px;
     border: none;
+}
+
+.modal-embed-wrapper.full-width {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.modal-embed-wrapper.full-width .modal-embed-frame iframe {
+    height: 380px;
 }
 
 .modal-embed-placeholder {
@@ -2653,4 +2829,323 @@ a.price-box.clickable:hover::after {
 .market-card.clickable:hover {
     border-color: var(--gray-400);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* =============================================================================
+   DATA HELPER / REVIEW MODE
+   ============================================================================= */
+
+/* Data Helper Card */
+.data-helper-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+}
+
+.data-helper-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--gray-800);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.data-helper-btn:hover {
+    background: var(--gray-700);
+}
+
+.data-helper-btn .btn-icon {
+    font-size: 1rem;
+}
+
+/* Review Controls */
+.review-controls {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.review-controls.hidden {
+    display: none;
+}
+
+.review-selected-count {
+    font-size: 0.8125rem;
+    color: var(--gray-600);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.review-selected-count span {
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.review-submit-btn {
+    width: 100%;
+    padding: 10px 16px;
+    background: #2563eb;
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 8px;
+}
+
+.review-submit-btn:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.review-submit-btn:disabled {
+    background: var(--gray-300);
+    cursor: not-allowed;
+}
+
+.review-cancel-btn {
+    width: 100%;
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-300);
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.review-cancel-btn:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-400);
+}
+
+/* Review Mode Active State */
+body.review-mode .data-helper-btn {
+    display: none;
+}
+
+body.review-mode .review-controls {
+    display: block;
+}
+
+/* Card Checkboxes */
+.market-card-checkbox {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gray-300);
+    border-radius: 4px;
+    background: var(--white);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    z-index: 10;
+}
+
+.market-card-checkbox::after {
+    content: '✓';
+    font-size: 12px;
+    color: var(--white);
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+.market-card-checkbox.checked {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.market-card-checkbox.checked::after {
+    opacity: 1;
+}
+
+.market-card-checkbox:hover {
+    border-color: #2563eb;
+}
+
+body.review-mode .market-card-checkbox {
+    display: flex;
+}
+
+body.review-mode .market-card {
+    position: relative;
+}
+
+body.review-mode .market-card.selected {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* Feedback Modal */
+.feedback-modal-content {
+    max-width: 480px;
+    padding: 24px;
+}
+
+.feedback-modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.feedback-modal-subtitle {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    margin-bottom: 20px;
+}
+
+.feedback-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.feedback-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.feedback-option:hover {
+    border-color: var(--gray-300);
+    background: var(--gray-50);
+}
+
+.feedback-option-featured {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.04);
+}
+
+.feedback-option-featured:hover {
+    border-color: #1d4ed8;
+    background: rgba(37, 99, 235, 0.08);
+}
+
+.feedback-option input[type="radio"] {
+    margin-top: 2px;
+    accent-color: #2563eb;
+}
+
+.feedback-option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.feedback-option-text strong {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.feedback-option-desc {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.feedback-notes {
+    margin-bottom: 20px;
+}
+
+.feedback-notes label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    margin-bottom: 6px;
+}
+
+.feedback-notes textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    resize: vertical;
+}
+
+.feedback-notes textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.feedback-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.feedback-btn-secondary {
+    padding: 10px 20px;
+    background: transparent;
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.feedback-btn-secondary:hover {
+    background: var(--gray-100);
+}
+
+.feedback-btn-primary {
+    padding: 10px 20px;
+    background: #2563eb;
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.feedback-btn-primary:hover {
+    background: #1d4ed8;
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 14px 20px;
+    background: var(--gray-800);
+    color: var(--white);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
 }

@@ -836,7 +836,7 @@
 
         async function loadData() {
             try {
-                const response = await fetch('data/monitor_elections.json');
+                const response = await fetch('data/active_markets.json');
                 if (!response.ok) throw new Error('Failed to load data');
                 const data = await response.json();
 

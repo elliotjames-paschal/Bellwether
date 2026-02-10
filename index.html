@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bellwether - Political Prediction Markets Research</title>
-    <link rel="stylesheet" href="css/styles.css?v=20260205e">
+    <link rel="stylesheet" href="css/styles.css?v=20260206c">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
@@ -110,27 +110,16 @@
 
             <!-- Filters -->
             <div class="monitor-filters">
-                <select id="filter-type" class="monitor-filter">
-                    <option value="all">All Types</option>
-                    <option value="presidential">Presidential</option>
-                    <option value="parliamentary">Parliamentary</option>
-                    <option value="senate">Senate</option>
-                    <option value="house">House</option>
-                    <option value="governor">Governor</option>
-                    <option value="mayoral">Mayoral</option>
-                    <option value="primary">Primary</option>
+                <select id="filter-category" class="monitor-filter">
+                    <option value="all">All Categories</option>
+                    <!-- Populated dynamically from data -->
                 </select>
-                <select id="filter-region" class="monitor-filter">
-                    <option value="all">All Regions</option>
-                    <option value="north_america">North America</option>
-                    <option value="south_america">South America</option>
-                    <option value="europe">Europe</option>
-                    <option value="asia">Asia</option>
-                    <option value="middle_east">Middle East</option>
-                    <option value="africa">Africa</option>
-                    <option value="oceania">Oceania</option>
+                <select id="filter-platform" class="monitor-filter">
+                    <option value="all">All Platforms</option>
+                    <option value="polymarket">Polymarket</option>
+                    <option value="kalshi">Kalshi</option>
                 </select>
-                <input type="text" id="filter-search" class="monitor-filter-search" placeholder="Search">
+                <input type="text" id="filter-search" class="monitor-filter-search" placeholder="Search markets...">
             </div>
 
             <!-- Tabs -->
@@ -150,7 +139,7 @@
             <div class="monitor-grid">
                 <div>
                     <div class="monitor-cards" id="monitor-cards">
-                        <div class="monitor-empty">Loading elections...</div>
+                        <div class="monitor-empty">Loading markets...</div>
                     </div>
                     <div class="monitor-load-more" id="monitor-load-more" style="display: none;">
                         <button id="load-more-btn">Load more markets</button>
@@ -158,13 +147,20 @@
                 </div>
 
                 <div class="monitor-sidebar">
-                    <!-- Platform Divergences -->
-                    <div class="sidebar-card" id="sidebar-divergences">
-                        <div class="sidebar-card-header">
-                            <span class="sidebar-card-title">Platform Divergences</span>
+                    <!-- Data Helper -->
+                    <div class="sidebar-card data-helper-card" id="data-helper">
+                        <div class="sidebar-card-eyebrow">Help Bellwether Improve</div>
+                        <div class="sidebar-card-title">Help Us Match Markets</div>
+                        <p class="sidebar-card-desc">Select markets on Polymarket and Kalshi that cover the same event so we can compare them. You can also flag errors or mislabeled markets.</p>
+                        <button id="start-review-btn" class="data-helper-btn">
+                            <span class="btn-icon">✓</span>
+                            Start Reviewing
+                        </button>
+                        <div id="review-mode-controls" class="review-controls hidden">
+                            <div class="review-selected-count"><span id="selected-count">0</span> selected</div>
+                            <button id="submit-review-btn" class="review-submit-btn" disabled>Submit Feedback</button>
+                            <button id="cancel-review-btn" class="review-cancel-btn">Cancel</button>
                         </div>
-                        <p class="sidebar-card-desc" id="divergence-summary">Checking for disagreements between Polymarket and Kalshi...</p>
-                        <a href="#" class="sidebar-card-link" onclick="document.querySelector('[data-view=divergences]').click(); return false;">View all →</a>
                     </div>
 
                     <!-- Latest Research -->
@@ -198,7 +194,57 @@
         </div>
     </div>
 
+    <!-- Data Feedback Modal -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="modal-content feedback-modal-content">
+            <button class="modal-close" id="feedback-modal-close">&times;</button>
+            <h3 class="feedback-modal-title">Label Selected Markets</h3>
+            <p class="feedback-modal-subtitle">You've selected <span id="feedback-count">0</span> market(s). What would you like to tell us?</p>
+
+            <div class="feedback-options">
+                <label class="feedback-option feedback-option-featured">
+                    <input type="radio" name="feedback-type" value="same-event">
+                    <span class="feedback-option-text">
+                        <strong>Same Event (Cross-Platform Match)</strong>
+                        <span class="feedback-option-desc">These markets on Polymarket and Kalshi are about the same event — help us link them for comparison</span>
+                    </span>
+                </label>
+                <label class="feedback-option">
+                    <input type="radio" name="feedback-type" value="not-political">
+                    <span class="feedback-option-text">
+                        <strong>Not Political</strong>
+                        <span class="feedback-option-desc">These markets aren't about politics</span>
+                    </span>
+                </label>
+                <label class="feedback-option">
+                    <input type="radio" name="feedback-type" value="wrong-category">
+                    <span class="feedback-option-text">
+                        <strong>Wrong Category</strong>
+                        <span class="feedback-option-desc">Mislabeled category (e.g., marked as Electoral but isn't)</span>
+                    </span>
+                </label>
+                <label class="feedback-option">
+                    <input type="radio" name="feedback-type" value="other">
+                    <span class="feedback-option-text">
+                        <strong>Other Issue</strong>
+                        <span class="feedback-option-desc">Something else is wrong</span>
+                    </span>
+                </label>
+            </div>
+
+            <div class="feedback-notes">
+                <label for="feedback-notes-input">Notes</label>
+                <textarea id="feedback-notes-input" placeholder="For matching: briefly explain why these are the same event. For errors: describe what's wrong." required></textarea>
+            </div>
+
+            <div class="feedback-actions">
+                <button id="feedback-cancel-btn" class="feedback-btn-secondary">Cancel</button>
+                <button id="feedback-submit-btn" class="feedback-btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/globe.js?v=20260203c"></script>
-    <script src="js/monitor.js?v=20260205e"></script>
+    <script src="js/monitor.js?v=20260207f"></script>
 </body>
 </html>
