@@ -69,15 +69,8 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
     return null;
   }
 
-  // Fetch recent orderbook snapshot (last hour)
-  const now = Date.now();
-  const oneHourAgo = now - (60 * 60 * 1000);
-
-  const params = new URLSearchParams({
-    start_time: oneHourAgo.toString(),
-    end_time: now.toString(),
-    limit: "1", // Just get the most recent snapshot
-  });
+  // Fetch CURRENT orderbook (no time params = latest snapshot)
+  const params = new URLSearchParams();
 
   if (platform === "kalshi") {
     params.set("ticker", tokenId);
@@ -154,7 +147,7 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
 async function fetchTrades(platform: string, tokenId: string): Promise<Array<{price: number, size: number, timestamp: number}> | null> {
   if (!DOME_API_KEY) return null;
 
-  // Use trade history endpoint
+  // Use orders endpoint for trade history
   const now = Date.now();
   const sixHoursAgo = now - (6 * 60 * 60 * 1000);
 
@@ -166,10 +159,10 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
   let endpoint: string;
   if (platform === "kalshi") {
     params.set("ticker", tokenId);
-    endpoint = `${DOME_REST_BASE}/kalshi/trades?${params}`;
+    endpoint = `${DOME_REST_BASE}/kalshi/orders?${params}`;
   } else {
     params.set("token_id", tokenId);
-    endpoint = `${DOME_REST_BASE}/polymarket/trades?${params}`;
+    endpoint = `${DOME_REST_BASE}/polymarket/orders?${params}`;
   }
 
   try {
