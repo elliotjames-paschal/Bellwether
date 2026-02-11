@@ -69,9 +69,25 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
     return null;
   }
 
+  // Fetch recent orderbook snapshot (last hour)
+  const now = Date.now();
+  const oneHourAgo = now - (60 * 60 * 1000);
+
+  const params = new URLSearchParams({
+    start_time: oneHourAgo.toString(),
+    end_time: now.toString(),
+    limit: "1", // Just get the most recent snapshot
+  });
+
+  if (platform === "kalshi") {
+    params.set("ticker", tokenId);
+  } else {
+    params.set("token_id", tokenId);
+  }
+
   const endpoint = platform === "kalshi"
-    ? `${DOME_REST_BASE}/kalshi/orderbook/${tokenId}`
-    : `${DOME_REST_BASE}/polymarket/orderbook/${tokenId}`;
+    ? `${DOME_REST_BASE}/kalshi/orderbooks?${params}`
+    : `${DOME_REST_BASE}/polymarket/orderbooks?${params}`;
 
   try {
     const response = await fetch(endpoint, {
@@ -79,24 +95,48 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
     });
 
     if (!response.ok) {
-      console.error(`Orderbook fetch failed: ${response.status}`);
+      const text = await response.text();
+      console.error(`Orderbook fetch failed: ${response.status} - ${text}`);
       return null;
     }
 
     const data = await response.json();
 
-    // Parse orderbook - format varies by platform
+    // Parse orderbook from the response
+    // Response is an array of snapshots, get the most recent one
+    const snapshots = Array.isArray(data) ? data : (data.data || []);
+    if (snapshots.length === 0) {
+      console.error("No orderbook snapshots returned");
+      return null;
+    }
+
+    const latestSnapshot = snapshots[0];
+    const orderbook = latestSnapshot.orderbook || latestSnapshot;
+
     const bids: OrderbookLevel[] = [];
     const asks: OrderbookLevel[] = [];
 
-    if (data.bids) {
-      for (const bid of data.bids) {
-        bids.push({ price: Number(bid.price || bid[0]), size: Number(bid.size || bid[1]) });
+    // Polymarket format: orderbook.yes = bids for YES, orderbook.no = asks (or vice versa)
+    // Kalshi format: similar structure
+    const yesBids = orderbook.yes || orderbook.bids || [];
+    const noBids = orderbook.no || orderbook.asks || [];
+
+    // YES bids are offers to buy YES tokens - these are bids
+    for (const bid of yesBids) {
+      const price = Number(bid.price || bid.p || bid[0]) / 100; // Convert cents to dollars
+      const size = Number(bid.size || bid.s || bid[1]);
+      if (price > 0 && size > 0) {
+        bids.push({ price, size });
       }
     }
-    if (data.asks) {
-      for (const ask of data.asks) {
-        asks.push({ price: Number(ask.price || ask[0]), size: Number(ask.size || ask[1]) });
+
+    // NO bids at price X = asks for YES at price (1-X)
+    for (const noBid of noBids) {
+      const noPrice = Number(noBid.price || noBid.p || noBid[0]) / 100;
+      const size = Number(noBid.size || noBid.s || noBid[1]);
+      const yesAskPrice = 1 - noPrice; // Convert NO bid to YES ask
+      if (yesAskPrice > 0 && size > 0) {
+        asks.push({ price: yesAskPrice, size });
       }
     }
 
@@ -114,13 +154,23 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
 async function fetchTrades(platform: string, tokenId: string): Promise<Array<{price: number, size: number, timestamp: number}> | null> {
   if (!DOME_API_KEY) return null;
 
-  // Use candlestick endpoint for trade history
-  const now = Math.floor(Date.now() / 1000);
-  const sixHoursAgo = now - (6 * 60 * 60);
+  // Use trade history endpoint
+  const now = Date.now();
+  const sixHoursAgo = now - (6 * 60 * 60 * 1000);
 
-  const endpoint = platform === "kalshi"
-    ? `${DOME_REST_BASE}/kalshi/candlesticks/${tokenId}?interval=1m&from=${sixHoursAgo}&to=${now}`
-    : `${DOME_REST_BASE}/polymarket/candlesticks/${tokenId}?interval=1m&from=${sixHoursAgo}&to=${now}`;
+  const params = new URLSearchParams({
+    start_time: sixHoursAgo.toString(),
+    end_time: now.toString(),
+  });
+
+  let endpoint: string;
+  if (platform === "kalshi") {
+    params.set("ticker", tokenId);
+    endpoint = `${DOME_REST_BASE}/kalshi/trades?${params}`;
+  } else {
+    params.set("token_id", tokenId);
+    endpoint = `${DOME_REST_BASE}/polymarket/trades?${params}`;
+  }
 
   try {
     const response = await fetch(endpoint, {
@@ -128,31 +178,30 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
     });
 
     if (!response.ok) {
-      console.error(`Trades fetch failed: ${response.status}`);
-      return null;
+      // Trades endpoint might not exist - fallback gracefully
+      console.log(`Trades fetch returned ${response.status}, using empty trades`);
+      return [];
     }
 
     const data = await response.json();
-
-    // Convert candlesticks to trades (using close price and volume)
     const trades: Array<{price: number, size: number, timestamp: number}> = [];
 
-    if (Array.isArray(data)) {
-      for (const candle of data) {
-        if (candle.volume > 0) {
-          trades.push({
-            price: Number(candle.close || candle.c),
-            size: Number(candle.volume || candle.v),
-            timestamp: Number(candle.timestamp || candle.t) * 1000,
-          });
-        }
+    const tradeList = Array.isArray(data) ? data : (data.trades || data.data || []);
+
+    for (const trade of tradeList) {
+      const price = Number(trade.price || trade.p) / 100; // Convert cents to dollars
+      const size = Number(trade.size || trade.amount || trade.s || 1);
+      const timestamp = Number(trade.timestamp || trade.t || trade.time) * (trade.timestamp > 1e12 ? 1 : 1000);
+
+      if (price > 0 && timestamp >= sixHoursAgo) {
+        trades.push({ price, size, timestamp });
       }
     }
 
     return trades;
   } catch (err) {
     console.error(`Trades fetch error: ${err}`);
-    return null;
+    return [];
   }
 }
 
