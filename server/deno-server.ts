@@ -96,40 +96,36 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
     const data = await response.json();
 
     // Parse orderbook from the response
-    // Response is an array of snapshots, get the most recent one
-    const snapshots = Array.isArray(data) ? data : (data.data || []);
+    // Response format: { snapshots: [...], pagination: {...} }
+    const snapshots = data.snapshots || data.data || (Array.isArray(data) ? data : []);
     if (snapshots.length === 0) {
       console.error("No orderbook snapshots returned");
       return null;
     }
 
     const latestSnapshot = snapshots[0];
-    const orderbook = latestSnapshot.orderbook || latestSnapshot;
 
     const bids: OrderbookLevel[] = [];
     const asks: OrderbookLevel[] = [];
 
-    // Polymarket format: orderbook.yes = bids for YES, orderbook.no = asks (or vice versa)
-    // Kalshi format: similar structure
-    const yesBids = orderbook.yes || orderbook.bids || [];
-    const noBids = orderbook.no || orderbook.asks || [];
+    // Dome API format: { bids: [...], asks: [...] }
+    // Prices are already in dollars (e.g., 0.999)
+    const rawBids = latestSnapshot.bids || [];
+    const rawAsks = latestSnapshot.asks || [];
 
-    // YES bids are offers to buy YES tokens - these are bids
-    for (const bid of yesBids) {
-      const price = Number(bid.price || bid.p || bid[0]) / 100; // Convert cents to dollars
-      const size = Number(bid.size || bid.s || bid[1]);
+    for (const bid of rawBids) {
+      const price = Number(bid.price || bid.p);
+      const size = Number(bid.size || bid.s);
       if (price > 0 && size > 0) {
         bids.push({ price, size });
       }
     }
 
-    // NO bids at price X = asks for YES at price (1-X)
-    for (const noBid of noBids) {
-      const noPrice = Number(noBid.price || noBid.p || noBid[0]) / 100;
-      const size = Number(noBid.size || noBid.s || noBid[1]);
-      const yesAskPrice = 1 - noPrice; // Convert NO bid to YES ask
-      if (yesAskPrice > 0 && size > 0) {
-        asks.push({ price: yesAskPrice, size });
+    for (const ask of rawAsks) {
+      const price = Number(ask.price || ask.p);
+      const size = Number(ask.size || ask.s);
+      if (price > 0 && size > 0) {
+        asks.push({ price, size });
       }
     }
 
