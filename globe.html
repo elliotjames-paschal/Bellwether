@@ -562,6 +562,104 @@
             opacity: 1;
         }
 
+        /* Country Info Panel - Shows when a country is clicked */
+        .country-info-panel {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(17, 24, 39, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 8px;
+            padding: 14px 16px;
+            z-index: 100;
+            min-width: 220px;
+            max-width: 280px;
+            display: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .country-info-panel.visible {
+            display: block;
+        }
+        .country-info-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(75, 85, 99, 0.4);
+        }
+        .country-info-flag {
+            font-size: 28px;
+            line-height: 1;
+        }
+        .country-info-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f3f4f6;
+        }
+        .country-info-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border-radius: 3px;
+            transition: all 0.15s;
+        }
+        .country-info-close:hover {
+            color: #d1d5db;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        /* V-Dem Score Section */
+        .country-vdem-section {
+            margin-bottom: 0;
+        }
+        .country-vdem-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        .country-vdem-score {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .country-vdem-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #dbeafe;
+        }
+        .country-vdem-index {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .country-vdem-bar {
+            height: 4px;
+            background: rgba(75, 85, 99, 0.4);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .country-vdem-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, #94a9bd, #dbeafe);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
         /* Markets list */
         .globe-elections {
             flex: 1;
@@ -810,6 +908,25 @@
             <div class="globe-zoom-controls">
                 <button class="globe-zoom-btn" id="zoom-in" title="Zoom in">+</button>
                 <button class="globe-zoom-btn" id="zoom-out" title="Zoom out">−</button>
+            </div>
+
+            <!-- Country V-Dem Panel (shows when a country is clicked and V-Dem is enabled) -->
+            <div class="country-info-panel" id="country-info-panel">
+                <button class="country-info-close" id="country-info-close" title="Close">&times;</button>
+                <div class="country-info-header">
+                    <span class="country-info-flag" id="country-info-flag"></span>
+                    <span class="country-info-name" id="country-info-name"></span>
+                </div>
+                <div class="country-vdem-section" id="country-vdem-section">
+                    <div class="country-vdem-label">V-Dem Score</div>
+                    <div class="country-vdem-score">
+                        <span class="country-vdem-value" id="country-vdem-value"></span>
+                        <span class="country-vdem-index" id="country-vdem-index"></span>
+                    </div>
+                    <div class="country-vdem-bar">
+                        <div class="country-vdem-bar-fill" id="country-vdem-bar-fill"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- V-Dem Panel (hidden by default, shown when V-Dem layer is active) -->
@@ -1445,6 +1562,56 @@
             }
             filters.search = country;
             applyFilters();
+        };
+
+        // Country Info Panel elements (V-Dem only panel)
+        const countryPanel = document.getElementById('country-info-panel');
+        const countryFlag = document.getElementById('country-info-flag');
+        const countryNameEl = document.getElementById('country-info-name');
+        const countryVdemSection = document.getElementById('country-vdem-section');
+        const countryVdemValue = document.getElementById('country-vdem-value');
+        const countryVdemIndex = document.getElementById('country-vdem-index');
+        const countryVdemBarFill = document.getElementById('country-vdem-bar-fill');
+        const countryCloseBtn = document.getElementById('country-info-close');
+
+        // Close button handler
+        if (countryCloseBtn) {
+            countryCloseBtn.addEventListener('click', () => {
+                countryPanel.classList.remove('visible');
+            });
+        }
+
+        // Handle country click from globe
+        window.onGlobeCountryClick = function(data) {
+            if (!data || !data.name) return;
+
+            // Always filter the sidebar to show this country's markets
+            const searchInput = document.getElementById('globe-search');
+            if (searchInput) {
+                searchInput.value = data.name;
+            }
+            filters.search = data.name;
+            applyFilters();
+
+            // Only show the V-Dem panel if V-Dem layer is enabled and we have data
+            if (data.vdemEnabled && data.vdem) {
+                countryPanel.classList.add('visible');
+
+                // Set country name and flag
+                const flag = countryFlags[data.name] || '🌍';
+                countryFlag.textContent = flag;
+                countryNameEl.textContent = data.name;
+
+                // Show V-Dem score
+                const score = data.vdem.value;
+                const displayScore = data.vdem.inverted ? (1 - score) : score;
+                countryVdemValue.textContent = (displayScore * 100).toFixed(0);
+                countryVdemIndex.textContent = data.vdem.label || 'Index';
+                countryVdemBarFill.style.width = (displayScore * 100) + '%';
+            } else {
+                // Hide panel if V-Dem not enabled
+                countryPanel.classList.remove('visible');
+            }
         };
 
         // Initialize

@@ -546,6 +546,78 @@ a:hover {
     text-decoration: underline;
 }
 
+/* Live Data Section */
+.modal-live-data-container {
+    margin-top: 16px;
+}
+
+.modal-live-data {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(16, 185, 129, 0.04));
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.modal-live-data-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-500);
+    margin-bottom: 12px;
+}
+
+.modal-live-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.modal-live-data-item {
+    text-align: center;
+}
+
+.modal-live-data-label {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-bottom: 4px;
+}
+
+.modal-live-data-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+}
+
+.modal-live-data-sub {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+    margin-top: 2px;
+}
+
+.modal-live-data-timestamp {
+    font-size: 0.65rem;
+    color: var(--gray-400);
+    text-align: right;
+    margin-top: 12px;
+    font-style: italic;
+}
+
+.modal-live-data-loading {
+    text-align: center;
+    color: var(--gray-500);
+    padding: 20px;
+    font-style: italic;
+}
+
+.modal-live-data-note {
+    text-align: center;
+    color: var(--gray-400);
+    font-size: 0.8rem;
+    padding: 12px;
+}
+
 @media (max-width: 768px) {
     .research-finding {
         padding: 16px 20px;

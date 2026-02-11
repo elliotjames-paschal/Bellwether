@@ -26,6 +26,76 @@
     let reviewMode = false;
     let selectedMarkets = new Set();
 
+    // Live data configuration
+    const LIVE_DATA_SERVER = 'https://bellwether-62-46t6s4gmaszv.elliotjames-paschal.deno.net';
+    let tokenIdLookup = {};
+
+    // Load token ID lookup
+    async function loadTokenIdLookup() {
+        try {
+            const response = await fetch('data/token_id_lookup.json');
+            if (response.ok) {
+                tokenIdLookup = await response.json();
+                console.log(`Loaded ${Object.keys(tokenIdLookup).length} token ID mappings`);
+            }
+        } catch (e) {
+            console.warn('Could not load token ID lookup:', e);
+        }
+    }
+
+    // Fetch live data for a market
+    async function fetchLiveData(marketId, platform = 'polymarket') {
+        const tokenId = tokenIdLookup[marketId];
+        if (!tokenId) return null;
+
+        try {
+            const response = await fetch(`${LIVE_DATA_SERVER}/api/metrics/${platform}/${tokenId}`);
+            if (!response.ok) return null;
+            return await response.json();
+        } catch (e) {
+            console.warn('Live data fetch failed:', e);
+            return null;
+        }
+    }
+
+    // Render live data section
+    function renderLiveDataSection(data) {
+        if (!data) {
+            return `<div class="modal-live-data">
+                <div class="modal-live-data-header">Live Market Depth</div>
+                <div class="modal-live-data-note">Live data not available for this market</div>
+            </div>`;
+        }
+
+        const mc = data.manipulation_cost;
+        const vwap = data.vwap_6h;
+
+        const priceImpact = mc.price_impact_cents !== null
+            ? `${mc.price_impact_cents}¢`
+            : 'N/A';
+
+        const vwapValue = vwap.vwap !== null
+            ? `${Math.round(vwap.vwap * 100)}%`
+            : 'No trades';
+
+        return `<div class="modal-live-data">
+            <div class="modal-live-data-header">Live Market Depth</div>
+            <div class="modal-live-data-grid">
+                <div class="modal-live-data-item">
+                    <div class="modal-live-data-label">$100K Buy Impact</div>
+                    <div class="modal-live-data-value">${priceImpact}</div>
+                    <div class="modal-live-data-sub">${mc.levels_consumed} levels consumed</div>
+                </div>
+                <div class="modal-live-data-item">
+                    <div class="modal-live-data-label">6h VWAP</div>
+                    <div class="modal-live-data-value">${vwapValue}</div>
+                    <div class="modal-live-data-sub">${vwap.trade_count} trades</div>
+                </div>
+            </div>
+            <div class="modal-live-data-timestamp">Updated ${new Date(data.fetched_at).toLocaleTimeString()}</div>
+        </div>`;
+    }
+
     // Format currency
     function formatVolume(value) {
         if (!value) return '—';
@@ -143,12 +213,23 @@
         const imageHtml = e.image ? `<div class="market-card-image"><img src="${e.image}" alt="" loading="lazy"></div>` : '';
         const headerClass = e.image ? 'market-card-header has-image' : 'market-card-header';
 
+        // Platform badges
+        let platformBadges = '';
+        if (e.has_both) {
+            platformBadges = '<span class="platform-badge pm">PM</span><span class="platform-badge kalshi">K</span>';
+        } else if (e.has_pm) {
+            platformBadges = '<span class="platform-badge pm">PM</span>';
+        } else if (e.has_k) {
+            platformBadges = '<span class="platform-badge kalshi">K</span>';
+        }
+
         return `
             <div class="${cardClass}" data-market-key="${e.key}">
                 <div class="${headerClass}">
                     ${imageHtml}
                     <div class="market-card-header-text">
                         <div class="market-card-badges">
+                            ${platformBadges}
                             <span class="category-tag">${e.category_display || 'Electoral'}</span>
                         </div>
                         <div class="market-card-title">${truncate(title, 100)}</div>
@@ -304,6 +385,9 @@
             raceContextHtml = renderRaceContextSection(raceContext);
         }
 
+        // Live data container (only for PM markets)
+        const liveDataHtml = e.has_pm ? '<div class="modal-live-data-container"></div>' : '';
+
         return `
             <div class="modal-header">
                 ${modalImageHtml}
@@ -315,6 +399,7 @@
             </div>
             <div class="modal-body">
                 <div class="modal-prices${pricesClass}">${pricesHtml}</div>
+                ${liveDataHtml}
                 ${raceContextHtml}
                 ${linksHtml}
                 ${embedHtml}
@@ -368,6 +453,9 @@
             raceContextHtml = renderRaceContextSection(raceContext);
         }
 
+        // Live data container (only for PM markets)
+        const liveDataHtml = m.platform === 'Polymarket' ? '<div class="modal-live-data-container"></div>' : '';
+
         return `
             <div class="modal-header">
                 ${modalImageHtml}
@@ -383,6 +471,7 @@
             </div>
             <div class="modal-body">
                 <div class="modal-prices single-col">${pricesHtml}</div>
+                ${liveDataHtml}
                 ${raceContextHtml}
                 ${linkHtml}
                 ${embedHtml}
@@ -407,6 +496,18 @@
 
         const closeBtn = modalContent.querySelector('.modal-close');
         if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+        // Load live data if available (Polymarket only for now)
+        const marketId = entry.pm_market_id;
+        if (marketId && entry.has_pm) {
+            const liveDataContainer = modalContent.querySelector('.modal-live-data-container');
+            if (liveDataContainer) {
+                liveDataContainer.innerHTML = '<div class="modal-live-data"><div class="modal-live-data-header">Live Market Depth</div><div class="modal-live-data-loading">Loading...</div></div>';
+                fetchLiveData(marketId, 'polymarket').then(data => {
+                    liveDataContainer.innerHTML = renderLiveDataSection(data);
+                });
+            }
+        }
     }
 
     function closeModal() {
@@ -684,6 +785,9 @@
     }
 
     function init() {
+        // Load token ID lookup for live data
+        loadTokenIdLookup();
+
         document.querySelectorAll('.monitor-tab').forEach(tab => {
             tab.addEventListener('click', () => switchView(tab.dataset.view));
         });

@@ -1017,12 +1017,124 @@ function initGlobe(containerId, options) {
         if (!isDragging) return;
         isDragging = false;
         updateCursor();
+
+        // If we didn't drag, treat this as a click
+        if (!hasDragged) {
+            var rect = svgNode.getBoundingClientRect();
+            var mx = evt.clientX - rect.left;
+            var my = evt.clientY - rect.top;
+
+            // Check if click is within the globe SVG
+            if (mx >= 0 && mx <= size && my >= 0 && my <= size) {
+                // First check if we clicked on a marker
+                var marker = findNearestMarker(mx, my);
+                if (!marker) {
+                    // Check if we clicked on a country
+                    var country = getCountryAtPoint(mx, my);
+                    console.log('Click detected, country:', country);
+                    if (country && country.name) {
+                        var markets = getMarketsForCountry(country.name);
+                        var vdemScore = getCountryVdemScore(country.name);
+                        console.log('Country:', country.name, 'Markets:', markets.length);
+
+                        // Notify the page about country click
+                        if (window.onGlobeCountryClick) {
+                            window.onGlobeCountryClick({
+                                name: country.name,
+                                id: country.id,
+                                markets: markets,
+                                marketCount: markets.length,
+                                vdem: vdemScore,
+                                vdemEnabled: layerVisibility.vdem
+                            });
+                        }
+
+                        // Rotate to face the country
+                        if (window.rotateGlobeTo) {
+                            window.rotateGlobeTo(country.name);
+                        }
+                    }
+                }
+            }
+        }
+
         clickStartMarker = null;
         scheduleResume();
     });
 
     // Check if we're on the globe page (dedicated globe view)
     var isGlobePage = document.body.classList.contains('globe-page');
+
+    // Country click detection
+    function getCountryAtPoint(mx, my) {
+        console.log('getCountryAtPoint called, countriesFeatures:', !!countriesFeatures);
+        if (!countriesFeatures || !countriesFeatures.features) {
+            console.log('No countriesFeatures loaded');
+            return null;
+        }
+
+        // Convert screen coords to geo coords
+        var geoCoords = projection.invert([mx, my]);
+        console.log('Geo coords:', geoCoords);
+        if (!geoCoords) return null;
+
+        // Check if the point is on the visible hemisphere
+        var center = projection.invert([size / 2, size / 2]);
+        if (!center || d3.geoDistance(geoCoords, center) > Math.PI / 2) {
+            console.log('Point not on visible hemisphere');
+            return null;
+        }
+
+        // Find which country contains this point
+        console.log('Checking', countriesFeatures.features.length, 'countries');
+        for (var i = 0; i < countriesFeatures.features.length; i++) {
+            var feature = countriesFeatures.features[i];
+            if (d3.geoContains(feature, geoCoords)) {
+                var countryId = parseInt(feature.id);
+                var countryName = isoToCountry[countryId];
+                console.log('Found country:', countryId, countryName);
+                return {
+                    id: countryId,
+                    name: countryName,
+                    feature: feature,
+                    coords: geoCoords
+                };
+            }
+        }
+        console.log('No country found at point');
+        return null;
+    }
+
+    // Get markets for a country
+    function getMarketsForCountry(countryName) {
+        if (!countryName) return [];
+        var countryLower = countryName.toLowerCase();
+        return allMarkets.filter(function(m) {
+            var mCountry = (m.country || '').toLowerCase();
+            return mCountry === countryLower || mCountry.includes(countryLower) || countryLower.includes(mCountry);
+        });
+    }
+
+    // Get V-Dem data for country
+    function getCountryVdemScore(countryName) {
+        if (!vdemData || !layerVisibility.vdem || !countryName) return null;
+
+        // Try direct lookup first, then try alias
+        var country = vdemData.countries[countryName];
+        if (!country && countryNameAliases[countryName]) {
+            country = vdemData.countries[countryNameAliases[countryName]];
+        }
+        if (!country || !country.scores || !country.scores[activeVdemIndex]) return null;
+
+        var scoreData = country.scores[activeVdemIndex];
+        var indexInfo = vdemData.indices[activeVdemIndex];
+        return {
+            value: scoreData.value,
+            label: indexInfo ? indexInfo.label : activeVdemIndex,
+            description: indexInfo ? indexInfo.description : '',
+            inverted: indexInfo ? indexInfo.invert : false
+        };
+    }
 
     // Scroll-wheel zoom (fullscreen mode OR globe page)
     svgNode.addEventListener('wheel', function(evt) {
@@ -1031,6 +1143,7 @@ function initGlobe(containerId, options) {
         var delta = evt.deltaY > 0 ? -0.08 : 0.08;
         zoomLevel = Math.max(0.5, Math.min(4, zoomLevel + delta));
     }, { passive: false });
+
 
     // Load data — use countries topology for borders
     Promise.all([
@@ -1275,6 +1388,25 @@ function initGlobe(containerId, options) {
         window.getVdemCountryData = function(countryName) {
             if (!vdemData || !vdemData.countries[countryName]) return null;
             return vdemData.countries[countryName];
+        };
+
+        // Get current V-Dem index info
+        window.getActiveVdemIndex = function() {
+            if (!vdemData || !vdemData.indices) return null;
+            return {
+                key: activeVdemIndex,
+                info: vdemData.indices[activeVdemIndex]
+            };
+        };
+
+        // Check if V-Dem layer is enabled
+        window.isVdemEnabled = function() {
+            return layerVisibility.vdem;
+        };
+
+        // Get all markets for a country
+        window.getMarketsForCountry = function(countryName) {
+            return getMarketsForCountry(countryName);
         };
 
     }).catch(function(err) {
