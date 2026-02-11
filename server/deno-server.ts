@@ -1,10 +1,10 @@
 /**
- * Bellwether Live Data Server (Deno Deploy version)
+ * Bellwether Live Data Server (Deno Deploy - Serverless version)
  *
  * Features:
  * 1. Manipulation Cost: Simulates "$100K buy", reports price impact
  * 2. 6-Hour VWAP: Volume-weighted average price (Duffie method)
- * 3. Adaptive rate limiting: Backs off when API is busy
+ * 3. On-demand fetching with Deno KV caching
  *
  * Deploy: https://dash.deno.com
  */
@@ -17,41 +17,21 @@ const DOME_API_KEY = Deno.env.get("DOME_API_KEY") || "";
 const DOME_REST_BASE = "https://api.domeapi.io/v1";
 
 const CONFIG = {
-  tiers: {
-    tier1: {
-      max_markets: 50,
-      poll_interval_ms: 60000,  // Every 60 seconds
-    },
-    tier2: {
-      max_markets: 500,
-      poll_interval_ms: 300000, // Every 5 minutes
-    },
-  },
+  cache_ttl_ms: 60000, // 60 seconds cache TTL
   vwap_window_hours: 6,
   manipulation_test_amount: 100000, // $100K
-  tier1_markets: [] as Market[],
-  tier2_markets: [] as Market[],
 };
 
-interface Market {
-  label: string;
-  platform: string;
-  token_id: string;
-  condition_id?: string;
-  volume: number;
-}
+// Use Deno KV for persistent caching
+const kv = await Deno.openKv();
 
-interface OrderbookData {
-  bids: number[][];
-  asks: number[][];
-  timestamp: number;
-  midpoint: number | null;
-}
+// =============================================================================
+// TYPES
+// =============================================================================
 
-interface TradeData {
+interface OrderbookLevel {
   price: number;
   size: number;
-  timestamp: number;
 }
 
 interface ManipulationResult {
@@ -59,135 +39,199 @@ interface ManipulationResult {
   volume_consumed: number;
   levels_consumed: number;
   dollars_spent: number;
+  starting_price: number | null;
+  ending_price: number | null;
+}
+
+interface VWAPResult {
+  vwap: number | null;
+  trade_count: number;
+  total_volume: number;
+  window_hours: number;
+}
+
+interface MarketMetrics {
+  token_id: string;
+  platform: string;
+  manipulation_cost: ManipulationResult;
+  vwap_6h: VWAPResult;
+  fetched_at: string;
+  cached: boolean;
 }
 
 // =============================================================================
-// CACHE
+// DOME API FUNCTIONS
 // =============================================================================
 
-const cache: {
-  orderbooks: Record<string, OrderbookData>;
-  trades: Record<string, TradeData[]>;
-  computed_metrics: Record<string, {
-    label?: string;
-    manipulation_cost?: ManipulationResult;
-    vwap_6h?: number | null;
-    updated_at?: number;
-    tier?: string;
-  }>;
-} = {
-  orderbooks: {},
-  trades: {},
-  computed_metrics: {},
-};
+async function fetchOrderbook(platform: string, tokenId: string): Promise<OrderbookLevel[][] | null> {
+  if (!DOME_API_KEY) {
+    console.error("No DOME_API_KEY set");
+    return null;
+  }
 
-// =============================================================================
-// ADAPTIVE RATE LIMITING
-// =============================================================================
+  const endpoint = platform === "kalshi"
+    ? `${DOME_REST_BASE}/kalshi/orderbook/${tokenId}`
+    : `${DOME_REST_BASE}/polymarket/orderbook/${tokenId}`;
 
-const rateLimiter = {
-  currentDelayMs: 50,
-  minDelayMs: 50,
-  maxDelayMs: 5000,
-  backoffMultiplier: 2,
-  restoreMultiplier: 0.9,
-  consecutiveSuccesses: 0,
-  consecutiveFailures: 0,
-  isBackingOff: false,
-};
+  try {
+    const response = await fetch(endpoint, {
+      headers: { Authorization: `Bearer ${DOME_API_KEY}` },
+    });
 
-function recordApiSuccess() {
-  rateLimiter.consecutiveSuccesses++;
-  rateLimiter.consecutiveFailures = 0;
-
-  if (rateLimiter.consecutiveSuccesses > 10 && rateLimiter.currentDelayMs > rateLimiter.minDelayMs) {
-    rateLimiter.currentDelayMs = Math.max(
-      rateLimiter.minDelayMs,
-      rateLimiter.currentDelayMs * rateLimiter.restoreMultiplier
-    );
-    if (rateLimiter.isBackingOff) {
-      console.log(`[RateLimit] Restoring speed, delay now ${Math.round(rateLimiter.currentDelayMs)}ms`);
+    if (!response.ok) {
+      console.error(`Orderbook fetch failed: ${response.status}`);
+      return null;
     }
-    rateLimiter.isBackingOff = false;
+
+    const data = await response.json();
+
+    // Parse orderbook - format varies by platform
+    const bids: OrderbookLevel[] = [];
+    const asks: OrderbookLevel[] = [];
+
+    if (data.bids) {
+      for (const bid of data.bids) {
+        bids.push({ price: Number(bid.price || bid[0]), size: Number(bid.size || bid[1]) });
+      }
+    }
+    if (data.asks) {
+      for (const ask of data.asks) {
+        asks.push({ price: Number(ask.price || ask[0]), size: Number(ask.size || ask[1]) });
+      }
+    }
+
+    // Sort: bids descending, asks ascending
+    bids.sort((a, b) => b.price - a.price);
+    asks.sort((a, b) => a.price - b.price);
+
+    return [bids, asks];
+  } catch (err) {
+    console.error(`Orderbook fetch error: ${err}`);
+    return null;
   }
 }
 
-function recordApiRateLimit() {
-  rateLimiter.consecutiveFailures++;
-  rateLimiter.consecutiveSuccesses = 0;
-  rateLimiter.isBackingOff = true;
+async function fetchTrades(platform: string, tokenId: string): Promise<Array<{price: number, size: number, timestamp: number}> | null> {
+  if (!DOME_API_KEY) return null;
 
-  rateLimiter.currentDelayMs = Math.min(
-    rateLimiter.maxDelayMs,
-    rateLimiter.currentDelayMs * rateLimiter.backoffMultiplier
-  );
-  console.log(`[RateLimit] Backing off, delay now ${Math.round(rateLimiter.currentDelayMs)}ms`);
-}
+  // Use candlestick endpoint for trade history
+  const now = Math.floor(Date.now() / 1000);
+  const sixHoursAgo = now - (6 * 60 * 60);
 
-async function rateLimitedDelay() {
-  await new Promise((r) => setTimeout(r, rateLimiter.currentDelayMs));
-}
+  const endpoint = platform === "kalshi"
+    ? `${DOME_REST_BASE}/kalshi/candlesticks/${tokenId}?interval=1m&from=${sixHoursAgo}&to=${now}`
+    : `${DOME_REST_BASE}/polymarket/candlesticks/${tokenId}?interval=1m&from=${sixHoursAgo}&to=${now}`;
 
-// =============================================================================
-// MANIPULATION COST CALCULATION
-// =============================================================================
+  try {
+    const response = await fetch(endpoint, {
+      headers: { Authorization: `Bearer ${DOME_API_KEY}` },
+    });
 
-function computeManipulationCost(
-  asks: number[][],
-  currentMidpoint: number,
-  dollarAmount: number
-): ManipulationResult {
-  if (!asks || asks.length === 0) {
-    return { price_impact_cents: null, volume_consumed: 0, levels_consumed: 0, dollars_spent: 0 };
+    if (!response.ok) {
+      console.error(`Trades fetch failed: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+
+    // Convert candlesticks to trades (using close price and volume)
+    const trades: Array<{price: number, size: number, timestamp: number}> = [];
+
+    if (Array.isArray(data)) {
+      for (const candle of data) {
+        if (candle.volume > 0) {
+          trades.push({
+            price: Number(candle.close || candle.c),
+            size: Number(candle.volume || candle.v),
+            timestamp: Number(candle.timestamp || candle.t) * 1000,
+          });
+        }
+      }
+    }
+
+    return trades;
+  } catch (err) {
+    console.error(`Trades fetch error: ${err}`);
+    return null;
   }
+}
 
-  const sortedAsks = [...asks].sort((a, b) => a[0] - b[0]);
+// =============================================================================
+// CALCULATION FUNCTIONS
+// =============================================================================
 
-  let remainingDollars = dollarAmount;
+function computeManipulationCost(bids: OrderbookLevel[], asks: OrderbookLevel[], testAmount: number): ManipulationResult {
+  // Simulate a BUY order walking through asks
+  let remaining = testAmount;
+  let spent = 0;
   let volumeConsumed = 0;
   let levelsConsumed = 0;
-  let lastPrice = currentMidpoint;
+  let startingPrice: number | null = null;
+  let endingPrice: number | null = null;
 
-  for (const [price, size] of sortedAsks) {
-    if (remainingDollars <= 0) break;
+  if (asks.length === 0) {
+    return {
+      price_impact_cents: null,
+      volume_consumed: 0,
+      levels_consumed: 0,
+      dollars_spent: 0,
+      starting_price: null,
+      ending_price: null,
+    };
+  }
 
-    const levelCost = price * size;
+  startingPrice = asks[0].price;
 
-    if (levelCost <= remainingDollars) {
-      remainingDollars -= levelCost;
-      volumeConsumed += size;
+  for (const ask of asks) {
+    if (remaining <= 0) break;
+
+    const levelCost = ask.price * ask.size;
+
+    if (levelCost <= remaining) {
+      // Consume entire level
+      spent += levelCost;
+      volumeConsumed += ask.size;
+      remaining -= levelCost;
       levelsConsumed++;
-      lastPrice = price;
+      endingPrice = ask.price;
     } else {
-      const sharesToBuy = remainingDollars / price;
+      // Partial fill
+      const sharesToBuy = remaining / ask.price;
+      spent += remaining;
       volumeConsumed += sharesToBuy;
+      remaining = 0;
       levelsConsumed++;
-      lastPrice = price;
-      remainingDollars = 0;
+      endingPrice = ask.price;
     }
   }
 
-  const priceImpactCents = (lastPrice - currentMidpoint) * 100;
+  const priceImpact = (startingPrice && endingPrice)
+    ? Math.round((endingPrice - startingPrice) * 100) // in cents
+    : null;
 
   return {
-    price_impact_cents: Math.round(priceImpactCents * 100) / 100,
+    price_impact_cents: priceImpact,
     volume_consumed: Math.round(volumeConsumed),
     levels_consumed: levelsConsumed,
-    dollars_spent: dollarAmount - remainingDollars,
+    dollars_spent: Math.round(spent),
+    starting_price: startingPrice,
+    ending_price: endingPrice,
   };
 }
 
-// =============================================================================
-// 6-HOUR VWAP CALCULATION
-// =============================================================================
+function computeVWAP(trades: Array<{price: number, size: number, timestamp: number}>): VWAPResult {
+  const sixHoursAgo = Date.now() - (CONFIG.vwap_window_hours * 60 * 60 * 1000);
 
-function computeVWAP(trades: TradeData[], windowHours = 6): number | null {
-  if (!trades || trades.length === 0) return null;
+  const recentTrades = trades.filter(t => t.timestamp >= sixHoursAgo);
 
-  const cutoffTime = Date.now() - windowHours * 60 * 60 * 1000;
-  const recentTrades = trades.filter((t) => t.timestamp >= cutoffTime);
-
-  if (recentTrades.length === 0) return null;
+  if (recentTrades.length === 0) {
+    return {
+      vwap: null,
+      trade_count: 0,
+      total_volume: 0,
+      window_hours: CONFIG.vwap_window_hours,
+    };
+  }
 
   let sumPriceVolume = 0;
   let sumVolume = 0;
@@ -197,234 +241,81 @@ function computeVWAP(trades: TradeData[], windowHours = 6): number | null {
     sumVolume += trade.size;
   }
 
-  if (sumVolume === 0) return null;
-
-  return sumPriceVolume / sumVolume;
+  return {
+    vwap: sumVolume > 0 ? Math.round((sumPriceVolume / sumVolume) * 10000) / 10000 : null,
+    trade_count: recentTrades.length,
+    total_volume: Math.round(sumVolume),
+    window_hours: CONFIG.vwap_window_hours,
+  };
 }
 
 // =============================================================================
-// DOME API INTEGRATION
+// CACHE FUNCTIONS
 // =============================================================================
 
-async function fetchOrderbook(platform: string, tokenId: string): Promise<OrderbookData | null> {
-  const endpoint =
-    platform === "polymarket"
-      ? `${DOME_REST_BASE}/polymarket/orderbooks`
-      : `${DOME_REST_BASE}/kalshi/orderbooks`;
+async function getCachedMetrics(tokenId: string): Promise<MarketMetrics | null> {
+  const result = await kv.get<MarketMetrics>(["metrics", tokenId]);
 
-  const params = new URLSearchParams({
-    [platform === "polymarket" ? "token_id" : "ticker"]: tokenId,
-    limit: "1",
-  });
+  if (!result.value) return null;
 
-  try {
-    const response = await fetch(`${endpoint}?${params}`, {
-      headers: { Authorization: DOME_API_KEY },
-    });
+  // Check if cache is still valid
+  const fetchedAt = new Date(result.value.fetched_at).getTime();
+  if (Date.now() - fetchedAt > CONFIG.cache_ttl_ms) {
+    return null; // Cache expired
+  }
 
-    if (response.status === 429) {
-      recordApiRateLimit();
-      return null;
-    }
+  return { ...result.value, cached: true };
+}
 
-    if (!response.ok) {
-      console.error(`Orderbook fetch failed: ${response.status}`);
-      return null;
-    }
+async function cacheMetrics(tokenId: string, metrics: MarketMetrics): Promise<void> {
+  await kv.set(["metrics", tokenId], metrics, { expireIn: CONFIG.cache_ttl_ms });
+}
 
-    recordApiSuccess();
+// =============================================================================
+// MAIN FETCH FUNCTION
+// =============================================================================
 
-    const data = await response.json();
-    const snapshots = data.snapshots || [];
+async function getMarketMetrics(platform: string, tokenId: string): Promise<MarketMetrics | null> {
+  // Check cache first
+  const cached = await getCachedMetrics(tokenId);
+  if (cached) {
+    return cached;
+  }
 
-    if (snapshots.length === 0) return null;
+  // Fetch fresh data
+  const [orderbook, trades] = await Promise.all([
+    fetchOrderbook(platform, tokenId),
+    fetchTrades(platform, tokenId),
+  ]);
 
-    const latest = snapshots[0];
-    return {
-      bids: latest.orderbook?.yes || latest.bids || [],
-      asks: latest.orderbook?.no || latest.asks || [],
-      timestamp: latest.timestamp,
-      midpoint: latest.midpoint || null,
-    };
-  } catch (err) {
-    console.error(`Orderbook fetch error: ${err}`);
-    recordApiRateLimit();
+  if (!orderbook) {
     return null;
   }
-}
 
-async function fetchRecentTrades(
-  platform: string,
-  tokenId: string,
-  hoursBack = 6
-): Promise<TradeData[] | null> {
-  const endpoint =
-    platform === "polymarket"
-      ? `${DOME_REST_BASE}/polymarket/candlesticks/${tokenId}`
-      : `${DOME_REST_BASE}/kalshi/candlesticks/${tokenId}`;
+  const [bids, asks] = orderbook;
+  const manipulationCost = computeManipulationCost(bids, asks, CONFIG.manipulation_test_amount);
+  const vwap = computeVWAP(trades || []);
 
-  const endTime = Date.now();
-  const startTime = endTime - hoursBack * 60 * 60 * 1000;
+  const metrics: MarketMetrics = {
+    token_id: tokenId,
+    platform,
+    manipulation_cost: manipulationCost,
+    vwap_6h: vwap,
+    fetched_at: new Date().toISOString(),
+    cached: false,
+  };
 
-  const params = new URLSearchParams({
-    interval: "60",
-    start_time: String(startTime),
-    end_time: String(endTime),
-  });
+  // Cache the result
+  await cacheMetrics(tokenId, metrics);
 
-  try {
-    const response = await fetch(`${endpoint}?${params}`, {
-      headers: { Authorization: DOME_API_KEY },
-    });
-
-    if (response.status === 429) {
-      recordApiRateLimit();
-      return null;
-    }
-
-    if (!response.ok) {
-      console.error(`Trades fetch failed: ${response.status}`);
-      return null;
-    }
-
-    recordApiSuccess();
-
-    const data = await response.json();
-    const candles = data.candlesticks || data.candles || [];
-
-    return candles.map((c: Record<string, number>) => ({
-      price: c.close || c.c || c.p,
-      size: c.volume || c.v || 1,
-      timestamp: c.timestamp || c.t,
-    }));
-  } catch (err) {
-    console.error(`Trades fetch error: ${err}`);
-    recordApiRateLimit();
-    return null;
-  }
-}
-
-// =============================================================================
-// POLLING
-// =============================================================================
-
-async function pollTier(tierName: string, markets: Market[], type: "orderbook" | "trades") {
-  if (!markets || markets.length === 0) return;
-
-  console.log(`[${tierName}] Polling ${type} for ${markets.length} markets...`);
-
-  for (const market of markets) {
-    try {
-      if (type === "orderbook") {
-        const orderbook = await fetchOrderbook(market.platform, market.token_id);
-        if (orderbook) {
-          cache.orderbooks[market.token_id] = orderbook;
-
-          const manipResult = computeManipulationCost(
-            orderbook.asks,
-            orderbook.midpoint || 0.5,
-            CONFIG.manipulation_test_amount
-          );
-
-          if (!cache.computed_metrics[market.token_id]) {
-            cache.computed_metrics[market.token_id] = { label: market.label };
-          }
-          cache.computed_metrics[market.token_id].manipulation_cost = manipResult;
-          cache.computed_metrics[market.token_id].updated_at = Date.now();
-          cache.computed_metrics[market.token_id].tier = tierName;
-        }
-      } else if (type === "trades") {
-        const trades = await fetchRecentTrades(
-          market.platform,
-          market.token_id,
-          CONFIG.vwap_window_hours
-        );
-        if (trades) {
-          cache.trades[market.token_id] = trades;
-          const vwap = computeVWAP(trades, CONFIG.vwap_window_hours);
-
-          if (!cache.computed_metrics[market.token_id]) {
-            cache.computed_metrics[market.token_id] = { label: market.label };
-          }
-          cache.computed_metrics[market.token_id].vwap_6h = vwap;
-          cache.computed_metrics[market.token_id].updated_at = Date.now();
-        }
-      }
-    } catch (err) {
-      console.error(`[${tierName}] Error polling ${market.token_id}:`, err);
-    }
-
-    await rateLimitedDelay();
-  }
-}
-
-// =============================================================================
-// MARKET DATA (Embedded top markets - update via redeploy or fetch from URL)
-// =============================================================================
-
-async function loadMarkets() {
-  console.log("Loading market configuration...");
-
-  // Option 1: Fetch from your website's active_markets.json
-  try {
-    const response = await fetch(
-      "https://raw.githubusercontent.com/elliotjames-paschal/Bellwether/main/data/active_markets.json"
-    );
-    if (response.ok) {
-      const data = await response.json();
-      const markets = data.markets || [];
-
-      const sortedMarkets = markets
-        .filter((m: Record<string, string>) => m.pm_token_id_yes || m.k_ticker)
-        .sort((a: Record<string, number>, b: Record<string, number>) =>
-          (b.total_volume || 0) - (a.total_volume || 0)
-        );
-
-      CONFIG.tier1_markets = sortedMarkets
-        .slice(0, CONFIG.tiers.tier1.max_markets)
-        .map((m: Record<string, string | number>) => ({
-          label: m.label as string,
-          platform: m.pm_token_id_yes ? "polymarket" : "kalshi",
-          token_id: (m.pm_token_id_yes || m.k_ticker) as string,
-          condition_id: m.pm_condition_id as string,
-          volume: m.total_volume as number,
-        }));
-
-      CONFIG.tier2_markets = sortedMarkets
-        .slice(CONFIG.tiers.tier1.max_markets, CONFIG.tiers.tier1.max_markets + CONFIG.tiers.tier2.max_markets)
-        .map((m: Record<string, string | number>) => ({
-          label: m.label as string,
-          platform: m.pm_token_id_yes ? "polymarket" : "kalshi",
-          token_id: (m.pm_token_id_yes || m.k_ticker) as string,
-          condition_id: m.pm_condition_id as string,
-          volume: m.total_volume as number,
-        }));
-
-      console.log(`Loaded ${CONFIG.tier1_markets.length} tier1 + ${CONFIG.tier2_markets.length} tier2 markets`);
-      return;
-    }
-  } catch (err) {
-    console.error("Failed to fetch markets from GitHub:", err);
-  }
-
-  // Option 2: Fallback to hardcoded top markets
-  console.log("Using fallback hardcoded markets");
-  CONFIG.tier1_markets = [
-    // Add a few key markets as fallback
-    {
-      label: "2028 US Presidential Election",
-      platform: "polymarket",
-      token_id: "21742633143463906290569050155826241533067272736897614950488156847949938836455",
-      volume: 600000000,
-    },
-  ];
+  return metrics;
 }
 
 // =============================================================================
 // HTTP HANDLER
 // =============================================================================
 
-function handleRequest(request: Request): Response {
+async function handleRequest(request: Request): Promise<Response> {
   const url = new URL(request.url);
 
   const corsHeaders = {
@@ -438,64 +329,14 @@ function handleRequest(request: Request): Response {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // GET /metrics - All computed metrics
-  if (url.pathname === "/metrics" || url.pathname === "/api/metrics") {
-    const timestamps = Object.values(cache.computed_metrics)
-      .map((m) => m.updated_at || 0)
-      .filter((t) => t > 0);
-    const oldestUpdate = timestamps.length > 0 ? Math.min(...timestamps) : 0;
-    const cacheAgeMs = oldestUpdate > 0 ? Date.now() - oldestUpdate : 0;
-
-    return new Response(
-      JSON.stringify({
-        generated_at: new Date().toISOString(),
-        cache_age_seconds: Math.round(cacheAgeMs / 1000),
-        manipulation_test_amount: CONFIG.manipulation_test_amount,
-        vwap_window_hours: CONFIG.vwap_window_hours,
-        markets_count: Object.keys(cache.computed_metrics).length,
-        markets: cache.computed_metrics,
-      }),
-      { headers: corsHeaders }
-    );
-  }
-
-  // GET /metrics/:token_id - Single market
-  const marketMatch = url.pathname.match(/^\/(?:api\/)?metrics\/(.+)$/);
-  if (marketMatch) {
-    const tokenId = marketMatch[1];
-    const metrics = cache.computed_metrics[tokenId];
-
-    if (!metrics) {
-      return new Response(JSON.stringify({ error: "Market not found" }), {
-        status: 404,
-        headers: corsHeaders,
-      });
-    }
-
-    return new Response(
-      JSON.stringify({
-        token_id: tokenId,
-        ...metrics,
-      }),
-      { headers: corsHeaders }
-    );
-  }
-
   // GET /health
   if (url.pathname === "/health") {
     return new Response(
       JSON.stringify({
         status: "ok",
-        markets_tracked: {
-          tier1: CONFIG.tier1_markets.length,
-          tier2: CONFIG.tier2_markets.length,
-        },
-        cache_size: Object.keys(cache.computed_metrics).length,
-        rate_limiter: {
-          current_delay_ms: Math.round(rateLimiter.currentDelayMs),
-          is_backing_off: rateLimiter.isBackingOff,
-          status: rateLimiter.isBackingOff ? "backing_off" : "normal",
-        },
+        mode: "serverless",
+        cache_ttl_seconds: CONFIG.cache_ttl_ms / 1000,
+        dome_api_configured: !!DOME_API_KEY,
       }),
       { headers: corsHeaders }
     );
@@ -506,55 +347,63 @@ function handleRequest(request: Request): Response {
     return new Response(
       JSON.stringify({
         name: "Bellwether Live Data Server",
-        endpoints: ["/metrics", "/metrics/:token_id", "/health"],
+        version: "2.0.0-serverless",
+        endpoints: {
+          "/health": "Server health check",
+          "/api/metrics/:platform/:token_id": "Get manipulation cost + VWAP for a market",
+        },
+        example: "/api/metrics/polymarket/21742633143463906290569050155826241533067272736897614950488156847949938836455",
         docs: "https://github.com/elliotjames-paschal/Bellwether",
       }),
       { headers: corsHeaders }
     );
   }
 
-  return new Response(JSON.stringify({ error: "Not found" }), {
-    status: 404,
-    headers: corsHeaders,
-  });
-}
+  // GET /api/metrics/:platform/:token_id
+  const metricsMatch = url.pathname.match(/^\/api\/metrics\/(polymarket|kalshi)\/(.+)$/);
+  if (metricsMatch) {
+    const platform = metricsMatch[1];
+    const tokenId = metricsMatch[2];
 
-// =============================================================================
-// STARTUP
-// =============================================================================
+    const metrics = await getMarketMetrics(platform, tokenId);
 
-async function startPolling() {
-  console.log("==========================================");
-  console.log("  Bellwether Live Data Server (Deno)");
-  console.log("==========================================");
+    if (!metrics) {
+      return new Response(
+        JSON.stringify({
+          error: "Failed to fetch market data",
+          hint: "Check that the token_id is valid and the platform is correct"
+        }),
+        { status: 404, headers: corsHeaders }
+      );
+    }
 
-  if (!DOME_API_KEY) {
-    console.error("ERROR: DOME_API_KEY environment variable not set!");
-    console.error("Set it in Deno Deploy dashboard under Settings > Environment Variables");
+    return new Response(JSON.stringify(metrics), { headers: corsHeaders });
   }
 
-  await loadMarkets();
+  // Legacy endpoint support: /metrics/:token_id (assumes polymarket)
+  const legacyMatch = url.pathname.match(/^\/metrics\/(.+)$/);
+  if (legacyMatch) {
+    const tokenId = legacyMatch[1];
+    const metrics = await getMarketMetrics("polymarket", tokenId);
 
-  // Initial poll
-  console.log("\nInitial data fetch...");
-  await pollTier("tier1", CONFIG.tier1_markets, "orderbook");
-  await pollTier("tier1", CONFIG.tier1_markets, "trades");
+    if (!metrics) {
+      return new Response(
+        JSON.stringify({ error: "Market not found" }),
+        { status: 404, headers: corsHeaders }
+      );
+    }
 
-  // Set up polling intervals
-  setInterval(() => pollTier("tier1", CONFIG.tier1_markets, "orderbook"), CONFIG.tiers.tier1.poll_interval_ms);
-  setInterval(() => pollTier("tier1", CONFIG.tier1_markets, "trades"), CONFIG.tiers.tier1.poll_interval_ms);
-  setInterval(() => pollTier("tier2", CONFIG.tier2_markets, "orderbook"), CONFIG.tiers.tier2.poll_interval_ms);
-  setInterval(() => pollTier("tier2", CONFIG.tier2_markets, "trades"), CONFIG.tiers.tier2.poll_interval_ms);
+    return new Response(JSON.stringify(metrics), { headers: corsHeaders });
+  }
 
-  console.log("\n==========================================");
-  console.log("  Polling started!");
-  console.log(`  Tier 1: ${CONFIG.tier1_markets.length} markets @ 60s`);
-  console.log(`  Tier 2: ${CONFIG.tier2_markets.length} markets @ 5min`);
-  console.log("==========================================\n");
+  return new Response(
+    JSON.stringify({
+      error: "Not found",
+      available_endpoints: ["/", "/health", "/api/metrics/:platform/:token_id"]
+    }),
+    { status: 404, headers: corsHeaders }
+  );
 }
-
-// Start polling in background
-startPolling();
 
 // Start HTTP server
 Deno.serve({ port: 8000 }, handleRequest);
