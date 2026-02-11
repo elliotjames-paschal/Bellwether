@@ -1,0 +1,127 @@
+{
+  "generated_at": "2026-02-10T18:14:19.553401",
+  "elections": [
+    {
+      "id": "9002",
+      "name": "Texas Primary Election",
+      "electionDay": "2026-03-01",
+      "daysUntil": 19,
+      "state": "TX",
+      "contests": [
+        {
+          "office": "Governor",
+          "type": "Primary",
+          "district": "Texas",
+          "candidates": [
+            {
+              "name": "Greg Abbott",
+              "party": "Republican",
+              "photoUrl": ""
+            },
+            {
+              "name": "Beto O'Rourke",
+              "party": "Democratic",
+              "photoUrl": ""
+            }
+          ]
+        }
+      ],
+      "matchedMarketCount": 0,
+      "matchedMarkets": []
+    },
+    {
+      "id": "9001",
+      "name": "California Special Election",
+      "electionDay": "2026-03-15",
+      "daysUntil": 33,
+      "state": "CA",
+      "contests": [
+        {
+          "office": "US Senate",
+          "type": "General",
+          "district": "California",
+          "candidates": [
+            {
+              "name": "Adam Schiff",
+              "party": "Democratic",
+              "photoUrl": ""
+            },
+            {
+              "name": "Steve Garvey",
+              "party": "Republican",
+              "photoUrl": ""
+            }
+          ]
+        }
+      ],
+      "matchedMarketCount": 0,
+      "matchedMarkets": []
+    },
+    {
+      "id": "2000",
+      "name": "VIP Test Election",
+      "electionDay": "2026-06-10",
+      "daysUntil": 120,
+      "state": "CA",
+      "contests": [
+        {
+          "office": "US House - District 35",
+          "type": "General",
+          "district": "California's 35th congressional district",
+          "candidates": [
+            {
+              "name": "Jane Smith",
+              "party": "Republican",
+              "photoUrl": ""
+            },
+            {
+              "name": "John Doe",
+              "party": "Democratic",
+              "photoUrl": ""
+            }
+          ]
+        }
+      ],
+      "matchedMarketCount": 0,
+      "matchedMarkets": []
+    },
+    {
+      "id": "9003",
+      "name": "US General Election 2026",
+      "electionDay": "2026-11-03",
+      "daysUntil": 266,
+      "state": null,
+      "contests": [],
+      "matchedMarketCount": 0,
+      "matchedMarkets": []
+    },
+    {
+      "id": "9004",
+      "name": "Georgia Runoff Election",
+      "electionDay": "2026-12-06",
+      "daysUntil": 299,
+      "state": "GA",
+      "contests": [
+        {
+          "office": "US Senate",
+          "type": "Runoff",
+          "district": "Georgia",
+          "candidates": [
+            {
+              "name": "Raphael Warnock",
+              "party": "Democratic",
+              "photoUrl": ""
+            },
+            {
+              "name": "Herschel Walker",
+              "party": "Republican",
+              "photoUrl": ""
+            }
+          ]
+        }
+      ],
+      "matchedMarketCount": 0,
+      "matchedMarkets": []
+    }
+  ]
+}
