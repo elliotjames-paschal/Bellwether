@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Globe - Bellwether</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="css/styles.css?v=20260203n">
+    <link rel="stylesheet" href="css/styles.css?v=20260210f">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
     <style>
         /* Globe View Styles */
         body.globe-page {
@@ -48,9 +49,10 @@
             filter: invert(1) opacity(0.8);
         }
 
-        /* Also add the logo gradient square for dark mode */
+        /* Logo gradient circle for dark mode */
         .globe-page .nav-logo::before {
             background: linear-gradient(135deg, #60a5fa, #34d399);
+            border-radius: 50%;
         }
 
         .globe-view {
@@ -69,8 +71,8 @@
         }
 
         .globe-main #globe-container {
-            width: 600px !important;
-            height: 600px !important;
+            width: 850px !important;
+            height: 850px !important;
         }
 
         /* Override globe colors for dark theme */
@@ -237,10 +239,94 @@
             margin-bottom: 8px;
         }
 
+        /* Category dropdown */
+        .category-dropdown-wrap {
+            position: relative;
+            display: inline-flex;
+        }
+
+        .category-more-btn {
+            background: #1f2937;
+            border: 1px dashed #4b5563;
+        }
+        .category-more-btn.active {
+            background: #fff;
+            color: #111827;
+            border: 1px solid #fff;
+        }
+
+        .category-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 6px;
+            z-index: 100;
+            min-width: 160px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .category-dropdown.open {
+            display: block;
+        }
+
+        .category-dropdown-item {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 8px 10px;
+            background: transparent;
+            border: none;
+            color: #d1d5db;
+            font-size: 12px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 4px;
+            gap: 8px;
+        }
+
+        .category-dropdown-item:hover {
+            background: #374151;
+            color: #f3f4f6;
+        }
+
+        .category-dropdown-item.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .category-dropdown-item::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--cat-color, #6b7280);
+            flex-shrink: 0;
+        }
+
         .globe-filter-pills {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
+        }
+
+        .globe-filter-pills-wrap {
+            position: relative;
+            z-index: 10;
+        }
+
+        .globe-filter-pill[data-color]::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+            background: var(--pill-color, #6b7280);
         }
 
         .globe-filter-pill {
@@ -264,7 +350,219 @@
             color: #111827;
         }
 
-        /* Elections list */
+        /* Data Layer Toggles */
+        .globe-layers {
+            padding: 16px 20px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .globe-layer-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            cursor: pointer;
+        }
+
+        .globe-layer-toggle:hover {
+            opacity: 0.9;
+        }
+
+        .globe-layer-switch {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            background: #374151;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+
+        .globe-layer-toggle.active .globe-layer-switch {
+            background: #6b9fd4;
+        }
+
+        .globe-layer-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .globe-layer-toggle.active .globe-layer-switch::after {
+            transform: translateX(16px);
+        }
+
+        .globe-layer-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #6b9fd4;
+        }
+
+        .globe-layer-label {
+            flex: 1;
+            font-size: 13px;
+            color: #d1d5db;
+        }
+
+        .globe-layer-toggle.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .globe-layer-toggle.disabled .globe-layer-label::after {
+            content: ' (coming soon)';
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        /* V-Dem Panel - Top Right of Globe */
+        .vdem-panel {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(17, 24, 39, 0.88);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 4px;
+            padding: 10px 12px;
+            z-index: 100;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        }
+        /* V-Dem Legend */
+        .vdem-legend {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(75, 85, 99, 0.4);
+            flex-shrink: 0;
+        }
+        .vdem-legend-bar {
+            height: 6px;
+            border-radius: 1px;
+            background: linear-gradient(to right,
+                #94a9bd 0%,
+                #dbeafe 100%
+            );
+        }
+        .vdem-legend-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3px;
+            font-size: 9px;
+            color: #6b7280;
+        }
+
+        /* V-Dem Index Options */
+        .vdem-indices {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            overflow-y: auto;
+            max-height: 340px;
+            margin: 0 -4px;
+            padding: 0 4px;
+        }
+        .vdem-indices::-webkit-scrollbar {
+            width: 4px;
+        }
+        .vdem-indices::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .vdem-indices::-webkit-scrollbar-thumb {
+            background: rgba(148, 169, 189, 0.3);
+            border-radius: 2px;
+        }
+        .vdem-index-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 6px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .vdem-index-option:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .vdem-index-option.active {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* Radio Button */
+        .vdem-index-radio {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1.5px solid #4b5563;
+            flex-shrink: 0;
+            transition: all 0.1s;
+            position: relative;
+        }
+        .vdem-index-option:hover .vdem-index-radio {
+            border-color: #9ca3af;
+        }
+        .vdem-index-option.active .vdem-index-radio {
+            border-color: #9ca3af;
+        }
+        .vdem-index-option.active .vdem-index-radio::after {
+            content: '';
+            position: absolute;
+            top: 1.5px;
+            left: 1.5px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #d1d5db;
+        }
+
+        /* Index Label */
+        .vdem-index-label {
+            font-size: 11px;
+            color: #9ca3af;
+            flex: 1;
+        }
+        .vdem-index-option:hover .vdem-index-label {
+            color: #d1d5db;
+        }
+        .vdem-index-option.active .vdem-index-label {
+            color: #e5e7eb;
+        }
+
+        /* Inverted indicator */
+        .vdem-index-inverted {
+            font-size: 8px;
+            color: #6b7280;
+        }
+
+        /* V-Dem Tooltip */
+        .vdem-tooltip {
+            position: absolute;
+            right: calc(100% + 8px);
+            top: 0;
+            width: 200px;
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid rgba(75, 85, 99, 0.6);
+            border-radius: 3px;
+            padding: 8px 10px;
+            font-size: 11px;
+            line-height: 1.45;
+            color: #9ca3af;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s;
+            z-index: 101;
+        }
+        .vdem-tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Markets list */
         .globe-elections {
             flex: 1;
             overflow-y: auto;
@@ -316,6 +614,11 @@
             background: #374151;
             border: 1px solid #60a5fa;
             margin: -1px;
+        }
+
+        .globe-election-item.hovered {
+            background: #374151;
+            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5);
         }
 
         .globe-election-header {
@@ -386,20 +689,21 @@
 
         .globe-election-links {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             padding-top: 10px;
             border-top: 1px solid rgba(75, 85, 99, 0.4);
+            justify-content: flex-end;
         }
 
         .globe-election-link {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 5px 10px;
+            padding: 5px 12px;
             font-size: 11px;
             font-weight: 500;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 4px;
             border: 1px solid #4b5563;
             background: transparent;
             color: #d1d5db;
@@ -407,17 +711,26 @@
         }
 
         .globe-election-link:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: #6b7280;
+            background: rgba(255, 255, 255, 0.08);
             color: #fff;
         }
 
+        .globe-election-link.pm {
+            border-color: rgba(96, 165, 250, 0.4);
+            color: #93c5fd;
+        }
         .globe-election-link.pm:hover {
-            border-color: rgba(96, 165, 250, 0.5);
+            border-color: #60a5fa;
+            background: rgba(96, 165, 250, 0.15);
         }
 
+        .globe-election-link.kalshi {
+            border-color: rgba(52, 211, 153, 0.4);
+            color: #6ee7b7;
+        }
         .globe-election-link.kalshi:hover {
-            border-color: rgba(52, 211, 153, 0.5);
+            border-color: #34d399;
+            background: rgba(52, 211, 153, 0.15);
         }
 
         .globe-election-link-arrow {
@@ -427,27 +740,20 @@
 
         /* Footer stats */
         .globe-sidebar-footer {
-            padding: 16px 20px;
+            padding: 12px 20px;
             border-top: 1px solid #374151;
             background: #1f2937;
-        }
-
-        .globe-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
             text-align: center;
         }
 
-        .globe-stat-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
+        .globe-footer-stat {
+            font-size: 13px;
+            color: #9ca3af;
         }
 
-        .globe-stat-label {
-            font-size: 11px;
-            color: #9ca3af;
+        .globe-footer-stat strong {
+            color: #fff;
+            font-weight: 600;
         }
 
         /* Empty state */
@@ -505,6 +811,103 @@
                 <button class="globe-zoom-btn" id="zoom-in" title="Zoom in">+</button>
                 <button class="globe-zoom-btn" id="zoom-out" title="Zoom out">−</button>
             </div>
+
+            <!-- V-Dem Panel (hidden by default, shown when V-Dem layer is active) -->
+            <div class="vdem-panel" id="vdem-panel" style="display: none;">
+                <!-- Index Options -->
+                <div class="vdem-indices">
+                    <!-- Core Democracy -->
+                    <div class="vdem-index-option active" data-index="v2x_polyarchy" data-description="Measures responsiveness of rulers to citizens through electoral competition, free and fair elections, and freedom of association.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Electoral Democracy</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_libdem" data-description="Combines electoral democracy with rule of law, civil liberties, independent judiciary, and limits on executive power.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Liberal Democracy</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_partipdem" data-description="Emphasizes citizen participation beyond elections: civil society, direct democracy, local government.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Participatory Democracy</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_delibdem" data-description="Emphasizes reasoned debate, justification of decisions, and respect for counterarguments in political discourse.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Deliberative Democracy</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_egaldem" data-description="Focus on equal distribution of political power and resources across social groups.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Egalitarian Democracy</div>
+                    </div>
+                    <!-- Elections & Governance -->
+                    <div class="vdem-index-option" data-index="v2xel_frefair" data-description="Electoral integrity - free and fair elections without fraud, intimidation, or irregularities.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Clean Elections</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_rule" data-description="Transparent, predictable, and impartially enforced laws that apply equally to all.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Rule of Law</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_jucon" data-description="Extent to which executive power is constrained by an independent judiciary.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Judicial Constraints</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_corr" data-description="Corruption in public sector, executive, legislature, and judiciary. Higher = more corrupt." data-inverted="true">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Political Corruption</div>
+                        <div class="vdem-index-inverted">↕</div>
+                    </div>
+                    <!-- Rights & Freedoms -->
+                    <div class="vdem-index-option" data-index="v2x_civlib" data-description="Personal freedoms including movement, religion, expression, and personal autonomy.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Civil Liberties</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_freexp_altinf" data-description="Freedom of expression and access to alternative sources of information.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Freedom of Expression</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_clphy" data-description="Freedom from political killings, torture, and physical violence by the state.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Physical Integrity</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_clpriv" data-description="Freedom from government interference in private life, property rights.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Private Liberties</div>
+                    </div>
+                    <!-- Society & Inclusion -->
+                    <div class="vdem-index-option" data-index="v2x_gender" data-description="Women's political empowerment including civil liberties, participation, and representation.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Women's Empowerment</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2xcs_ccsi" data-description="Strength and independence of civil society organizations.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Civil Society</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2xeg_eqdr" data-description="Equal distribution of political power across social groups.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Equal Distribution</div>
+                    </div>
+                    <!-- Media -->
+                    <div class="vdem-index-option" data-index="v2xme_altinf" data-description="Availability of alternative sources of information and media independence.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Media Freedom</div>
+                    </div>
+                    <div class="vdem-index-option" data-index="v2x_freexp" data-description="Freedom of academic and cultural expression, discussion of political issues.">
+                        <div class="vdem-index-radio"></div>
+                        <div class="vdem-index-label">Expression (narrow)</div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="vdem-legend">
+                    <div class="vdem-legend-bar"></div>
+                    <div class="vdem-legend-labels">
+                        <span>Worse</span>
+                        <span>Better</span>
+                    </div>
+                </div>
+
+                <!-- Tooltip (shown on hover) -->
+                <div class="vdem-tooltip" id="vdem-tooltip"></div>
+            </div>
         </div>
 
         <!-- Sidebar -->
@@ -514,27 +917,53 @@
                 <input type="text" id="globe-search" class="globe-search" placeholder="Search country, election...">
             </div>
 
+            <!-- Data Layers -->
+            <div class="globe-layers">
+                <div class="globe-filter-label">Data Layers</div>
+                <div class="globe-layer-toggle active" data-layer="markets">
+                    <div class="globe-layer-switch"></div>
+                    <div class="globe-layer-dot"></div>
+                    <div class="globe-layer-label">Political Markets</div>
+                </div>
+                <div class="globe-layer-toggle" data-layer="vdem">
+                    <div class="globe-layer-switch"></div>
+                    <div class="globe-layer-dot"></div>
+                    <div class="globe-layer-label">V-Dem Index</div>
+                </div>
+                <div class="globe-layer-toggle disabled" data-layer="acled">
+                    <div class="globe-layer-switch"></div>
+                    <div class="globe-layer-dot"></div>
+                    <div class="globe-layer-label">Conflict Events</div>
+                </div>
+            </div>
+
             <!-- Filters -->
             <div class="globe-filters">
                 <div class="globe-filter-group">
-                    <div class="globe-filter-label">Election Type</div>
-                    <div class="globe-filter-pills" id="filter-type">
+                    <div class="globe-filter-label">Category</div>
+                    <div class="globe-filter-pills globe-filter-pills-wrap" id="filter-category">
                         <button class="globe-filter-pill active" data-value="all">All</button>
-                        <button class="globe-filter-pill" data-value="presidential">Presidential</button>
-                        <button class="globe-filter-pill" data-value="parliamentary">Parliamentary</button>
-                        <button class="globe-filter-pill" data-value="referendum">Referendum</button>
-                        <button class="globe-filter-pill" data-value="regional">Regional</button>
-                    </div>
-                </div>
-
-                <div class="globe-filter-group">
-                    <div class="globe-filter-label">Year</div>
-                    <div class="globe-filter-pills" id="filter-time">
-                        <button class="globe-filter-pill" data-value="2025">2025</button>
-                        <button class="globe-filter-pill active" data-value="2026">2026</button>
-                        <button class="globe-filter-pill" data-value="2027">2027</button>
-                        <button class="globe-filter-pill" data-value="2028">2028</button>
-                        <button class="globe-filter-pill" data-value="all">All</button>
+                        <button class="globe-filter-pill" data-value="Electoral" data-color="#3b82f6">Electoral</button>
+                        <button class="globe-filter-pill" data-value="Monetary Policy" data-color="#10b981">Monetary</button>
+                        <button class="globe-filter-pill" data-value="International" data-color="#06b6d4">Intl</button>
+                        <button class="globe-filter-pill" data-value="Military & Security" data-color="#64748b">Military</button>
+                        <div class="category-dropdown-wrap">
+                            <button class="globe-filter-pill category-more-btn" id="category-more-btn">More ▾</button>
+                            <div class="category-dropdown" id="category-dropdown">
+                                <button class="category-dropdown-item" data-value="Appointments" data-color="#f59e0b">Appointments</button>
+                                <button class="category-dropdown-item" data-value="Political Speech" data-color="#f97316">Political Speech</button>
+                                <button class="category-dropdown-item" data-value="Judicial" data-color="#ec4899">Judicial</button>
+                                <button class="category-dropdown-item" data-value="Legislative" data-color="#8b5cf6">Legislative</button>
+                                <button class="category-dropdown-item" data-value="Regulatory" data-color="#d946ef">Regulatory</button>
+                                <button class="category-dropdown-item" data-value="Government Operations" data-color="#0ea5e9">Government Ops</button>
+                                <button class="category-dropdown-item" data-value="Party Politics" data-color="#ef4444">Party Politics</button>
+                                <button class="category-dropdown-item" data-value="State & Local" data-color="#84cc16">State & Local</button>
+                                <button class="category-dropdown-item" data-value="Timing & Events" data-color="#a855f7">Timing & Events</button>
+                                <button class="category-dropdown-item" data-value="Polling & Approval" data-color="#14b8a6">Polling & Approval</button>
+                                <button class="category-dropdown-item" data-value="Crisis & Emergency" data-color="#dc2626">Crisis & Emergency</button>
+                                <button class="category-dropdown-item" data-value="Other" data-color="#6b7280">Other</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -551,49 +980,65 @@
                 </div>
             </div>
 
-            <!-- Elections List -->
+            <!-- Markets List -->
             <div class="globe-elections">
                 <div class="globe-elections-header">
-                    <span class="globe-elections-title">Elections in View (<span id="election-count">0</span>)</span>
-                    <span class="globe-elections-sort">Sorted by volume</span>
+                    <span class="globe-elections-title">Markets (<span id="election-count">0</span>)</span>
+                    <span class="globe-elections-sort">by volume</span>
                 </div>
                 <div class="globe-elections-list" id="elections-list">
-                    <div class="globe-elections-empty">Loading elections...</div>
+                    <div class="globe-elections-empty">Loading markets...</div>
                 </div>
             </div>
 
             <!-- Footer Stats -->
             <div class="globe-sidebar-footer">
-                <div class="globe-stats">
-                    <div>
-                        <div class="globe-stat-value" id="stat-elections">—</div>
-                        <div class="globe-stat-label">Elections</div>
-                    </div>
-                    <div>
-                        <div class="globe-stat-value" id="stat-countries">—</div>
-                        <div class="globe-stat-label">Countries</div>
-                    </div>
-                    <div>
-                        <div class="globe-stat-value" id="stat-month">—</div>
-                        <div class="globe-stat-label">In view</div>
-                    </div>
+                <div class="globe-footer-stat">
+                    <strong id="stat-total-markets">—</strong> active markets
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="js/globe.js?v=20260203c"></script>
+    <script src="js/globe.js?v=20260210v"></script>
     <script>
     (function() {
         'use strict';
 
-        let allElections = [];
-        let filteredElections = [];
+        let allMarkets = [];
+        let filteredMarkets = [];
+
+        // Category colors (matching globe_markets.json)
+        const categoryColors = {
+            'Electoral': '#3b82f6',
+            'Monetary Policy': '#10b981',
+            'Legislative': '#8b5cf6',
+            'Appointments': '#f59e0b',
+            'Regulatory': '#ef4444',
+            'International': '#06b6d4',
+            'Judicial': '#ec4899',
+            'Military & Security': '#64748b',
+            'Crisis & Emergency': '#dc2626',
+            'Government Operations': '#0ea5e9',
+            'Party Politics': '#a855f7',
+            'State & Local': '#84cc16',
+            'Timing & Events': '#fbbf24',
+            'Polling & Approval': '#14b8a6',
+            'Political Speech': '#f97316',
+            'Other': '#6b7280'
+        };
+
+        // All categories shown in filter pills
+        const majorCategories = [
+            'Electoral', 'Monetary Policy', 'International', 'Military & Security',
+            'Appointments', 'Political Speech', 'Judicial', 'Legislative', 'Regulatory',
+            'Government Operations', 'Party Politics', 'State & Local',
+            'Timing & Events', 'Polling & Approval', 'Crisis & Emergency'
+        ];
 
         // Filter state
         let filters = {
-            type: 'all',
-            year: '2026',
+            category: 'all',
             region: 'all',
             search: ''
         };
@@ -634,23 +1079,26 @@
             return countryFlags[country] || '🌍';
         }
 
-        function matchesYear(electionYear, filterYear) {
-            if (filterYear === 'all') return true;
-            return electionYear && electionYear.toString() === filterYear;
+        function getCategoryColor(category) {
+            return categoryColors[category] || categoryColors['Other'];
+        }
+
+        function matchesCategory(marketCategory, filterCategory) {
+            if (filterCategory === 'all') return true;
+            if (filterCategory === 'other') {
+                return !majorCategories.includes(marketCategory);
+            }
+            return marketCategory === filterCategory;
         }
 
         function applyFilters() {
-            filteredElections = allElections.filter(e => {
-                // Type filter
-                if (filters.type !== 'all') {
-                    const type = (e.type || '').toLowerCase();
-                    if (type !== filters.type) return false;
-                }
+            filteredMarkets = allMarkets.filter(e => {
+                // Must have location data
+                if (!e.lat || !e.lng) return false;
 
-                // Year filter
-                if (!matchesYear(e.year, filters.year)) {
-                    return false;
-                }
+                // Category filter
+                const cat = e.category_display || 'Other';
+                if (!matchesCategory(cat, filters.category)) return false;
 
                 // Region filter
                 if (filters.region !== 'all') {
@@ -664,7 +1112,9 @@
                     const label = (e.label || '').toLowerCase();
                     const country = (e.country || '').toLowerCase();
                     const location = (e.location || '').toLowerCase();
-                    if (!label.includes(search) && !country.includes(search) && !location.includes(search)) {
+                    const category = (e.category_display || '').toLowerCase();
+                    if (!label.includes(search) && !country.includes(search) &&
+                        !location.includes(search) && !category.includes(search)) {
                         return false;
                     }
                 }
@@ -672,66 +1122,82 @@
                 return true;
             });
 
-            // Sort by year, then by volume
-            filteredElections.sort((a, b) => {
-                if (a.year !== b.year) return (a.year || 9999) - (b.year || 9999);
+            // Sort by volume
+            filteredMarkets.sort((a, b) => {
                 return (b.total_volume || 0) - (a.total_volume || 0);
             });
 
-            renderElections();
+            renderMarkets();
             updateStats();
+
+            // Update globe filtering if available
+            if (window.setGlobeFilter) {
+                window.setGlobeFilter(filters.category, filters.region);
+            }
         }
 
-        function renderElections() {
+        function renderMarkets() {
             const container = document.getElementById('elections-list');
             const countEl = document.getElementById('election-count');
 
             if (!container) return;
 
-            countEl.textContent = filteredElections.length;
+            countEl.textContent = filteredMarkets.length;
 
-            if (filteredElections.length === 0) {
-                container.innerHTML = '<div class="globe-elections-empty">No elections match your filters</div>';
+            if (filteredMarkets.length === 0) {
+                container.innerHTML = '<div class="globe-elections-empty">No markets match your filters</div>';
                 return;
             }
 
-            container.innerHTML = filteredElections.map(e => {
+            container.innerHTML = filteredMarkets.slice(0, 100).map(e => {
                 const flag = getFlag(e.country);
+                const categoryColor = getCategoryColor(e.category_display);
+
                 // Price is 0-1 format, convert to percentage
-                const price = e.pm_price || e.k_price;
+                const price = e.price || e.pm_price || e.k_price;
                 const priceStr = price ? Math.round(price * 100) + '%' : null;
                 const isHot = e.price_change_24h && Math.abs(e.price_change_24h) > 0.05;
 
                 // Build platform links
-                const pmLink = e.pm_url
-                    ? `<a href="${e.pm_url}" target="_blank" rel="noopener" class="globe-election-link pm" onclick="event.stopPropagation()">Polymarket <span class="globe-election-link-arrow">↗</span></a>`
+                const url = e.url || e.pm_url || e.k_url;
+                const pmLink = e.pm_url || (e.has_pm && url)
+                    ? `<a href="${e.pm_url || url}" target="_blank" rel="noopener" class="globe-election-link pm" onclick="event.stopPropagation()">Polymarket <span class="globe-election-link-arrow">↗</span></a>`
                     : '';
-                const kLink = e.k_url
-                    ? `<a href="${e.k_url}" target="_blank" rel="noopener" class="globe-election-link kalshi" onclick="event.stopPropagation()">Kalshi <span class="globe-election-link-arrow">↗</span></a>`
+                const kLink = e.k_url || (e.has_k && !e.has_pm && url)
+                    ? `<a href="${e.k_url || url}" target="_blank" rel="noopener" class="globe-election-link kalshi" onclick="event.stopPropagation()">Kalshi <span class="globe-election-link-arrow">↗</span></a>`
                     : '';
-                const hasLinks = e.pm_url || e.k_url;
+                const hasLinks = pmLink || kLink;
 
-                // Get candidate name for frontrunner display
-                const candidate = e.pm_candidate || e.k_candidate || 'Frontrunner';
+                // Format volume
+                const volume = e.total_volume || 0;
+                const volumeStr = volume >= 1000000
+                    ? '$' + (volume / 1000000).toFixed(1) + 'M'
+                    : volume >= 1000
+                        ? '$' + (volume / 1000).toFixed(0) + 'K'
+                        : '$' + volume.toFixed(0);
+
+                // Category badge with color
+                const category = e.category_display || 'Other';
 
                 return `
-                    <div class="globe-election-item" data-country="${e.country || ''}">
+                    <div class="globe-election-item" data-country="${e.country || ''}" data-category="${category}">
                         <div class="globe-election-header">
                             <div class="globe-election-left">
                                 <span class="globe-election-flag">${flag}</span>
                                 <div class="globe-election-info">
-                                    <div class="globe-election-name">${e.label || 'Unknown Election'}</div>
-                                    <div class="globe-election-meta">${e.year || ''}${e.is_completed ? ' · Completed' : ''}</div>
+                                    <div class="globe-election-name">${e.label || 'Unknown Market'}</div>
+                                    <div class="globe-election-meta">
+                                        <span style="color: ${categoryColor}">${category}</span>
+                                        ${e.platform ? ' · ' + e.platform : ''}
+                                    </div>
                                 </div>
                             </div>
                             ${isHot ? '<div class="globe-election-hot"></div>' : ''}
                         </div>
-                        ${priceStr ? `
                         <div class="globe-election-probability">
-                            <span class="globe-election-probability-value">${priceStr}</span>
-                            <span class="globe-election-probability-label">${candidate}</span>
+                            ${priceStr ? `<span class="globe-election-probability-value">${priceStr}</span>` : ''}
+                            <span class="globe-election-probability-label">${volumeStr} vol</span>
                         </div>
-                        ` : ''}
                         ${hasLinks ? `
                         <div class="globe-election-links">
                             ${pmLink}${kLink}
@@ -761,41 +1227,154 @@
         }
 
         function updateStats() {
-            const statElections = document.getElementById('stat-elections');
-            const statCountries = document.getElementById('stat-countries');
-            const statFiltered = document.getElementById('stat-month');
-
-            if (statElections) {
-                statElections.textContent = allElections.length;
-            }
-
-            if (statCountries) {
-                const countries = new Set(allElections.map(e => e.country).filter(Boolean));
-                statCountries.textContent = countries.size;
-            }
-
-            if (statFiltered) {
-                statFiltered.textContent = filteredElections.length;
+            const statTotal = document.getElementById('stat-total-markets');
+            if (statTotal) {
+                statTotal.textContent = allMarkets.length.toLocaleString();
             }
         }
 
+        // Layer state
+        const layers = {
+            markets: true,
+            vdem: false,
+            acled: false
+        };
+
         function setupFilterHandlers() {
-            // Type filter
-            document.querySelectorAll('#filter-type .globe-filter-pill').forEach(pill => {
-                pill.addEventListener('click', () => {
-                    document.querySelectorAll('#filter-type .globe-filter-pill').forEach(p => p.classList.remove('active'));
-                    pill.classList.add('active');
-                    filters.type = pill.dataset.value;
-                    applyFilters();
+            // V-Dem panel elements
+            const vdemPanel = document.getElementById('vdem-panel');
+            const vdemTooltip = document.getElementById('vdem-tooltip');
+            const vdemLegend = vdemPanel ? vdemPanel.querySelector('.vdem-legend') : null;
+
+            // Layer toggles
+            document.querySelectorAll('.globe-layer-toggle:not(.disabled)').forEach(toggle => {
+                toggle.addEventListener('click', (e) => {
+                    const layer = toggle.dataset.layer;
+                    layers[layer] = !layers[layer];
+                    toggle.classList.toggle('active', layers[layer]);
+
+                    // Notify globe of layer change
+                    if (window.setGlobeLayer) {
+                        window.setGlobeLayer(layer, layers[layer]);
+                    }
+
+                    // Show/hide V-Dem panel
+                    if (layer === 'vdem' && vdemPanel) {
+                        vdemPanel.style.display = layers[layer] ? 'block' : 'none';
+                    }
+
+                    // If markets layer is toggled, update sidebar
+                    if (layer === 'markets') {
+                        applyFilters();
+                    }
                 });
             });
 
-            // Year filter
-            document.querySelectorAll('#filter-time .globe-filter-pill').forEach(pill => {
+            // V-Dem index panel handlers
+            if (vdemPanel) {
+                const indexOptions = vdemPanel.querySelectorAll('.vdem-index-option');
+
+                indexOptions.forEach(option => {
+                    // Click to select index
+                    option.addEventListener('click', () => {
+                        // Deselect all
+                        indexOptions.forEach(opt => opt.classList.remove('active'));
+                        // Select clicked
+                        option.classList.add('active');
+
+                        // Update globe
+                        const index = option.dataset.index;
+                        if (window.setVdemIndex) {
+                            window.setVdemIndex(index);
+                        }
+
+                        // Update legend for inverted indices
+                        if (vdemLegend) {
+                            if (option.dataset.inverted === 'true') {
+                                vdemLegend.classList.add('inverted');
+                            } else {
+                                vdemLegend.classList.remove('inverted');
+                            }
+                        }
+                    });
+
+                    // Hover for tooltip
+                    option.addEventListener('mouseenter', (e) => {
+                        const description = option.dataset.description;
+                        if (description && vdemTooltip) {
+                            vdemTooltip.textContent = description;
+                            vdemTooltip.classList.add('visible');
+                            // Position tooltip near the hovered item
+                            const optRect = option.getBoundingClientRect();
+                            const panelRect = vdemPanel.getBoundingClientRect();
+                            vdemTooltip.style.top = (optRect.top - panelRect.top) + 'px';
+                        }
+                    });
+
+                    option.addEventListener('mouseleave', () => {
+                        if (vdemTooltip) {
+                            vdemTooltip.classList.remove('visible');
+                        }
+                    });
+                });
+            }
+
+            // Category dropdown
+            const categoryDropdown = document.getElementById('category-dropdown');
+            const categoryMoreBtn = document.getElementById('category-more-btn');
+
+            // Set color CSS variables on dropdown items
+            document.querySelectorAll('.category-dropdown-item').forEach(item => {
+                if (item.dataset.color) {
+                    item.style.setProperty('--cat-color', item.dataset.color);
+                }
+            });
+
+            categoryMoreBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                categoryDropdown.classList.toggle('open');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!categoryDropdown.contains(e.target) && e.target !== categoryMoreBtn) {
+                    categoryDropdown.classList.remove('open');
+                }
+            });
+
+            // Dropdown item selection
+            document.querySelectorAll('.category-dropdown-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    // Clear all active states
+                    document.querySelectorAll('#filter-category .globe-filter-pill').forEach(p => p.classList.remove('active'));
+                    document.querySelectorAll('.category-dropdown-item').forEach(i => i.classList.remove('active'));
+
+                    // Mark this item active and update the "More" button
+                    item.classList.add('active');
+                    categoryMoreBtn.classList.add('active');
+                    categoryMoreBtn.textContent = item.textContent + ' ▾';
+
+                    // Apply filter
+                    filters.category = item.dataset.value;
+                    applyFilters();
+
+                    // Close dropdown
+                    categoryDropdown.classList.remove('open');
+                });
+            });
+
+            // Category filter (main pills - exclude the "More" button)
+            document.querySelectorAll('#filter-category .globe-filter-pill:not(.category-more-btn)').forEach(pill => {
                 pill.addEventListener('click', () => {
-                    document.querySelectorAll('#filter-time .globe-filter-pill').forEach(p => p.classList.remove('active'));
+                    // Clear all active states
+                    document.querySelectorAll('#filter-category .globe-filter-pill').forEach(p => p.classList.remove('active'));
+                    document.querySelectorAll('.category-dropdown-item').forEach(i => i.classList.remove('active'));
+
+                    // Reset "More" button text
+                    categoryMoreBtn.textContent = 'More ▾';
+
                     pill.classList.add('active');
-                    filters.year = pill.dataset.value;
+                    filters.category = pill.dataset.value;
                     applyFilters();
                 });
             });
@@ -824,8 +1403,8 @@
                         filters.search = searchInput.value.trim();
                         applyFilters();
                         // Rotate globe to first result's country
-                        if (filters.search && filteredElections.length > 0 && window.rotateGlobeTo) {
-                            const firstMatch = filteredElections[0];
+                        if (filters.search && filteredMarkets.length > 0 && window.rotateGlobeTo) {
+                            const firstMatch = filteredMarkets[0];
                             if (firstMatch.country) {
                                 window.rotateGlobeTo(firstMatch.country);
                             }
@@ -841,14 +1420,32 @@
                 if (!response.ok) throw new Error('Failed to load data');
                 const data = await response.json();
 
-                allElections = data.elections || [];
+                // Load all markets with location data
+                allMarkets = (data.markets || []).filter(m => m.lat && m.lng);
+                console.log('Loaded', allMarkets.length, 'markets with locations');
                 applyFilters();
             } catch (err) {
-                console.error('Error loading elections:', err);
+                console.error('Error loading markets:', err);
                 document.getElementById('elections-list').innerHTML =
-                    '<div class="globe-elections-empty">Unable to load elections</div>';
+                    '<div class="globe-elections-empty">Unable to load markets</div>';
             }
         }
+
+        // Handle globe marker click - filter sidebar to show markets for that location
+        window.onGlobeMarkerClick = function(market) {
+            if (!market) return;
+
+            const country = market.country || '';
+            if (!country) return;
+
+            // Set search filter to country name and update the input
+            const searchInput = document.getElementById('globe-search');
+            if (searchInput) {
+                searchInput.value = country;
+            }
+            filters.search = country;
+            applyFilters();
+        };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {

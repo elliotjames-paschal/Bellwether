@@ -5,8 +5,8 @@
       "lng": -77.04,
       "label": "2028 \u2014 United States \u2014 President (+23 more)",
       "elections": 24,
-      "markets": 441,
-      "volume": 1268355652.99,
+      "markets": 373,
+      "volume": 1266526834.22,
       "search_query": "President United States 2028",
       "has_pm": 1,
       "has_k": 1,
@@ -27,8 +27,8 @@
       "pm_event": "portugal-presidential-election"
     },
     {
-      "lat": -15.79,
-      "lng": -47.88,
+      "lat": -23.55,
+      "lng": -46.64,
       "label": "2026 \u2014 Brazil \u2014 President (+2 more)",
       "elections": 3,
       "markets": 24,
@@ -195,18 +195,6 @@
       "pm_event": "republican-nominee-for-florida-governor"
     },
     {
-      "lat": 51.51,
-      "lng": -0.13,
-      "label": "2026 \u2014 United Kingdom \u2014 Prime Minister (+5 more)",
-      "elections": 6,
-      "markets": 52,
-      "volume": 766828.85,
-      "search_query": "Prime Minister United Kingdom 2026",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXNEXTUKPM-30"
-    },
-    {
       "lat": 45.37,
       "lng": -69.6,
       "label": "2026 \u2014 Maine \u2014 Senate (+8 more)",
@@ -270,6 +258,18 @@
       "has_k": 1,
       "kalshi_event": "GOVPARTYMI-26",
       "pm_event": "michigan-governor-winner-2026"
+    },
+    {
+      "lat": 51.51,
+      "lng": -0.13,
+      "label": "2026 \u2014 United Kingdom \u2014 Prime Minister (+3 more)",
+      "elections": 4,
+      "markets": 44,
+      "volume": 591442.85,
+      "search_query": "Prime Minister United Kingdom 2026",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXNEXTUKPM-30"
     },
     {
       "lat": 34.05,
@@ -362,8 +362,8 @@
       "pm_event": "wa-03-house-race-perez-d-vs-kent-r"
     },
     {
-      "lat": 49.91,
-      "lng": 7.45,
+      "lat": 49.99,
+      "lng": 8.25,
       "label": "2026 \u2014 Rhineland-Palatinate \u2014 Parliament",
       "elections": 1,
       "markets": 8,
@@ -464,8 +464,8 @@
       "pm_event": "lebanon-parliamentary-election-winner"
     },
     {
-      "lat": 48.66,
-      "lng": 9.35,
+      "lat": 48.78,
+      "lng": 9.18,
       "label": "2026 \u2014 Baden-W\u00fcrttemberg \u2014 Parliament",
       "elections": 1,
       "markets": 7,
@@ -487,6 +487,17 @@
       "has_k": 1,
       "kalshi_event": "KXGOVKSNOMD-26",
       "pm_event": "kansas-governor-democratic-primary-winner"
+    },
+    {
+      "lat": 53.47,
+      "lng": -2.16,
+      "label": "2024 \u2014 Gorton and Denton \u2014 Parliament (+1 more)",
+      "elections": 2,
+      "markets": 8,
+      "volume": 175386.01,
+      "search_query": "Parliament Gorton and Denton United Kingdom 2024",
+      "has_pm": 1,
+      "has_k": 0
     },
     {
       "lat": 37.67,
@@ -859,14 +870,14 @@
     {
       "lat": 45.42,
       "lng": -75.69,
-      "label": "2026 \u2014 Canada \u2014 Other (+4 more)",
-      "elections": 5,
-      "markets": 20,
-      "volume": 39945.65,
+      "label": "2026 \u2014 Canada \u2014 Other (+2 more)",
+      "elections": 3,
+      "markets": 9,
+      "volume": 39545.65,
       "search_query": "Other Canada 2026",
       "has_pm": 1,
       "has_k": 1,
-      "kalshi_event": "KXVANCOUVERMAYOR-26OCT17",
+      "kalshi_event": "KXOTTAWAMAYOR-26OCT26",
       "pm_event": "canada-new-democratic-party-leadership-election-winner"
     },
     {
@@ -935,8 +946,8 @@
       "pm_event": "montana-senate-election-winner"
     },
     {
-      "lat": 11.13,
-      "lng": 78.66,
+      "lat": 13.08,
+      "lng": 80.27,
       "label": "2026 \u2014 Tamil Nadu \u2014 Regional",
       "elections": 1,
       "markets": 12,
@@ -1146,8 +1157,8 @@
       "kalshi_event": "KXTURKEYPRES-28"
     },
     {
-      "lat": 56.49,
-      "lng": -4.2,
+      "lat": 55.95,
+      "lng": -3.19,
       "label": "2026 \u2014 Scotland \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 8,
@@ -1183,8 +1194,8 @@
       "pm_event": "santa-cruz-de-la-sierra-mayoral-election-winner-bolivia"
     },
     {
-      "lat": 10.85,
-      "lng": 76.27,
+      "lat": 9.93,
+      "lng": 76.26,
       "label": "2026 \u2014 Kerala \u2014 Regional",
       "elections": 1,
       "markets": 11,
@@ -1232,8 +1243,8 @@
       "pm_event": "hawaii-governor-winner-2026"
     },
     {
-      "lat": 26.2,
-      "lng": 92.94,
+      "lat": 26.14,
+      "lng": 91.74,
       "label": "2026 \u2014 Assam \u2014 Regional",
       "elections": 1,
       "markets": 10,
@@ -1328,8 +1339,8 @@
       "pm_event": "chungcheongbuk-province-governor-election-winner"
     },
     {
-      "lat": 52.13,
-      "lng": -3.78,
+      "lat": 51.48,
+      "lng": -3.18,
       "label": "2026 \u2014 Wales \u2014 Regional",
       "elections": 1,
       "markets": 6,
@@ -1353,8 +1364,8 @@
       "pm_event": "latvian-parliamentary-election-winner"
     },
     {
-      "lat": 22.99,
-      "lng": 87.85,
+      "lat": 22.57,
+      "lng": 88.36,
       "label": "2026 \u2014 West Bengal \u2014 Regional",
       "elections": 1,
       "markets": 6,
@@ -1497,6 +1508,18 @@
       "pm_event": "guam-governor-republican-primary-winner-363"
     },
     {
+      "lat": 49.28,
+      "lng": -123.12,
+      "label": "2026 \u2014 Vancouver \u2014 Mayor",
+      "elections": 1,
+      "markets": 7,
+      "volume": 400.0,
+      "search_query": "Mayor Vancouver Canada 2026",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXVANCOUVERMAYOR-26OCT17"
+    },
+    {
       "lat": 18.47,
       "lng": -69.9,
       "label": "2028 \u2014 Dominican Republic \u2014 Parliament",
@@ -1509,8 +1532,8 @@
       "kalshi_event": "KXDOMINICANREPUBLICSENATE-28"
     },
     {
-      "lat": 9.08,
-      "lng": 7.49,
+      "lat": 6.45,
+      "lng": 3.39,
       "label": "2027 \u2014 Nigeria \u2014 President (+1 more)",
       "elections": 2,
       "markets": 7,
@@ -1629,8 +1652,8 @@
       "kalshi_event": "KXMALAYSIAPARLI-2-27"
     },
     {
-      "lat": -35.28,
-      "lng": 149.13,
+      "lat": -33.87,
+      "lng": 151.21,
       "label": "2028 \u2014 Australia \u2014 Parliament",
       "elections": 1,
       "markets": 6,
@@ -1687,16 +1710,28 @@
       "has_pm": 0,
       "has_k": 1,
       "kalshi_event": "KXTHEGAMBIAPRES-26"
+    },
+    {
+      "lat": 43.65,
+      "lng": -79.38,
+      "label": "2026 \u2014 Toronto \u2014 Mayor",
+      "elections": 1,
+      "markets": 4,
+      "volume": 0.0,
+      "search_query": "Mayor Toronto Canada 2026",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXTORONTOMAYOR-26OCT26"
     }
   ],
   "completed": [
     {
       "lat": 38.9,
       "lng": -77.04,
-      "label": "2024 \u2014 United States \u2014 President (+33 more)",
-      "elections": 34,
-      "markets": 430,
-      "volume": 6267218536.92,
+      "label": "2024 \u2014 United States \u2014 President (+31 more)",
+      "elections": 32,
+      "markets": 426,
+      "volume": 6260224566.26,
       "search_query": "President United States 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -1732,10 +1767,10 @@
     {
       "lat": 37.57,
       "lng": 126.98,
-      "label": "2024 \u2014 South Korea \u2014 President (+19 more)",
-      "elections": 20,
-      "markets": 98,
-      "volume": 326047912.39,
+      "label": "2024 \u2014 South Korea \u2014 President (+6 more)",
+      "elections": 7,
+      "markets": 85,
+      "volume": 325888206.61,
       "search_query": "President South Korea 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -1758,10 +1793,10 @@
     {
       "lat": 52.52,
       "lng": 13.41,
-      "label": "2024 \u2014 Germany \u2014 Parliament (+2 more)",
-      "elections": 3,
-      "markets": 29,
-      "volume": 116891371.43,
+      "label": "2024 \u2014 Germany \u2014 Parliament (+1 more)",
+      "elections": 2,
+      "markets": 24,
+      "volume": 116579910.37,
       "search_query": "Parliament Germany 2024",
       "has_pm": 1,
       "has_k": 1,
@@ -1873,12 +1908,12 @@
       "pm_event": "georgia-presidential-election-winner"
     },
     {
-      "lat": -15.79,
-      "lng": -47.88,
-      "label": "2024 \u2014 S\u00e3o Paulo \u2014 Mayor (+5 more)",
-      "elections": 6,
-      "markets": 25,
-      "volume": 43117887.74,
+      "lat": -23.55,
+      "lng": -46.64,
+      "label": "2024 \u2014 S\u00e3o Paulo \u2014 Mayor (+1 more)",
+      "elections": 2,
+      "markets": 11,
+      "volume": 41908560.39,
       "search_query": "Mayor S\u00e3o Paulo Brazil 2024",
       "has_pm": 1,
       "has_k": 0,
@@ -1896,19 +1931,6 @@
       "has_k": 1,
       "kalshi_event": "KXIRELANDPRES-25",
       "pm_event": "ireland-presidential-election"
-    },
-    {
-      "lat": 45.42,
-      "lng": -75.69,
-      "label": "2024 \u2014 Prince Edward Island \u2014 Parliament (+36 more)",
-      "elections": 37,
-      "markets": 188,
-      "volume": 37202676.77,
-      "search_query": "Parliament Prince Edward Island Canada 2024",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXNEXTCANADAPM-26",
-      "pm_event": "which-party-wins-most-seats-in-prince-edward-island"
     },
     {
       "lat": 52.23,
@@ -2015,19 +2037,6 @@
       "pm_event": "texas-presidential-election-winner"
     },
     {
-      "lat": -35.28,
-      "lng": 149.13,
-      "label": "2025 \u2014 Australia \u2014 Prime Minister (+6 more)",
-      "elections": 7,
-      "markets": 56,
-      "volume": 16899993.3,
-      "search_query": "Prime Minister Australia 2025",
-      "has_pm": 1,
-      "has_k": 1,
-      "kalshi_event": "KXAUSSEATBENNELONG-25",
-      "pm_event": "next-prime-minister-of-australia"
-    },
-    {
       "lat": 43.19,
       "lng": -71.57,
       "label": "2024 \u2014 New Hampshire \u2014 President (+3 more)",
@@ -2039,6 +2048,19 @@
       "has_k": 1,
       "kalshi_event": "PRESPARTYNH-24",
       "pm_event": "new-hampshire-presidential-election-winner"
+    },
+    {
+      "lat": -33.87,
+      "lng": 151.21,
+      "label": "2025 \u2014 Australia \u2014 Prime Minister (+4 more)",
+      "elections": 5,
+      "markets": 25,
+      "volume": 16493290.74,
+      "search_query": "Prime Minister Australia 2025",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXAUSTRALIA",
+      "pm_event": "next-prime-minister-of-australia"
     },
     {
       "lat": 42.17,
@@ -2080,6 +2102,30 @@
       "pm_event": "minnesota-presidential-election-winner"
     },
     {
+      "lat": 46.5,
+      "lng": -66.16,
+      "label": "2024 \u2014 New Brunswick \u2014 Parliament (+2 more)",
+      "elections": 3,
+      "markets": 8,
+      "volume": 10178391.07,
+      "search_query": "Parliament New Brunswick Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-most-seats-in-new-brunswick"
+    },
+    {
+      "lat": 46.24,
+      "lng": -63.13,
+      "label": "2024 \u2014 Prince Edward Island \u2014 Parliament",
+      "elections": 1,
+      "markets": 4,
+      "volume": 9955231.37,
+      "search_query": "Parliament Prince Edward Island Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-most-seats-in-prince-edward-island"
+    },
+    {
       "lat": 40.63,
       "lng": -89.4,
       "label": "2024 \u2014 Illinois \u2014 President",
@@ -2090,6 +2136,19 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "illinois-presidential-election-winner"
+    },
+    {
+      "lat": 45.42,
+      "lng": -75.69,
+      "label": "2024 \u2014 Canada \u2014 Parliament (+4 more)",
+      "elections": 5,
+      "markets": 51,
+      "volume": 9601178.73,
+      "search_query": "Parliament Canada 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXNEXTCANADAPM-26",
+      "pm_event": "which-party-will-win-the-popular-vote-in-the-next-canadian-election"
     },
     {
       "lat": 38.72,
@@ -2358,6 +2417,18 @@
       "pm_event": "kentucky-presidential-election-winner"
     },
     {
+      "lat": 49.28,
+      "lng": -123.12,
+      "label": "2024 \u2014 British Columbia \u2014 Parliament (+2 more)",
+      "elections": 3,
+      "markets": 12,
+      "volume": 2540240.61,
+      "search_query": "Parliament British Columbia Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-most-seats-in-british-columbia"
+    },
+    {
       "lat": 39.05,
       "lng": -76.64,
       "label": "2024 \u2014 Maryland \u2014 Senate (+2 more)",
@@ -2471,6 +2542,18 @@
       "pm_event": "which-party-gains-most-seats-in-japan-councillors-election"
     },
     {
+      "lat": 53.93,
+      "lng": -116.58,
+      "label": "2024 \u2014 Alberta \u2014 Parliament (+1 more)",
+      "elections": 2,
+      "markets": 8,
+      "volume": 1961068.49,
+      "search_query": "Parliament Alberta Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-most-seats-in-alberta"
+    },
+    {
       "lat": 37.77,
       "lng": -122.42,
       "label": "2024 \u2014 San Francisco \u2014 Mayor",
@@ -2532,6 +2615,18 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "moldova-presidential-election-winner"
+    },
+    {
+      "lat": 62.45,
+      "lng": -114.37,
+      "label": "2024 \u2014 Northwest Territories \u2014 Parliament",
+      "elections": 1,
+      "markets": 4,
+      "volume": 1396029.77,
+      "search_query": "Parliament Northwest Territories Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-northwest-territories"
     },
     {
       "lat": 39.01,
@@ -2688,6 +2783,18 @@
       "pm_event": "utah-presidential-election-winner"
     },
     {
+      "lat": 63.75,
+      "lng": -68.52,
+      "label": "2024 \u2014 Nunavut \u2014 Parliament",
+      "elections": 1,
+      "markets": 4,
+      "volume": 802100.77,
+      "search_query": "Parliament Nunavut Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-nunavut"
+    },
+    {
       "lat": 32.36,
       "lng": -86.3,
       "label": "2024 \u2014 Alabama \u2014 President (+2 more)",
@@ -2750,8 +2857,8 @@
       "pm_event": "south-dakota-presidential-election-winner"
     },
     {
-      "lat": 28.61,
-      "lng": 77.21,
+      "lat": 19.08,
+      "lng": 72.88,
       "label": "2024 \u2014 India \u2014 Parliament (+1 more)",
       "elections": 2,
       "markets": 11,
@@ -2760,6 +2867,18 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "india-election-will-bjp-win-a-majority-of-seats"
+    },
+    {
+      "lat": -3.72,
+      "lng": -38.54,
+      "label": "2024 \u2014 Fortaleza \u2014 Mayor",
+      "elections": 1,
+      "markets": 3,
+      "volume": 670165.7,
+      "search_query": "Mayor Fortaleza Brazil 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "fortaleza-mayoral-election-2024"
     },
     {
       "lat": 6.8,
@@ -2822,6 +2941,18 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "lithuanian-presidential-election-winner"
+    },
+    {
+      "lat": -30.03,
+      "lng": -51.23,
+      "label": "2024 \u2014 Porto Alegre \u2014 Mayor",
+      "elections": 1,
+      "markets": 5,
+      "volume": 457239.5,
+      "search_query": "Mayor Porto Alegre Brazil 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "porto-alegre-mayoral-election-2024"
     },
     {
       "lat": 40.73,
@@ -2914,6 +3045,18 @@
       "pm_event": "oakland-mayoral-special-election"
     },
     {
+      "lat": 47.57,
+      "lng": -52.71,
+      "label": "2024 \u2014 Newfoundland and Labrador \u2014 Parliament",
+      "elections": 1,
+      "markets": 4,
+      "volume": 345960.1,
+      "search_query": "Parliament Newfoundland and Labrador Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-most-seats-in-newfoundland-and-labrador"
+    },
+    {
       "lat": 30.98,
       "lng": -91.96,
       "label": "2024 \u2014 Louisiana \u2014 President",
@@ -2950,6 +3093,18 @@
       "has_k": 1,
       "kalshi_event": "PRESPARTYID-24",
       "pm_event": "idaho-presidential-election-winner"
+    },
+    {
+      "lat": 52.41,
+      "lng": 13.07,
+      "label": "2024 \u2014 Brandenburg \u2014 Regional",
+      "elections": 1,
+      "markets": 5,
+      "volume": 311461.06,
+      "search_query": "Regional Brandenburg Germany 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "who-wins-most-votes-in-brandenburg-election"
     },
     {
       "lat": 18.11,
@@ -3014,6 +3169,19 @@
       "pm_event": "indonesia-election-prabowo-subianto-wins"
     },
     {
+      "lat": -33.8,
+      "lng": 151.1,
+      "label": "2025 \u2014 Bennelong \u2014 Parliament",
+      "elections": 1,
+      "markets": 16,
+      "volume": 266506.0,
+      "search_query": "Parliament Bennelong Australia 2025",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXAUSSEATBENNELONG-25",
+      "pm_event": "australia-election-seat-of-bennelong"
+    },
+    {
       "lat": 35.69,
       "lng": 51.39,
       "label": "2024 \u2014 Iran \u2014 President",
@@ -3026,8 +3194,8 @@
       "pm_event": "next-president-of-iran"
     },
     {
-      "lat": -25.75,
-      "lng": 28.19,
+      "lat": -26.2,
+      "lng": 28.04,
       "label": "2024 \u2014 South Africa \u2014 President (+1 more)",
       "elections": 2,
       "markets": 9,
@@ -3049,6 +3217,18 @@
       "has_k": 1,
       "kalshi_event": "KXMAYORBOSTON-25",
       "pm_event": "boston-mayoral-election"
+    },
+    {
+      "lat": 60.72,
+      "lng": -135.05,
+      "label": "2024 \u2014 Yukon \u2014 Parliament",
+      "elections": 1,
+      "markets": 4,
+      "volume": 200487.23,
+      "search_query": "Parliament Yukon Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-yukon"
     },
     {
       "lat": 41.65,
@@ -3147,6 +3327,19 @@
       "has_k": 0
     },
     {
+      "lat": -27.47,
+      "lng": 153.03,
+      "label": "2025 \u2014 Brisbane \u2014 Parliament",
+      "elections": 1,
+      "markets": 15,
+      "volume": 140196.56,
+      "search_query": "Parliament Brisbane Australia 2025",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXAUSSEATBRISBANE-25",
+      "pm_event": "australia-election-seat-of-brisbane"
+    },
+    {
       "lat": 14.63,
       "lng": -90.51,
       "label": "2023 \u2014 Guatemala \u2014 President",
@@ -3230,6 +3423,19 @@
       "pm_event": "slovakia-presidential-election-winner"
     },
     {
+      "lat": 43.65,
+      "lng": -79.38,
+      "label": "2024 \u2014 Ontario \u2014 Parliament (+3 more)",
+      "elections": 4,
+      "markets": 8,
+      "volume": 92014.55,
+      "search_query": "Parliament Ontario Canada 2024",
+      "has_pm": 1,
+      "has_k": 1,
+      "kalshi_event": "KXONTPARTY-25",
+      "pm_event": "ontario-parliamentary-election-2nd-place"
+    },
+    {
       "lat": 41.9,
       "lng": 12.5,
       "label": "2025 \u2014 Calabria \u2014 Regional (+4 more)",
@@ -3267,6 +3473,30 @@
       "pm_event": "senegal-presidential-election-winner"
     },
     {
+      "lat": 52.13,
+      "lng": -106.67,
+      "label": "2024 \u2014 Saskatchewan \u2014 Regional",
+      "elections": 1,
+      "markets": 3,
+      "volume": 76927.07,
+      "search_query": "Regional Saskatchewan Canada 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-party-wins-most-seats-in-in-saskatchewan-election"
+    },
+    {
+      "lat": -25.43,
+      "lng": -49.27,
+      "label": "2024 \u2014 Curitiba \u2014 Mayor",
+      "elections": 1,
+      "markets": 3,
+      "volume": 64499.25,
+      "search_query": "Mayor Curitiba Brazil 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "curitiba-mayoral-election-2024"
+    },
+    {
       "lat": 0.39,
       "lng": 9.45,
       "label": "2025 \u2014 Gabon \u2014 President",
@@ -3302,6 +3532,18 @@
       "has_k": 1,
       "kalshi_event": "KXMAYORATLANTA-25",
       "pm_event": "atlanta-mayoral-election"
+    },
+    {
+      "lat": 36.57,
+      "lng": 128.51,
+      "label": "2025 \u2014 Gyeongbuk State \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 40735.34,
+      "search_query": "President Gyeongbuk State South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
     },
     {
       "lat": 35.18,
@@ -3350,6 +3592,18 @@
       "has_k": 0
     },
     {
+      "lat": 37.88,
+      "lng": 127.73,
+      "label": "2025 \u2014 Gangwon State \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 30302.9,
+      "search_query": "President Gangwon State South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
       "lat": 47.49,
       "lng": -121.84,
       "label": "2025 \u2014 King County, WA \u2014 Executive",
@@ -3372,6 +3626,30 @@
       "has_pm": 0,
       "has_k": 1,
       "kalshi_event": "KXMAYOROMAHA-25"
+    },
+    {
+      "lat": 35.54,
+      "lng": 129.31,
+      "label": "2025 \u2014 Ulsan \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 23083.4,
+      "search_query": "President Ulsan South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
+      "lat": 36.64,
+      "lng": 127.49,
+      "label": "2025 \u2014 Chungbuk State \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 21244.9,
+      "search_query": "President Chungbuk State South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
     },
     {
       "lat": 35.23,
@@ -3400,6 +3678,18 @@
       "pm_event": "cleveland-mayoral-election-966"
     },
     {
+      "lat": -19.92,
+      "lng": -43.94,
+      "label": "2024 \u2014 Belo Horizonte \u2014 Mayor",
+      "elections": 1,
+      "markets": 3,
+      "volume": 17422.91,
+      "search_query": "Mayor Belo Horizonte Brazil 2024",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "belo-horizonte-mayoral-election-2024"
+    },
+    {
       "lat": 41.99,
       "lng": 21.43,
       "label": "2024 \u2014 North Macedonia \u2014 President",
@@ -3412,8 +3702,8 @@
       "pm_event": "north-macedonia-presidential-election-winner"
     },
     {
-      "lat": 9.08,
-      "lng": 7.49,
+      "lat": 6.45,
+      "lng": 3.39,
       "label": "2023 \u2014 Nigeria \u2014 President",
       "elections": 1,
       "markets": 3,
@@ -3433,6 +3723,18 @@
       "has_pm": 0,
       "has_k": 1,
       "kalshi_event": "KXMAYORFORTW-25"
+    },
+    {
+      "lat": 49.9,
+      "lng": -97.14,
+      "label": "2025 \u2014 Winnipeg Centre \u2014 Parliament (+1 more)",
+      "elections": 2,
+      "markets": 12,
+      "volume": 13879.0,
+      "search_query": "Parliament Winnipeg Centre Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXWINNIPEGCENTRE-25"
     },
     {
       "lat": 47.5,
@@ -3472,6 +3774,30 @@
       "kalshi_event": "KXCZECHPARTY-25"
     },
     {
+      "lat": 35.18,
+      "lng": 128.69,
+      "label": "2025 \u2014 Gyeongnam State \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 10443.53,
+      "search_query": "President Gyeongnam State South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
+      "lat": 36.35,
+      "lng": 127.38,
+      "label": "2025 \u2014 Daejeon \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 9626.27,
+      "search_query": "President Daejeon South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
       "lat": -21.21,
       "lng": -175.15,
       "label": "2026 \u2014 Tonga \u2014 Prime Minister",
@@ -3496,6 +3822,66 @@
       "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
     },
     {
+      "lat": 35.87,
+      "lng": 128.6,
+      "label": "2025 \u2014 Daegu \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 6526.87,
+      "search_query": "President Daegu South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
+      "lat": 51.05,
+      "lng": -114.07,
+      "label": "2025 \u2014 Calgary Centre \u2014 Parliament",
+      "elections": 1,
+      "markets": 6,
+      "volume": 5980.0,
+      "search_query": "Parliament Calgary Centre Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXCALGARYCENTRE-25"
+    },
+    {
+      "lat": 42.98,
+      "lng": -81.25,
+      "label": "2025 \u2014 London-Fanshawe \u2014 Parliament",
+      "elections": 1,
+      "markets": 6,
+      "volume": 5859.0,
+      "search_query": "Parliament London-Fanshawe Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXFANSHAWE-25"
+    },
+    {
+      "lat": 46.35,
+      "lng": -72.55,
+      "label": "2025 \u2014 Trois-Rivi\u00e8res \u2014 Parliament",
+      "elections": 1,
+      "markets": 6,
+      "volume": 5743.0,
+      "search_query": "Parliament Trois-Rivi\u00e8res Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXTROIS-25"
+    },
+    {
+      "lat": 36.66,
+      "lng": 126.67,
+      "label": "2025 \u2014 Chungnam State \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 4780.87,
+      "search_query": "President Chungnam State South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
       "lat": 46.81,
       "lng": -71.21,
       "label": "2025 \u2014 Quebec \u2014 Parliament",
@@ -3506,6 +3892,42 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "will-the-conservative-party-win-13-seats-in-quebec"
+    },
+    {
+      "lat": 43.45,
+      "lng": -80.49,
+      "label": "2025 \u2014 Kitchener South\u2014Hespeler \u2014 Parliament",
+      "elections": 1,
+      "markets": 6,
+      "volume": 4752.0,
+      "search_query": "Parliament Kitchener South\u2014Hespeler Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXKITCHENER-25"
+    },
+    {
+      "lat": 42.32,
+      "lng": -83.04,
+      "label": "2025 \u2014 Windsor West \u2014 Parliament",
+      "elections": 1,
+      "markets": 6,
+      "volume": 4535.0,
+      "search_query": "Parliament Windsor West Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXWINDSORWEST-25"
+    },
+    {
+      "lat": 43.06,
+      "lng": -79.29,
+      "label": "2025 \u2014 Niagara South \u2014 Regional",
+      "elections": 1,
+      "markets": 6,
+      "volume": 4441.0,
+      "search_query": "Regional Niagara South Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXNIAGARASOUTH-25"
     },
     {
       "lat": 37.46,
@@ -3520,6 +3942,30 @@
       "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
     },
     {
+      "lat": 35.16,
+      "lng": 126.85,
+      "label": "2025 \u2014 Gwangju \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 4114.35,
+      "search_query": "President Gwangju South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
+      "lat": 45.42,
+      "lng": -73.5,
+      "label": "2025 \u2014 La Prairie\u2014Atateken \u2014 Parliament",
+      "elections": 1,
+      "markets": 6,
+      "volume": 3969.0,
+      "search_query": "Parliament La Prairie\u2014Atateken Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXLAPRAIRIE-25"
+    },
+    {
       "lat": 30.04,
       "lng": 31.24,
       "label": "2024 \u2014 Egypt \u2014 President",
@@ -3530,6 +3976,18 @@
       "has_pm": 1,
       "has_k": 0,
       "pm_event": "egypt-presidential-election-will-abdel-fattah-el-sisi-win"
+    },
+    {
+      "lat": 34.82,
+      "lng": 126.89,
+      "label": "2025 \u2014 Jeonnam State \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 3213.65,
+      "search_query": "President Jeonnam State South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
     },
     {
       "lat": 64.17,
@@ -3553,6 +4011,66 @@
       "search_query": "Parliament Spain 2023",
       "has_pm": 1,
       "has_k": 0
+    },
+    {
+      "lat": 43.26,
+      "lng": -79.87,
+      "label": "2025 \u2014 Hamilton Centre \u2014 Parliament",
+      "elections": 1,
+      "markets": 6,
+      "volume": 2370.0,
+      "search_query": "Parliament Hamilton Centre Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXHAMILTONCENTRE-25"
+    },
+    {
+      "lat": 36.48,
+      "lng": 127.26,
+      "label": "2025 \u2014 Sejong \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 2322.0,
+      "search_query": "President Sejong South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
+      "lat": 33.5,
+      "lng": 126.53,
+      "label": "2025 \u2014 Jeju Province \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 1682.54,
+      "search_query": "President Jeju Province South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
+      "lat": 35.82,
+      "lng": 127.11,
+      "label": "2025 \u2014 Jeonbuk State \u2014 President",
+      "elections": 1,
+      "markets": 1,
+      "volume": 1629.16,
+      "search_query": "President Jeonbuk State South Korea 2025",
+      "has_pm": 1,
+      "has_k": 0,
+      "pm_event": "which-cities-provinces-will-lee-jae-myung-win"
+    },
+    {
+      "lat": 48.43,
+      "lng": -71.07,
+      "label": "2025 \u2014 Chicoutimi\u2014Le Fjord \u2014 Parliament",
+      "elections": 1,
+      "markets": 6,
+      "volume": 1353.0,
+      "search_query": "Parliament Chicoutimi\u2014Le Fjord Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXCHICOUTIMI-25"
     },
     {
       "lat": 40.84,
@@ -3602,6 +4120,18 @@
       "kalshi_event": "KXKENYAPRES-27"
     },
     {
+      "lat": 45.27,
+      "lng": -66.06,
+      "label": "2025 \u2014 Saint John\u2014St. Croix \u2014 Parliament (+1 more)",
+      "elections": 2,
+      "markets": 10,
+      "volume": 166.0,
+      "search_query": "Parliament Saint John\u2014St. Croix Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXSTCROIX-25"
+    },
+    {
       "lat": 39.1,
       "lng": -84.51,
       "label": "2025 \u2014 Cincinnati \u2014 Mayor",
@@ -3624,6 +4154,18 @@
       "has_pm": 0,
       "has_k": 1,
       "kalshi_event": "KXZAMBIAPRES-26"
+    },
+    {
+      "lat": 50.45,
+      "lng": -104.62,
+      "label": "2025 \u2014 Regina-Wascana \u2014 Parliament",
+      "elections": 1,
+      "markets": 2,
+      "volume": 0.0,
+      "search_query": "Parliament Regina-Wascana Canada 2025",
+      "has_pm": 0,
+      "has_k": 1,
+      "kalshi_event": "KXREGINAWASCANA-25"
     }
   ]
 }

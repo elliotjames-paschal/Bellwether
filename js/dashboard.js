@@ -128,6 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadCalibrationByCloseness();
     await loadPredictionVsVolume();
     await loadLiquidityByCategory();
+    await loadLiquidityAccuracyAnalysis();
     await loadLiquidityPlatformComparison();
     await loadSpreadVsVolume();
     await loadLiquidityTimeseries();
@@ -157,9 +158,14 @@ async function loadSummary() {
             animateValue(heroMarkets, 0, data.total_markets, 1200);
         }
 
-        const heroElections = document.getElementById('hero-elections');
-        if (heroElections && data.unique_elections) {
-            animateValue(heroElections, 0, data.unique_elections, 1000);
+        const heroElectoral = document.getElementById('hero-electoral');
+        if (heroElectoral && data.electoral_markets) {
+            animateValue(heroElectoral, 0, data.electoral_markets, 1000);
+        }
+
+        const heroCountries = document.getElementById('hero-countries');
+        if (heroCountries && data.electoral_countries) {
+            heroCountries.textContent = data.electoral_countries;
         }
 
         const insightElectoral = document.getElementById('insight-electoral');
@@ -898,90 +904,230 @@ async function loadMarketDistribution() {
     }
 }
 
+// Volume chart state
+let volumeData = null;
+let volumeActiveCategories = new Set();
+const MAX_VOLUME_CATEGORIES = 8;
+
+// Category colors for volume chart
+const VOLUME_CATEGORY_COLORS = {
+    'Electoral': '#5B8DEE',           // Polymarket blue
+    'Monetary Policy': '#E85D75',     // Muted red
+    'Party Politics': '#2CB67D',      // Kalshi green
+    'Military Security': '#F6A96C',   // Muted orange
+    'International': '#9B72CB',       // Muted purple
+    'Appointments': '#4ECDC4',        // Muted turquoise
+    'Political Speech': '#E89F5B',    // Muted gold
+    'Regulatory': '#36B3A8',          // Muted teal
+    'Government Operations': '#7C8BA1', // Gray blue
+    'Judicial': '#D4A373',            // Tan
+    'Legislative': '#90BE6D',         // Light green
+    'Crisis Emergency': '#F94144',    // Red
+    'Timing Events': '#277DA1',       // Steel blue
+    'Polling Approval': '#F8961E',    // Orange
+    'State Local': '#43AA8B'          // Teal
+};
+
 async function loadVolumeTimeseries() {
     try {
-        const data = await fetchJSON('volume_timeseries.json');
+        volumeData = await fetchJSON('volume_timeseries.json');
 
-        // Category colors matching paper exactly (from archive/volume_timeseries_by_category.py)
-        const categoryColors = {
-            'Electoral': '#5B8DEE',           // Polymarket blue
-            'Monetary Policy': '#E85D75',     // Muted red
-            'Party Politics': '#2CB67D',      // Kalshi green
-            'Military Security': '#F6A96C',   // Muted orange
-            'International': '#9B72CB',       // Muted purple
-            'Appointments': '#4ECDC4',        // Muted turquoise
-            'Political Speech': '#E89F5B',    // Muted gold
-            'Regulatory': '#36B3A8'           // Muted teal
-        };
-
-        const traces = [];
-
-        // Plot all categories from the data (top 8 by volume)
-        for (const cat of Object.keys(data.categories)) {
-            // Map zeros/small values to null (creates gaps) for log scale
-            const values = data.categories[cat].map(v => v > 0.001 ? v : null);
-            traces.push({
-                x: data.months,
-                y: values,
-                name: cat,
-                type: 'scatter',
-                mode: 'lines+markers',
-                line: {
-                    color: categoryColors[cat] || COLORS.gray,
-                    width: 2
-                },
-                marker: { size: 4 },
-                connectgaps: true,
-                hovertemplate: `${cat}: $%{y:.2f}M<extra></extra>`
-            });
+        // Initialize with default categories (top 8)
+        if (volumeData.defaultCategories && volumeData.defaultCategories.length > 0) {
+            volumeActiveCategories = new Set(volumeData.defaultCategories);
+        } else {
+            // Take first 8 categories if no defaults specified
+            const allCats = Object.keys(volumeData.categories);
+            volumeActiveCategories = new Set(allCats.slice(0, MAX_VOLUME_CATEGORIES));
         }
 
-        // Find July 2023 index for initial view (users can zoom out to see earlier data)
-        const startMonthIndex = data.months.indexOf('2023-07');
-        const initialRange = startMonthIndex >= 0
-            ? [data.months[startMonthIndex], data.months[data.months.length - 1]]
-            : [data.months[0], data.months[data.months.length - 1]];
+        // Build the dropdown
+        buildVolumeCategoryDropdown();
 
-        const layout = {
-            ...LAYOUT_DEFAULTS,
-            xaxis: {
-                title: '',
-                gridcolor: COLORS.line,
-                tickangle: -45,
-                zeroline: false,
-                showline: true,
-                linecolor: COLORS.line,
-                nticks: 15,
-                tickfont: { size: 9 },
-                range: initialRange
-            },
-            yaxis: {
-                title: 'Total Volume ($M, log scale)',
-                type: 'log',
-                gridcolor: COLORS.line,
-                zeroline: false,
-                showline: true,
-                linecolor: COLORS.line,
-                tickvals: [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000],
-                ticktext: ['$1K', '$10K', '$100K', '$1M', '$10M', '$100M', '$1,000M', '$10,000M'],
-                range: [-3.5, 4]
-            },
-            legend: {
-                orientation: 'h',
-                y: 1.15,
-                x: 0.5,
-                xanchor: 'center',
-                font: { size: 10 }
-            },
-            margin: { l: 80, r: 20, t: 60, b: 80 },
-            hovermode: 'x unified'
-        };
-
-        Plotly.newPlot('chart-volume', traces, layout, { responsive: true, displayModeBar: false });
+        // Render the chart
+        renderVolumeChart();
     } catch (e) {
         console.warn('Could not load volume chart:', e);
         showError('chart-volume');
     }
+}
+
+function buildVolumeCategoryDropdown() {
+    const toggle = document.getElementById('volume-dropdown-toggle');
+    const menu = document.getElementById('volume-dropdown-menu');
+    const label = document.getElementById('volume-dropdown-label');
+    if (!toggle || !menu || !volumeData) return;
+
+    menu.innerHTML = '';
+
+    // Create checkbox items for each category
+    for (const cat of Object.keys(volumeData.categories)) {
+        const isChecked = volumeActiveCategories.has(cat);
+        const item = document.createElement('div');
+        item.className = 'category-dropdown-item';
+        item.dataset.category = cat;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `vol-cat-${cat.replace(/\s+/g, '-')}`;
+        checkbox.checked = isChecked;
+
+        const dot = document.createElement('span');
+        dot.className = 'color-dot';
+        dot.style.background = VOLUME_CATEGORY_COLORS[cat] || COLORS.gray;
+
+        const labelEl = document.createElement('label');
+        labelEl.htmlFor = checkbox.id;
+        labelEl.textContent = cat;
+
+        item.appendChild(checkbox);
+        item.appendChild(dot);
+        item.appendChild(labelEl);
+        menu.appendChild(item);
+
+        // Handle checkbox change
+        checkbox.addEventListener('change', () => handleVolumeCategoryChange(cat, checkbox));
+
+        // Click on row toggles checkbox
+        item.addEventListener('click', (e) => {
+            if (e.target !== checkbox) {
+                checkbox.click();
+            }
+        });
+    }
+
+    // Update disabled state
+    updateVolumeDropdownState();
+
+    // Toggle dropdown open/close
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = menu.classList.contains('open');
+        menu.classList.toggle('open');
+        toggle.classList.toggle('open');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.remove('open');
+            toggle.classList.remove('open');
+        }
+    });
+
+    updateVolumeDropdownLabel();
+}
+
+function handleVolumeCategoryChange(category, checkbox) {
+    if (checkbox.checked) {
+        if (volumeActiveCategories.size >= MAX_VOLUME_CATEGORIES) {
+            checkbox.checked = false;
+            return;
+        }
+        volumeActiveCategories.add(category);
+    } else {
+        volumeActiveCategories.delete(category);
+    }
+
+    updateVolumeDropdownState();
+    updateVolumeDropdownLabel();
+    renderVolumeChart();
+}
+
+function updateVolumeDropdownState() {
+    const menu = document.getElementById('volume-dropdown-menu');
+    if (!menu) return;
+
+    const atMax = volumeActiveCategories.size >= MAX_VOLUME_CATEGORIES;
+
+    for (const item of menu.querySelectorAll('.category-dropdown-item')) {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        if (atMax && !checkbox.checked) {
+            item.classList.add('disabled');
+            checkbox.disabled = true;
+        } else {
+            item.classList.remove('disabled');
+            checkbox.disabled = false;
+        }
+    }
+}
+
+function updateVolumeDropdownLabel() {
+    const label = document.getElementById('volume-dropdown-label');
+    if (!label) return;
+    label.textContent = `${volumeActiveCategories.size}/${MAX_VOLUME_CATEGORIES} categories`;
+}
+
+function renderVolumeChart() {
+    if (!volumeData) return;
+
+    const traces = [];
+
+    // Plot only active categories
+    for (const cat of Object.keys(volumeData.categories)) {
+        if (!volumeActiveCategories.has(cat)) continue;
+
+        // Map zeros/small values to null (creates gaps) for log scale
+        const values = volumeData.categories[cat].map(v => v > 0.001 ? v : null);
+        traces.push({
+            x: volumeData.months,
+            y: values,
+            name: cat,
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {
+                color: VOLUME_CATEGORY_COLORS[cat] || COLORS.gray,
+                width: 2
+            },
+            marker: { size: 4 },
+            connectgaps: true,
+            hovertemplate: `${cat}: $%{y:.2f}M<extra></extra>`
+        });
+    }
+
+    // Find July 2023 index for initial view (users can zoom out to see earlier data)
+    const startMonthIndex = volumeData.months.indexOf('2023-07');
+    const initialRange = startMonthIndex >= 0
+        ? [volumeData.months[startMonthIndex], volumeData.months[volumeData.months.length - 1]]
+        : [volumeData.months[0], volumeData.months[volumeData.months.length - 1]];
+
+    const layout = {
+        ...LAYOUT_DEFAULTS,
+        xaxis: {
+            title: '',
+            gridcolor: COLORS.line,
+            tickangle: -45,
+            zeroline: false,
+            showline: true,
+            linecolor: COLORS.line,
+            nticks: 15,
+            tickfont: { size: 9 },
+            range: initialRange
+        },
+        yaxis: {
+            title: 'Total Volume ($M, log scale)',
+            type: 'log',
+            gridcolor: COLORS.line,
+            zeroline: false,
+            showline: true,
+            linecolor: COLORS.line,
+            tickvals: [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000],
+            ticktext: ['$1K', '$10K', '$100K', '$1M', '$10M', '$100M', '$1,000M', '$10,000M'],
+            range: [-3.5, 4]
+        },
+        legend: {
+            orientation: 'h',
+            y: 1.02,
+            x: 0.5,
+            xanchor: 'center',
+            yanchor: 'bottom',
+            font: { size: 9 }
+        },
+        margin: { l: 80, r: 20, t: 90, b: 80 },
+        hovermode: 'x unified'
+    };
+
+    Plotly.newPlot('chart-volume', traces, layout, { responsive: true, displayModeBar: false });
 }
 
 // ============================================================================
@@ -1458,54 +1604,51 @@ async function loadCalibrationByCloseness() {
     }
 }
 
-// Store prediction vs volume data globally for platform switching
+// Store prediction vs volume data and current platform
 let _predVolumeData = null;
+let _predVolPlatform = 'polymarket';
 
 async function loadPredictionVsVolume() {
     try {
         _predVolumeData = await fetchJSON('prediction_vs_volume.json');
-        renderPredVolumeChart('polymarket');
+        renderPredVolumeChart();
     } catch (e) {
         console.warn('Could not load prediction vs volume:', e);
         showError('chart-pred-volume');
     }
 }
 
-function renderPredVolumeChart(platform) {
+function renderPredVolumeChart() {
     const data = _predVolumeData;
-    if (!data || !data[platform]) {
+    if (!data || !data[_predVolPlatform]) {
         showError('chart-pred-volume');
         return;
     }
 
-    const plat = data[platform];
-    const correctPts = plat.points.filter(p => p.correct);
-    const incorrectPts = plat.points.filter(p => !p.correct);
+    const platData = data[_predVolPlatform];
+    // Use 'yes' tokens only (handle both old and new data format)
+    const plat = platData.yes || platData;
 
-    const correctTrace = {
-        x: correctPts.map(p => p.price),
-        y: correctPts.map(p => p.volume),
+    if (!plat || !plat.points) {
+        showError('chart-pred-volume');
+        return;
+    }
+
+    const isKalshi = _predVolPlatform === 'kalshi';
+    const markerColor = isKalshi ? 'rgba(16, 185, 129, 0.3)' : 'rgba(37, 99, 235, 0.3)';
+    const lineColor = isKalshi ? 'rgba(16, 185, 129, 0.5)' : 'rgba(37, 99, 235, 0.5)';
+
+    const scatterTrace = {
+        x: plat.points.map(p => p.price),
+        y: plat.points.map(p => p.volume),
         mode: 'markers',
-        name: 'Correct',
+        name: 'Markets',
         marker: {
             size: 4,
-            color: 'rgba(16, 185, 129, 0.35)',
-            line: { color: 'rgba(16, 185, 129, 0.6)', width: 0.5 }
+            color: markerColor,
+            line: { color: lineColor, width: 0.5 }
         },
-        hovertemplate: 'Price: %{x:.2f}<br>Volume: $%{y:,.0f}<extra>Correct</extra>'
-    };
-
-    const incorrectTrace = {
-        x: incorrectPts.map(p => p.price),
-        y: incorrectPts.map(p => p.volume),
-        mode: 'markers',
-        name: 'Incorrect',
-        marker: {
-            size: 4,
-            color: 'rgba(239, 68, 68, 0.35)',
-            line: { color: 'rgba(239, 68, 68, 0.6)', width: 0.5 }
-        },
-        hovertemplate: 'Price: %{x:.2f}<br>Volume: $%{y:,.0f}<extra>Incorrect</extra>'
+        hovertemplate: 'Price: %{x:.2f}<br>Volume: $%{y:,.0f}<extra></extra>'
     };
 
     const trendTrace = {
@@ -1532,14 +1675,8 @@ function renderPredVolumeChart(platform) {
             gridcolor: COLORS.line,
             zeroline: false
         },
-        legend: {
-            orientation: 'h',
-            y: -0.15,
-            x: 0.5,
-            xanchor: 'center',
-            font: { size: 11 }
-        },
-        margin: { l: 70, r: 30, t: 20, b: 80 },
+        showlegend: false,
+        margin: { l: 70, r: 30, t: 20, b: 60 },
         annotations: [{
             x: 0.98, y: 0.98,
             xref: 'paper', yref: 'paper',
@@ -1551,15 +1688,16 @@ function renderPredVolumeChart(platform) {
         }]
     };
 
-    Plotly.newPlot('chart-pred-volume', [correctTrace, incorrectTrace, trendTrace], layout, CONFIG);
+    Plotly.newPlot('chart-pred-volume', [scatterTrace, trendTrace], layout, CONFIG);
 }
 
 function switchPredVolPlatform(platform, btn) {
+    _predVolPlatform = platform;
     // Update button states within the same container
     const container = btn.parentElement;
     container.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    renderPredVolumeChart(platform);
+    renderPredVolumeChart();
 }
 
 function showError(elementId) {
@@ -1912,88 +2050,208 @@ function initShareButtons() {
 // LIQUIDITY CHARTS
 // ============================================================================
 
+let liquidityCategoryData = null;
+let brierCategoryData = null;
+let currentLiquidityCategoryMetric = 'spread';
+
 async function loadLiquidityByCategory() {
     try {
-        const data = await fetchJSON('liquidity_by_category.json');
+        liquidityCategoryData = await fetchJSON('liquidity_by_category.json');
+        brierCategoryData = await fetchJSON('brier_by_category.json');
 
-        // Sort by spread (tightest first for horizontal bar - reverse for display)
-        const indices = data.categories.map((_, i) => i);
-
-        // Spread chart
-        const pmSpread = {
-            y: data.categories,
-            x: data.polymarket.spread,
-            name: 'Polymarket',
-            type: 'bar',
-            orientation: 'h',
-            marker: { color: COLORS_SOFT.pm },
-            hovertemplate: '%{y}: %{x:.1f}%<extra>Polymarket</extra>'
-        };
-
-        const kalshiSpread = {
-            y: data.categories,
-            x: data.kalshi.spread,
-            name: 'Kalshi',
-            type: 'bar',
-            orientation: 'h',
-            marker: { color: COLORS_SOFT.kalshi },
-            hovertemplate: '%{y}: %{x:.1f}%<extra>Kalshi</extra>'
-        };
-
-        const spreadLayout = {
-            ...LAYOUT_DEFAULTS,
-            barmode: 'group',
-            bargap: 0.2,
-            xaxis: { title: 'Median Relative Spread (%)', gridcolor: COLORS.line, zeroline: false },
-            yaxis: { automargin: true },
-            margin: { l: 140, r: 20, t: 30, b: 50 },
-            annotations: [{
-                x: 0.98, y: 0.02,
-                xref: 'paper', yref: 'paper',
-                text: `n = ${data.total_markets.toLocaleString()} markets`,
-                showarrow: false,
-                font: { size: 11, color: COLORS.text }
-            }]
-        };
-
-        Plotly.newPlot('chart-spread-category', [pmSpread, kalshiSpread], spreadLayout, CONFIG);
-
-        // Depth chart
-        const pmDepth = {
-            y: data.categories,
-            x: data.polymarket.depth,
-            name: 'Polymarket',
-            type: 'bar',
-            orientation: 'h',
-            marker: { color: COLORS_SOFT.pm },
-            hovertemplate: '%{y}: %{x:,.0f}<extra>Polymarket</extra>'
-        };
-
-        const kalshiDepth = {
-            y: data.categories,
-            x: data.kalshi.depth,
-            name: 'Kalshi',
-            type: 'bar',
-            orientation: 'h',
-            marker: { color: COLORS_SOFT.kalshi },
-            hovertemplate: '%{y}: %{x:,.0f}<extra>Kalshi</extra>'
-        };
-
-        const depthLayout = {
-            ...LAYOUT_DEFAULTS,
-            barmode: 'group',
-            bargap: 0.2,
-            xaxis: { title: 'Median Depth (contracts)', type: 'log', gridcolor: COLORS.line, zeroline: false },
-            yaxis: { automargin: true },
-            margin: { l: 140, r: 20, t: 30, b: 50 }
-        };
-
-        Plotly.newPlot('chart-depth-category', [pmDepth, kalshiDepth], depthLayout, CONFIG);
+        renderLiquidityCategory('spread');
     } catch (e) {
         console.warn('Could not load liquidity by category:', e);
-        showError('chart-spread-category');
-        showError('chart-depth-category');
+        showError('chart-liquidity-category');
     }
+}
+
+function renderLiquidityCategory(metric) {
+    if (!liquidityCategoryData) return;
+    const data = liquidityCategoryData;
+
+    const isSpread = metric === 'spread';
+    const title = document.getElementById('liquidity-category-title');
+    const desc = document.getElementById('liquidity-category-desc');
+
+    if (title) title.textContent = isSpread ? 'Bid-Ask Spread by Category' : 'Order Book Depth by Category';
+    if (desc) desc.textContent = isSpread
+        ? 'Median relative spread (%) by political category. Lower spreads indicate tighter markets with better liquidity.'
+        : 'Median total depth (contracts) by political category. Higher depth means more liquidity available at posted prices.';
+
+    const pmTrace = {
+        y: data.categories,
+        x: isSpread ? data.polymarket.spread : data.polymarket.depth,
+        name: 'Polymarket',
+        type: 'bar',
+        orientation: 'h',
+        marker: { color: COLORS_SOFT.pm },
+        hovertemplate: isSpread ? '%{y}: %{x:.1f}%<extra>Polymarket</extra>' : '%{y}: %{x:,.0f}<extra>Polymarket</extra>'
+    };
+
+    const kalshiTrace = {
+        y: data.categories,
+        x: isSpread ? data.kalshi.spread : data.kalshi.depth,
+        name: 'Kalshi',
+        type: 'bar',
+        orientation: 'h',
+        marker: { color: COLORS_SOFT.kalshi },
+        hovertemplate: isSpread ? '%{y}: %{x:.1f}%<extra>Kalshi</extra>' : '%{y}: %{x:,.0f}<extra>Kalshi</extra>'
+    };
+
+    const layout = {
+        ...LAYOUT_DEFAULTS,
+        barmode: 'group',
+        bargap: 0.2,
+        xaxis: {
+            title: isSpread ? 'Median Relative Spread (%)' : 'Median Depth (contracts)',
+            type: isSpread ? 'linear' : 'log',
+            gridcolor: COLORS.line,
+            zeroline: false
+        },
+        yaxis: { automargin: true },
+        margin: { l: 140, r: 20, t: 30, b: 50 },
+        annotations: [{
+            x: 0.98, y: 0.02,
+            xref: 'paper', yref: 'paper',
+            text: `n = ${data.total_markets.toLocaleString()} markets`,
+            showarrow: false,
+            font: { size: 11, color: COLORS.text }
+        }]
+    };
+
+    Plotly.newPlot('chart-liquidity-category', [pmTrace, kalshiTrace], layout, CONFIG);
+}
+
+function switchLiquidityCategoryMetric(metric, btn) {
+    currentLiquidityCategoryMetric = metric;
+    document.querySelectorAll('#subtab-liquidity-by-category .chart-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLiquidityCategory(metric);
+}
+
+let liquidityAccuracyData = null;
+let selectedLiquidityMetric = 'depth';  // 'spread' or 'depth'
+let selectedLiquidityCategory = 'overall';
+
+async function loadLiquidityAccuracyAnalysis() {
+    try {
+        liquidityAccuracyData = await fetchJSON('liquidity_accuracy_analysis.json');
+        renderLiquidityAccuracy();
+    } catch (e) {
+        console.warn('Could not load liquidity accuracy analysis:', e);
+        showError('chart-liquidity-accuracy');
+    }
+}
+
+function setLiquidityMetric(metric) {
+    selectedLiquidityMetric = metric;
+    // Update button states
+    document.getElementById('btn-metric-spread').classList.toggle('active', metric === 'spread');
+    document.getElementById('btn-metric-depth').classList.toggle('active', metric === 'depth');
+    renderLiquidityAccuracy();
+}
+
+function setLiquidityCategory(category) {
+    selectedLiquidityCategory = category;
+    renderLiquidityAccuracy();
+}
+
+function renderLiquidityAccuracy() {
+    if (!liquidityAccuracyData) return;
+
+    const metricData = liquidityAccuracyData[selectedLiquidityMetric];
+    if (!metricData) return;
+
+    const binCenters = liquidityAccuracyData.bin_centers;
+    const traces = [];
+
+    // Determine which data to use (overall or category)
+    let sourceData, displayName, totalMarkets;
+    if (selectedLiquidityCategory === 'overall') {
+        sourceData = metricData.overall;
+        displayName = 'All Markets';
+        totalMarkets = sourceData.total_markets;
+    } else {
+        sourceData = metricData.categories[selectedLiquidityCategory];
+        if (!sourceData) {
+            sourceData = metricData.overall;
+            displayName = 'All Markets';
+            totalMarkets = sourceData.total_markets;
+        } else {
+            displayName = selectedLiquidityCategory.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+            totalMarkets = sourceData.total_markets;
+        }
+    }
+
+    // Get valid data points (non-null brier scores)
+    const validIndices = sourceData.brier.map((b, i) => b !== null ? i : null).filter(i => i !== null);
+    const counts = validIndices.map(i => sourceData.n[i]);
+
+    // Main line - website blue
+    traces.push({
+        x: validIndices.map(i => binCenters[i]),
+        y: validIndices.map(i => sourceData.brier[i]),
+        text: counts.map(n => `n=${n}`),
+        mode: 'lines',
+        name: `${displayName} (n=${totalMarkets.toLocaleString()})`,
+        line: { color: '#2563eb', width: 2.5, shape: 'spline', smoothing: 0.8 },
+        hovertemplate: displayName + '<br>' + (selectedLiquidityMetric === 'spread' ? 'Spread' : 'Depth') + ' Percentile: %{x:.0f}%<br>Brier Score: %{y:.4f}<br>%{text}<extra></extra>'
+    });
+
+    // Determine y-axis range based on data
+    const brierValues = validIndices.map(i => sourceData.brier[i]).filter(v => v !== null);
+    const maxBrier = Math.max(...brierValues);
+    const yMax = Math.min(Math.ceil(maxBrier * 10) / 10 + 0.05, 0.5);
+
+    const metricLabel = selectedLiquidityMetric === 'spread' ? 'Tighter Spread' : 'Greater Depth';
+    const xAxisTitle = selectedLiquidityMetric === 'spread'
+        ? 'Spread Percentile (100% = tightest spread) →'
+        : 'Depth Percentile (100% = most liquid) →';
+
+    const layout = {
+        ...LAYOUT_DEFAULTS,
+        showlegend: false,
+        xaxis: {
+            title: xAxisTitle,
+            gridcolor: '#e5e7eb',
+            zeroline: false,
+            range: [0, 100],
+            tickvals: [0, 25, 50, 75, 100],
+            ticktext: ['0%', '25%', '50%', '75%', '100%'],
+            tickfont: { color: '#6b7280' },
+            titlefont: { color: '#374151' }
+        },
+        yaxis: {
+            title: 'Brier Score (lower = more accurate)',
+            gridcolor: '#e5e7eb',
+            zeroline: false,
+            range: [0, yMax],
+            tickfont: { color: '#6b7280' },
+            titlefont: { color: '#374151' }
+        },
+        margin: { l: 60, r: 40, t: 40, b: 60 },
+        annotations: [
+            {
+                x: 0.02, y: 0.98,
+                xref: 'paper', yref: 'paper',
+                text: `r = ${metricData.correlation.toFixed(3)}`,
+                showarrow: false,
+                font: { size: 12, color: '#6b7280' },
+                bgcolor: 'rgba(255,255,255,0.8)',
+                borderpad: 4
+            },
+            {
+                x: 0.98, y: 0.02,
+                xref: 'paper', yref: 'paper',
+                text: `n = ${totalMarkets.toLocaleString()} markets`,
+                showarrow: false,
+                font: { size: 11, color: '#9ca3af' }
+            }
+        ]
+    };
+
+    Plotly.newPlot('chart-liquidity-accuracy', traces, layout, CONFIG);
 }
 
 async function loadLiquidityPlatformComparison() {
@@ -2224,6 +2482,28 @@ function switchLiquidityTimeseriesMetric(metric, btn) {
         } else {
             descEl.textContent = 'Daily median order book depth (contracts) across all active markets. Higher depth means more liquidity available at posted prices. Data available from Oct 2025.';
         }
+    }
+}
+
+function switchLiquidityPlatformMetric(metric, btn) {
+    btn.parentElement.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const spreadChart = document.getElementById('chart-liquidity-spread-dist');
+    const depthChart = document.getElementById('chart-liquidity-depth-dist');
+    const titleEl = document.getElementById('liquidity-platform-title');
+    const descEl = document.getElementById('liquidity-platform-desc');
+
+    if (metric === 'spread') {
+        spreadChart.style.display = '';
+        depthChart.style.display = 'none';
+        if (titleEl) titleEl.textContent = 'Spread Distribution by Platform';
+        if (descEl) descEl.textContent = 'Distribution of relative spreads across platforms. Which platform offers tighter markets?';
+    } else {
+        spreadChart.style.display = 'none';
+        depthChart.style.display = '';
+        if (titleEl) titleEl.textContent = 'Depth Distribution by Platform';
+        if (descEl) descEl.textContent = 'Distribution of order book depth across platforms (log scale).';
     }
 }
 

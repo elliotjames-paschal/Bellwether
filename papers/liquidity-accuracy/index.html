@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Does Liquidity Predict Accuracy? - Bellwether</title>
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+    <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .article-header {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 80px 32px 48px;
+        }
+        .article-meta {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: 16px;
+        }
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+        .article-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .article-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--pm-color), var(--kalshi-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .author-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .author-title {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        .article-content {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 32px 80px;
+        }
+        .article-content p {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--gray-700);
+            margin-bottom: 24px;
+        }
+        .article-content h2 {
+            font-size: 1.5rem;
+            margin-top: 48px;
+            margin-bottom: 16px;
+        }
+        .article-content a {
+            color: var(--pm-color);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+        .back-link:hover {
+            color: var(--gray-700);
+        }
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+        }
+        .article-figure {
+            margin: 32px 0;
+            text-align: center;
+        }
+        .article-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .article-figure figcaption {
+            margin-top: 12px;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+        .article-figure-wide {
+            margin: 32px -80px;
+        }
+        @media (max-width: 900px) {
+            .article-figure-wide {
+                margin: 32px 0;
+            }
+        }
+        .data-box {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 24px 0;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        @media (max-width: 600px) {
+            .article-title {
+                font-size: 1.75rem;
+            }
+            .article-header {
+                padding: 48px 24px 32px;
+            }
+            .article-content {
+                padding: 0 24px 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-left">
+                <a href="../../" class="nav-logo"><span class="nav-logo-text">Bel<span class="nav-logo-bounce">l</span><span class="nav-logo-rest">wether</span></span></a>
+                <div class="nav-links">
+                    <a href="../../">Home</a>
+                    <a href="../../globe.html">Globe</a>
+                    <a href="../../research.html">Research</a>
+                    <a href="../../data.html">Data</a>
+                    <a href="../../about.html">About</a>
+                </div>
+            </div>
+            <a href="https://www.hoover.org" target="_blank" rel="noopener" class="nav-affiliation">
+                <img src="../../assets/hoover-tower.svg" alt="" class="nav-affiliation-icon">
+                <span>Hoover Institution</span>
+            </a>
+        </div>
+    </nav>
+    <script>
+    (function() {
+        var nav = document.querySelector('.nav');
+        var scrolled = false;
+        window.addEventListener('scroll', function() {
+            var s = window.scrollY > 20;
+            if (s !== scrolled) { scrolled = s; nav.classList.toggle('scrolled', s); }
+        }, { passive: true });
+    })();
+    </script>
+
+    <article>
+        <header class="article-header">
+            <a href="../../research.html" class="back-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Research
+            </a>
+
+            <div class="article-meta">February 2026</div>
+            <h1 class="article-title">Does Liquidity Predict Accuracy?</h1>
+            <p class="article-subtitle">
+                Tight spreads and deep order books feel trustworthy. We tested whether they actually predict better forecasts.
+            </p>
+
+            <div class="article-author">
+                <div class="author-avatar">B</div>
+                <div class="author-info">
+                    <span class="author-name">Bell Team</span>
+                    <span class="author-title">Bellwether Research</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="article-content">
+
+            <div class="data-box">
+                Data: 2,970 resolved markets from Polymarket and Kalshi (Oct 2025 &ndash; Feb 2026), plus 8 million time-series snapshots across 2,753 markets.
+            </div>
+
+            <h2>The Question</h2>
+
+            <p>
+                A market with a 1-cent spread and $50,000 of depth feels more refined than one with a 10-cent spread and $500 of depth. The tight spread suggests agreement; the deep book suggests conviction. But does any of this actually predict whether the price is more accurate? We tested this using orderbook data from Polymarket and Kalshi&mdash;both in cross-section (comparing markets to each other) and over time (tracking each market as it evolves toward resolution).
+            </p>
+
+            <h2>The Trap</h2>
+
+            <p>
+                The obvious approach is to correlate spread with Brier score. But there's a trap: if you use <em>relative</em> spread (spread divided by price), it's mechanically correlated with price level. Markets priced near 0% or 100% have extreme relative spreads by construction. Since prices near the extremes also have low Brier scores (predicting 95% and being right costs you almost nothing), you get a spurious correlation. The fix is simple: use <em>absolute</em> spread (best ask minus best bid, in cents). Absolute spread has almost no correlation with price (r&nbsp;=&nbsp;0.04), so there's no confound to control for.
+            </p>
+
+            <figure class="article-figure">
+                <img src="../../assets/liquidity-article/1_spread_vs_price_diagnostic.png" alt="Absolute spread vs price showing no correlation">
+                <figcaption><strong>Figure 1.</strong> Absolute spread is nearly uncorrelated with price (r&nbsp;=&nbsp;0.04). No U-shape, no systematic pattern&mdash;just noise. This means we can test spread's effect on accuracy without worrying about price confounds.</figcaption>
+            </figure>
+
+            <h2>The Result</h2>
+
+            <p>
+                After confirming there's no confound, we tested whether absolute spread predicts accuracy. The answer is no. In cross-section, markets with tighter spreads are not systematically more accurate than markets with wider spreads. The correlation between spread and residual Brier score (actual minus expected) is 0.04&mdash;statistically significant with 3,000 markets, but explaining less than 0.2% of variance. Depth shows even less signal. Order book imbalance, which initially looked promising in exploratory analysis, also failed to survive proper controls.
+            </p>
+
+            <figure class="article-figure">
+                <img src="../../assets/liquidity-article/2_residual_analysis.png" alt="Spread and depth vs residual accuracy">
+                <figcaption><strong>Figure 2.</strong> Neither spread nor depth predicts residual accuracy. Both correlations are effectively zero.</figcaption>
+            </figure>
+
+            <p>
+                The time-series analysis tells the same story. We trained a Random Forest on 6.4 million snapshots using every available feature: spread, depth, order book imbalance, price extremity, time in market life. The model achieved 55.6% R&sup2; on training data&mdash;but when tested on held-out <em>markets</em> (not just held-out snapshots), performance dropped to &minus;20.9%. That's worse than predicting zero for everything. The model had memorized market-specific quirks, not learned any generalizable relationship between liquidity and accuracy.
+            </p>
+
+            <figure class="article-figure">
+                <img src="../../assets/liquidity-article/5_train_vs_test.png" alt="Train vs test performance">
+                <figcaption><strong>Figure 3.</strong> The critical test. Train R&sup2; looks impressive (55.6%), but test R&sup2; on new markets is negative (&minus;20.9%). The patterns don't generalize.</figcaption>
+            </figure>
+
+            <h2>Why, and What To Do</h2>
+
+            <p>
+                This null result has precedent. <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=929916">Tetlock (2008)</a> found similar patterns in TradeSports, another limit order book exchange: liquidity doesn't improve calibration and actually <em>worsens</em> forecasting resolution. The mechanism is that na&iuml;ve limit order traders subsidize informed flow without contributing information&mdash;more liquidity means more noise traders alongside informed ones, leaving the signal-to-noise ratio roughly constant. At the macro level, Clinton and Huang (2025) found that PredictIt&mdash;with an $850 position cap&mdash;outperformed the far more liquid Polymarket in forecasting the 2024 election, suggesting forecast quality depends on trader diversity, not capital depth. The practical implications are straightforward: don't discount a market just because it has wide spreads or shallow depth. Don't weight prices by liquidity when aggregating forecasts. The midpoint price already incorporates whatever information the market has. Observable orderbook features add nothing predictive beyond it.
+            </p>
+
+        </div>
+    </article>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024&ndash;2026 Stanford University</p>
+                <div class="footer-links">
+                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

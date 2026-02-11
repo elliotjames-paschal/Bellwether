@@ -195,6 +195,10 @@ function initGlobe(containerId, options) {
                 hoveredMarker = null;
                 tooltip.style.opacity = '0';
                 tooltip.style.pointerEvents = 'none';
+                // Notify globe page hover ended
+                if (window.onGlobeMarkerHover) {
+                    window.onGlobeMarkerHover(null);
+                }
                 scheduleResume();
             }
         }, 150);
@@ -209,15 +213,10 @@ function initGlobe(containerId, options) {
         delayedHideTooltip();
     });
 
-    // Fullscreen button - pill style with text
+    // Fullscreen button - HIDDEN (functionality preserved for globe page)
     var fsBtn = document.createElement('button');
     fsBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="flex-shrink:0;"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg><span style="margin-left:6px;">Explore</span>';
-    fsBtn.style.cssText = 'position:absolute;bottom:16px;right:16px;z-index:10;' +
-        'background:rgba(255,255,255,0.92);border:1px solid #c5ddf5;border-radius:20px;' +
-        'padding:8px 16px 8px 12px;cursor:pointer;display:flex;align-items:center;' +
-        'color:#4285f4;font-size:13px;font-weight:500;font-family:system-ui,-apple-system,sans-serif;' +
-        'transition:all 0.2s ease;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(66,133,244,0.15);' +
-        'opacity:1;';
+    fsBtn.style.cssText = 'display:none !important;';
     fsBtn.title = 'Explore globe in fullscreen';
     fsBtn.addEventListener('mouseenter', function() {
         fsBtn.style.background = '#4285f4';
@@ -418,11 +417,180 @@ function initGlobe(containerId, options) {
     var animationId = null;
     var landFeature = null;
     var borderMesh = null;
+    var countriesFeatures = null; // Individual country geometries for choropleth
     var liveElections = [];
     var completedElections = [];
+    var allMarkets = [];
+    var categoryColors = {};
+    var activeFilter = { category: 'all', region: 'all' };
+    var activeVdemIndex = 'v2x_polyarchy'; // Default V-Dem index to display
     var hoveredMarker = null;
     var zoomLevel = 1;
     var baseScale = size * 0.485;
+
+    // Layer visibility state
+    var layerVisibility = {
+        markets: true,
+        vdem: false,
+        acled: false
+    };
+
+    // V-Dem and ACLED data (loaded on demand)
+    var vdemData = null;
+    var acledData = null;
+
+    // ISO 3166-1 numeric code to V-Dem country name mapping
+    var isoToCountry = {
+        // A
+        4: 'Afghanistan', 8: 'Albania', 12: 'Algeria', 24: 'Angola', 32: 'Argentina',
+        51: 'Armenia', 36: 'Australia', 40: 'Austria', 31: 'Azerbaijan',
+        // B
+        44: 'Bahamas', 48: 'Bahrain', 50: 'Bangladesh', 52: 'Barbados', 112: 'Belarus',
+        56: 'Belgium', 84: 'Belize', 204: 'Benin', 64: 'Bhutan', 68: 'Bolivia',
+        70: 'Bosnia and Herzegovina', 72: 'Botswana', 76: 'Brazil', 96: 'Brunei',
+        100: 'Bulgaria', 854: 'Burkina Faso', 108: 'Burundi',
+        // C
+        132: 'Cape Verde', 116: 'Cambodia', 120: 'Cameroon', 124: 'Canada',
+        140: 'Central African Republic', 148: 'Chad', 152: 'Chile', 156: 'China',
+        170: 'Colombia', 174: 'Comoros', 178: 'Congo', 180: 'DR Congo',
+        188: 'Costa Rica', 384: 'Ivory Coast', 191: 'Croatia', 192: 'Cuba', 196: 'Cyprus',
+        203: 'Czech Republic',
+        // D
+        208: 'Denmark', 262: 'Djibouti', 214: 'Dominican Republic',
+        // E
+        218: 'Ecuador', 818: 'Egypt', 222: 'El Salvador', 226: 'Equatorial Guinea',
+        232: 'Eritrea', 233: 'Estonia', 748: 'Eswatini', 231: 'Ethiopia',
+        // F
+        242: 'Fiji', 246: 'Finland', 250: 'France',
+        // G
+        266: 'Gabon', 270: 'The Gambia', 268: 'Georgia', 276: 'Germany', 288: 'Ghana',
+        300: 'Greece', 304: 'Denmark', 320: 'Guatemala', 324: 'Guinea', 624: 'Guinea-Bissau', 328: 'Guyana',
+        // H
+        332: 'Haiti', 340: 'Honduras', 344: 'Hong Kong', 348: 'Hungary',
+        // I
+        352: 'Iceland', 356: 'India', 360: 'Indonesia', 364: 'Iran', 368: 'Iraq',
+        372: 'Ireland', 376: 'Israel', 380: 'Italy',
+        // J
+        388: 'Jamaica', 392: 'Japan', 400: 'Jordan',
+        // K
+        398: 'Kazakhstan', 404: 'Kenya', 408: 'North Korea', 410: 'South Korea',
+        383: 'Kosovo', 414: 'Kuwait', 417: 'Kyrgyzstan',
+        // L
+        418: 'Laos', 428: 'Latvia', 422: 'Lebanon', 426: 'Lesotho', 430: 'Liberia',
+        434: 'Libya', 440: 'Lithuania', 442: 'Luxembourg',
+        // M
+        450: 'Madagascar', 454: 'Malawi', 458: 'Malaysia', 462: 'Maldives', 466: 'Mali',
+        470: 'Malta', 478: 'Mauritania', 480: 'Mauritius', 484: 'Mexico', 498: 'Moldova',
+        496: 'Mongolia', 499: 'Montenegro', 504: 'Morocco', 508: 'Mozambique', 104: 'Myanmar',
+        // N
+        516: 'Namibia', 524: 'Nepal', 528: 'Netherlands', 554: 'New Zealand',
+        558: 'Nicaragua', 562: 'Niger', 566: 'Nigeria', 807: 'North Macedonia', 578: 'Norway',
+        // O
+        512: 'Oman',
+        // P
+        586: 'Pakistan', 275: 'Palestine/West Bank', 591: 'Panama', 598: 'Papua New Guinea',
+        600: 'Paraguay', 604: 'Peru', 608: 'Philippines', 616: 'Poland', 620: 'Portugal',
+        // Q
+        634: 'Qatar',
+        // R
+        642: 'Romania', 643: 'Russia', 646: 'Rwanda',
+        // S
+        678: 'Sao Tome and Principe', 682: 'Saudi Arabia', 686: 'Senegal', 688: 'Serbia',
+        690: 'Seychelles', 694: 'Sierra Leone', 702: 'Singapore', 703: 'Slovakia',
+        705: 'Slovenia', 90: 'Solomon Islands', 706: 'Somalia', 710: 'South Africa',
+        728: 'South Sudan', 724: 'Spain', 144: 'Sri Lanka', 729: 'Sudan', 740: 'Suriname',
+        752: 'Sweden', 756: 'Switzerland', 760: 'Syria',
+        // T
+        158: 'Taiwan', 762: 'Tajikistan', 834: 'Tanzania', 764: 'Thailand',
+        626: 'Timor-Leste', 768: 'Togo', 780: 'Trinidad and Tobago', 788: 'Tunisia',
+        792: 'Türkiye', 795: 'Turkmenistan',
+        // U
+        800: 'Uganda', 804: 'Ukraine', 784: 'United Arab Emirates', 826: 'United Kingdom',
+        840: 'United States', 858: 'Uruguay', 860: 'Uzbekistan',
+        // V
+        548: 'Vanuatu', 862: 'Venezuela', 704: 'Vietnam',
+        // Y
+        887: 'Yemen',
+        // Z
+        894: 'Zambia', 716: 'Zimbabwe'
+    };
+
+    // Alternative country name mappings for V-Dem lookup
+    var countryNameAliases = {
+        'Turkey': 'Türkiye',
+        'Turkiye': 'Türkiye',
+        'Republic of the Congo': 'Congo',
+        'Democratic Republic of the Congo': 'DR Congo',
+        'Gambia': 'The Gambia',
+        'Swaziland': 'Eswatini',
+        'East Timor': 'Timor-Leste',
+        'Macedonia': 'North Macedonia',
+        'Burma': 'Myanmar',
+        'Cote d\'Ivoire': 'Ivory Coast',
+        'Cabo Verde': 'Cape Verde'
+    };
+
+    // Get V-Dem color for a country
+    function getVdemColor(countryId) {
+        if (!vdemData || !layerVisibility.vdem) return null;
+        var countryName = isoToCountry[countryId];
+        if (!countryName) return null;
+
+        // Try direct lookup first, then try alias
+        var country = vdemData.countries[countryName];
+        if (!country && countryNameAliases[countryName]) {
+            country = vdemData.countries[countryNameAliases[countryName]];
+        }
+        if (!country || !country.scores || !country.scores[activeVdemIndex]) return null;
+
+        var score = country.scores[activeVdemIndex].value;
+        var indexInfo = vdemData.indices[activeVdemIndex];
+
+        // Color scale: dark blue (bad) to light blue (good)
+        var invert = indexInfo && indexInfo.invert;
+        var t = invert ? (1 - score) : score;
+
+        // Blue gradient: #94a9bd (muted blue) -> #dbeafe (light)
+        // t=0: muted blue, t=1: light blue
+        var r = Math.round(148 + (219 - 148) * t);
+        var g = Math.round(169 + (234 - 169) * t);
+        var b = Math.round(189 + (254 - 189) * t);
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+
+    // Load V-Dem data when layer is enabled
+    function loadVdemData() {
+        if (vdemData) return Promise.resolve(vdemData);
+
+        return fetch('data/vdem_scores.json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                vdemData = data;
+                console.log('Loaded V-Dem data for', Object.keys(data.countries).length, 'countries');
+                return data;
+            })
+            .catch(function(err) {
+                console.error('Failed to load V-Dem data:', err);
+                return null;
+            });
+    }
+
+    // Load ACLED data when layer is enabled
+    function loadAcledData() {
+        if (acledData) return Promise.resolve(acledData);
+
+        return fetch('data/acled_events.json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                acledData = data;
+                console.log('Loaded ACLED data:', data.events ? data.events.length : 0, 'events');
+                return data;
+            })
+            .catch(function(err) {
+                console.error('Failed to load ACLED data:', err);
+                return null;
+            });
+    }
 
     // Drag & auto-rotate state
     var autoRotate = true;
@@ -486,8 +654,23 @@ function initGlobe(containerId, options) {
             .attr("stroke", "#c5ddf5")
             .attr("stroke-width", 1.5);
 
-        // Land
-        if (landFeature) {
+        // Land - either merged (default) or individual countries (for choropleth)
+        if (layerVisibility.vdem && vdemData && countriesFeatures) {
+            // Draw individual countries with V-Dem coloring
+            countriesFeatures.features.forEach(function(feature) {
+                var countryId = parseInt(feature.id);
+                var vdemColor = getVdemColor(countryId);
+                var fillColor = vdemColor || '#b5cde2';
+
+                svg.append("path")
+                    .datum(feature)
+                    .attr("d", path)
+                    .attr("fill", fillColor)
+                    .attr("stroke", "none")
+                    .attr("opacity", vdemColor ? 0.85 : 1);
+            });
+        } else if (landFeature) {
+            // Default: draw merged land mass
             svg.append("path")
                 .datum(landFeature)
                 .attr("d", path)
@@ -528,41 +711,79 @@ function initGlobe(containerId, options) {
         var markerScale = size / originalSize;
 
         // Completed elections (hoverable dots)
-        completedElections.forEach(function(e, idx) {
+        if (!layerVisibility.markets) {
+            // Skip rendering markets if layer is disabled
+        } else completedElections.forEach(function(e, idx) {
             if (!e.lat || !e.lng || !isVisible(e.lng, e.lat)) return;
+
+            // Apply category and region filters
+            if (activeFilter.category !== 'all') {
+                var cat = e.category_display || 'Other';
+                if (cat !== activeFilter.category) return;
+            }
+            if (activeFilter.region !== 'all') {
+                var region = e.region;
+                if (region === 'north_america' || region === 'south_america') region = 'americas';
+                if (region === 'middle_east') region = 'asia';
+                if (region !== activeFilter.region) return;
+            }
+
             var coords = projection([e.lng, e.lat]);
             if (!coords) return;
 
             completedProjected.push({ x: coords[0], y: coords[1], idx: idx, data: e });
 
+            // Get category color (new format) or default blue, but muted for completed
+            var baseColor = e.color || categoryColors[e.category] || '#3b82f6';
+
             var isHovered = hoveredMarker && hoveredMarker.type === 'completed' && hoveredMarker.idx === idx;
             svg.append("circle")
                 .attr("cx", coords[0]).attr("cy", coords[1])
                 .attr("r", (isHovered ? 6 : 3.5) * markerScale)
-                .attr("fill", isHovered ? "#2563eb" : "#3b82f6")
+                .attr("fill", isHovered ? baseColor : d3.color(baseColor).darker(0.5))
                 .attr("stroke", isHovered ? "#fff" : "none")
                 .attr("stroke-width", (isHovered ? 1.5 : 0) * markerScale)
-                .attr("opacity", isHovered ? 1 : 0.82);
+                .attr("opacity", isHovered ? 1 : 0.65);
         });
 
-        // Live elections (pulsing rings + solid dots)
-        liveElections.forEach(function(e, idx) {
+        // Live elections / markets (pulsing rings + solid dots)
+        if (!layerVisibility.markets) {
+            // Skip rendering markets if layer is disabled
+        } else liveElections.forEach(function(e, idx) {
             if (!e.lat || !e.lng || !isVisible(e.lng, e.lat)) return;
+
+            // Apply category and region filters
+            if (activeFilter.category !== 'all') {
+                var cat = e.category_display || 'Other';
+                if (cat !== activeFilter.category) return;
+            }
+            if (activeFilter.region !== 'all') {
+                var region = e.region;
+                // Map internal regions to filter values
+                if (region === 'north_america' || region === 'south_america') region = 'americas';
+                if (region === 'middle_east') region = 'asia';
+                if (region !== activeFilter.region) return;
+            }
+
             var coords = projection([e.lng, e.lat]);
             if (!coords) return;
 
             liveProjected.push({ x: coords[0], y: coords[1], idx: idx, data: e });
 
+            // Get category color (new format) or default blue
+            var dotColor = e.color || categoryColors[e.category] || '#1d6ff2';
+            var ringColor = dotColor;
+
             var phase = livePulse + (e.lat * 0.7 + e.lng * 0.3);
             var ringPulse = 0.3 + Math.sin(phase) * 0.25;
             var ringSize = (8 + Math.sin(phase) * 2.5) * markerScale;
 
-            // Outer pulsing ring
+            // Outer pulsing ring (color matches dot)
             svg.append("circle")
                 .attr("cx", coords[0]).attr("cy", coords[1])
                 .attr("r", ringSize)
                 .attr("fill", "none")
-                .attr("stroke", "#1d6ff2")
+                .attr("stroke", ringColor)
                 .attr("stroke-width", 1.5 * markerScale)
                 .attr("opacity", ringPulse);
 
@@ -571,7 +792,7 @@ function initGlobe(containerId, options) {
             svg.append("circle")
                 .attr("cx", coords[0]).attr("cy", coords[1])
                 .attr("r", (isHovered ? 7 : 4.5) * markerScale)
-                .attr("fill", isHovered ? "#1a56cc" : "#1d6ff2")
+                .attr("fill", isHovered ? d3.color(dotColor).darker(0.3) : dotColor)
                 .attr("stroke", isHovered ? "#fff" : "#e0eaff")
                 .attr("stroke-width", (isHovered ? 1.5 : 0.75) * markerScale);
         });
@@ -646,9 +867,16 @@ function initGlobe(containerId, options) {
             clearTimeout(resumeTimer);
             var e = hit.data;
 
+            // Notify globe page of hover (for sidebar highlighting)
+            if (window.onGlobeMarkerHover) {
+                window.onGlobeMarkerHover(e);
+            }
+
             // Build rich tooltip
-            var statusColor = hit.type === 'completed' ? '#9ca3af' : '#4285f4';
-            var statusLabel = hit.type === 'completed' ? 'Completed' : 'Live';
+            // Use category color if available, otherwise status-based color
+            var catColor = e.color || categoryColors[e.category] || '#4285f4';
+            var statusColor = hit.type === 'completed' ? '#9ca3af' : catColor;
+            var categoryLabel = e.category_display || (hit.type === 'completed' ? 'Completed' : 'Live');
             var statusDot = '<span style="color:' + statusColor + ';">\u25CF</span> ';
 
             // Build label — use marquee scroll for long text
@@ -668,7 +896,7 @@ function initGlobe(containerId, options) {
 
             var lines = [];
             lines.push(labelHtml);
-            lines.push('<span style="font-size:11px;color:' + statusColor + ';">' + statusDot + statusLabel + '</span>');
+            lines.push('<span style="font-size:11px;color:' + statusColor + ';">' + statusDot + categoryLabel + '</span>');
 
             if (e.markets) {
                 var detail = e.markets + ' market' + (e.markets > 1 ? 's' : '');
@@ -696,7 +924,32 @@ function initGlobe(containerId, options) {
                 }
             }
 
+            // Add View link on globe page
+            if (isGlobePage) {
+                lines.push('<div style="text-align:right;margin-top:4px;">' +
+                    '<span class="globe-tooltip-view" style="font-size:11px;color:rgba(255,255,255,0.6);cursor:pointer;' +
+                    'transition:color 0.15s;" ' +
+                    'onmouseover="this.style.color=\'#fff\'" ' +
+                    'onmouseout="this.style.color=\'rgba(255,255,255,0.6)\'">' +
+                    'View →</span></div>');
+            }
+
             tooltipContent.innerHTML = lines.join('<br>');
+
+            // Attach click handler to View button
+            var viewBtn = tooltipContent.querySelector('.globe-tooltip-view');
+            if (viewBtn) {
+                viewBtn.addEventListener('click', function() {
+                    if (window.onGlobeMarkerClick) {
+                        window.onGlobeMarkerClick(e);
+                    }
+                    // Hide tooltip after clicking
+                    tooltip.style.opacity = '0';
+                    tooltip.style.pointerEvents = 'none';
+                    hoveredMarker = null;
+                    scheduleResume();
+                });
+            }
             clearTimeout(tooltipHideTimer);
             tooltip.style.pointerEvents = 'auto';
             tooltip.style.opacity = '1';
@@ -719,9 +972,17 @@ function initGlobe(containerId, options) {
         }
     });
 
-    // Drag to rotate
+    // Drag to rotate (with click detection for markers)
+    var clickStartMarker = null;
+    var hasDragged = false;
+
     svgNode.addEventListener('mousedown', function(evt) {
-        // Don't initiate drag on marker hover (let clicks pass through)
+        var rect = svgNode.getBoundingClientRect();
+        var mx = evt.clientX - rect.left;
+        var my = evt.clientY - rect.top;
+        clickStartMarker = findNearestMarker(mx, my);
+        hasDragged = false;
+
         isDragging = true;
         autoRotate = false;
         clearTimeout(resumeTimer);
@@ -737,6 +998,12 @@ function initGlobe(containerId, options) {
         if (!isDragging) return;
         var dx = evt.clientX - dragStartX;
         var dy = evt.clientY - dragStartY;
+
+        // Detect if user has actually dragged (moved more than 5px)
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+            hasDragged = true;
+        }
+
         // Convert px delta to degrees (scale sensitivity by zoom so drag feels consistent when zoomed in)
         var dragSensitivity = 0.3 / zoomLevel;
         rotation = (dragStartRotation + dx * dragSensitivity) % 360;
@@ -746,10 +1013,11 @@ function initGlobe(containerId, options) {
         hoveredMarker = null;
     });
 
-    document.addEventListener('mouseup', function() {
+    document.addEventListener('mouseup', function(evt) {
         if (!isDragging) return;
         isDragging = false;
         updateCursor();
+        clickStartMarker = null;
         scheduleResume();
     });
 
@@ -767,19 +1035,42 @@ function initGlobe(containerId, options) {
     // Load data — use countries topology for borders
     Promise.all([
         fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(function(r) { return r.json(); }),
-        fetch('data/globe_elections.json').then(function(r) { return r.json(); })
+        fetch('data/globe_markets.json').then(function(r) { return r.json(); }).catch(function() {
+            // Fallback to globe_elections.json for backward compatibility
+            return fetch('data/globe_elections.json').then(function(r) { return r.json(); });
+        })
     ]).then(function(results) {
         var topology = results[0];
-        var electionData = results[1];
+        var marketData = results[1];
 
         // Land mass (merged) for fill
         landFeature = topoFeature(topology, topology.objects.land);
+        // Individual countries for choropleth - use topojson library for correct parsing
+        if (typeof topojson !== 'undefined') {
+            countriesFeatures = topojson.feature(topology, topology.objects.countries);
+            console.log('Using topojson library for countries, parsed', countriesFeatures.features.length, 'features');
+        } else {
+            countriesFeatures = topoFeature(topology, topology.objects.countries);
+            console.warn('topojson library not loaded, using fallback parser');
+        }
         // Country borders (internal shared edges)
         borderMesh = topoMesh(topology, topology.objects.countries);
 
-        liveElections = electionData.live || [];
-        completedElections = electionData.completed || [];
+        // New format: globe_markets.json with markets array
+        if (marketData.markets) {
+            allMarkets = marketData.markets || [];
+            categoryColors = marketData.category_colors || {};
+            // For backward compat, split into live (all) and completed (none)
+            liveElections = allMarkets;
+            completedElections = [];
+        } else {
+            // Old format: globe_elections.json with live/completed
+            liveElections = marketData.live || [];
+            completedElections = marketData.completed || [];
+            allMarkets = liveElections.concat(completedElections);
+        }
 
+        console.log('Globe loaded', allMarkets.length, 'market points');
         animate();
 
         // Country coordinates for globe navigation
@@ -938,6 +1229,54 @@ function initGlobe(containerId, options) {
             zoomLevel = Math.max(0.5, zoomLevel - 0.2);
         };
 
+        // Expose filter function for category/region filtering
+        window.setGlobeFilter = function(category, region) {
+            activeFilter.category = category || 'all';
+            activeFilter.region = region || 'all';
+        };
+
+        // Expose layer toggle function
+        window.setGlobeLayer = function(layer, enabled) {
+            layerVisibility[layer] = enabled;
+            console.log('Globe layer', layer, enabled ? 'enabled' : 'disabled');
+
+            // Load V-Dem data when enabled
+            if (layer === 'vdem' && enabled) {
+                loadVdemData().then(function(data) {
+                    if (data) {
+                        console.log('V-Dem data ready, indices:', Object.keys(data.indices));
+                    }
+                });
+            }
+
+            // Load ACLED data when enabled
+            if (layer === 'acled' && enabled) {
+                loadAcledData().then(function(data) {
+                    if (data && data.events && data.events.length > 0) {
+                        console.log('ACLED data ready, events:', data.events.length);
+                    }
+                });
+            }
+        };
+
+        // Expose V-Dem index selector
+        window.setVdemIndex = function(index) {
+            activeVdemIndex = index;
+            console.log('V-Dem index set to:', index);
+        };
+
+        // Get available V-Dem indices
+        window.getVdemIndices = function() {
+            if (!vdemData) return null;
+            return vdemData.indices;
+        };
+
+        // Get V-Dem data for a country (for tooltip/sidebar)
+        window.getVdemCountryData = function(countryName) {
+            if (!vdemData || !vdemData.countries[countryName]) return null;
+            return vdemData.countries[countryName];
+        };
+
     }).catch(function(err) {
         console.error('Globe error:', err);
         container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#9ca3af;font-size:13px;">Globe unavailable</div>';
@@ -958,6 +1297,9 @@ function initGlobe(containerId, options) {
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('globe-container')) {
-        initGlobe('globe-container', { size: 640, rotationSpeed: 0.08 });
+        // Use larger size on dedicated globe page
+        var isGlobePage = document.body.classList.contains('globe-page');
+        var globeSize = isGlobePage ? 850 : 640;
+        initGlobe('globe-container', { size: globeSize, rotationSpeed: 0.08 });
     }
 });

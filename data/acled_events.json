@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-02-10T21:17:35.963628",
+  "source": "ACLED (Armed Conflict Location & Event Data)",
+  "source_url": "https://acleddata.com/",
+  "note": "API credentials required - register at acleddata.com",
+  "event_colors": {
+    "Battles": "#dc2626",
+    "Violence against civilians": "#991b1b",
+    "Explosions/Remote violence": "#ea580c",
+    "Protests": "#f59e0b",
+    "Riots": "#d97706",
+    "Strategic developments": "#6b7280"
+  },
+  "events": []
+}

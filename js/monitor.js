@@ -192,7 +192,7 @@
                 </div>
                 <div class="market-card-prices single-col">
                     <div class="price-box">
-                        <div class="price-box-label">Price</div>
+                        <div class="price-box-label">${m.platform}</div>
                         <div class="price-box-value ${platformClass}">${formatPrice(m.price)}</div>
                     </div>
                 </div>
@@ -297,6 +297,13 @@
         // Modal image
         const modalImageHtml = e.image ? `<div class="modal-image"><img src="${e.image}" alt=""></div>` : '';
 
+        // Race context (from Google Civic API)
+        let raceContextHtml = '';
+        if (e.category_display === 'US Electoral') {
+            const raceContext = getRaceContext(e);
+            raceContextHtml = renderRaceContextSection(raceContext);
+        }
+
         return `
             <div class="modal-header">
                 ${modalImageHtml}
@@ -308,6 +315,7 @@
             </div>
             <div class="modal-body">
                 <div class="modal-prices${pricesClass}">${pricesHtml}</div>
+                ${raceContextHtml}
                 ${linksHtml}
                 ${embedHtml}
             </div>
@@ -353,6 +361,13 @@
         // Modal image
         const modalImageHtml = m.image ? `<div class="modal-image"><img src="${m.image}" alt=""></div>` : '';
 
+        // Race context (from Google Civic API) - only for US Electoral
+        let raceContextHtml = '';
+        if (m.category_display === 'US Electoral') {
+            const raceContext = getRaceContext(m);
+            raceContextHtml = renderRaceContextSection(raceContext);
+        }
+
         return `
             <div class="modal-header">
                 ${modalImageHtml}
@@ -368,6 +383,7 @@
             </div>
             <div class="modal-body">
                 <div class="modal-prices single-col">${pricesHtml}</div>
+                ${raceContextHtml}
                 ${linkHtml}
                 ${embedHtml}
             </div>
@@ -436,12 +452,25 @@
                 }
             }
 
-            // Search filter
+            // Search filter - search multiple fields, match all words
             if (filters.search) {
-                const search = filters.search.toLowerCase();
-                const label = (m.label || '').toLowerCase();
-                const question = (m.pm_question || m.k_question || '').toLowerCase();
-                if (!label.includes(search) && !question.includes(search)) return false;
+                const searchWords = filters.search.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+                const searchable = [
+                    m.label || '',
+                    m.pm_question || '',
+                    m.k_question || '',
+                    m.location || '',
+                    m.country || '',
+                    m.office || '',
+                    m.party || '',
+                    m.type || '',
+                    m.pm_candidate || '',
+                    m.k_candidate || ''
+                ].join(' ').toLowerCase();
+
+                // All search words must be found somewhere
+                const allMatch = searchWords.every(word => searchable.includes(word));
+                if (!allMatch) return false;
             }
 
             return true;
@@ -455,11 +484,36 @@
 
         switch (currentView) {
             case 'biggest_moves':
-                sorted = sorted.filter(m => m.price_change_24h !== null);
-                sorted.sort((a, b) => Math.abs(b.price_change_24h || 0) - Math.abs(a.price_change_24h || 0));
+                // Volume-weighted moves: heavily prioritize high-volume markets
+                // Score = abs(price_change) * log(volume)³ - surfaces moves on markets DC cares about
+                const MIN_VOLUME = 100000;  // $100K minimum to filter noise
+                sorted = sorted.filter(m => {
+                    const vol = m.total_volume || m.volume || 0;
+                    return m.price_change_24h !== null && vol >= MIN_VOLUME;
+                });
+                sorted.sort((a, b) => {
+                    const volA = a.total_volume || a.volume || 0;
+                    const volB = b.total_volume || b.volume || 0;
+                    const logA = Math.log10(Math.max(volA, 1));
+                    const logB = Math.log10(Math.max(volB, 1));
+                    const scoreA = Math.abs(a.price_change_24h || 0) * logA * logA * logA;
+                    const scoreB = Math.abs(b.price_change_24h || 0) * logB * logB * logB;
+                    return scoreB - scoreA;
+                });
                 break;
             case 'highest_volume':
+                // Sort by volume, then dedupe by event slug (one market per event)
                 sorted.sort((a, b) => (b.total_volume || b.volume || 0) - (a.total_volume || a.volume || 0));
+                const seenSlugs = new Set();
+                sorted = sorted.filter(m => {
+                    // Extract event slug from pm_url or k_url
+                    const pmSlug = m.pm_url ? m.pm_url.split('/event/')[1]?.split('/')[0] : null;
+                    const kSlug = m.k_url ? m.k_url.split('/events/')[1]?.split('/')[0] : null;
+                    const slug = pmSlug || kSlug || m.key;
+                    if (seenSlugs.has(slug)) return false;
+                    seenSlugs.add(slug);
+                    return true;
+                });
                 break;
             case 'divergences':
                 // Only elections with both platforms and spread > 5%
@@ -477,14 +531,16 @@
 
     function renderCards() {
         const container = document.getElementById('monitor-cards');
-        const loadMoreBtn = document.getElementById('monitor-load-more');
+        const loadMoreContainer = document.getElementById('monitor-load-more');
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        const showLessBtn = document.getElementById('show-less-btn');
         if (!container) return;
 
         const sorted = getSortedMarkets();
 
         if (sorted.length === 0) {
             container.innerHTML = `<div class="monitor-empty">No markets found matching these filters</div>`;
-            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            if (loadMoreContainer) loadMoreContainer.style.display = 'none';
             return;
         }
 
@@ -498,8 +554,14 @@
             addCheckboxesToCards();
         }
 
-        if (loadMoreBtn) {
-            loadMoreBtn.style.display = sorted.length > displayCount ? 'block' : 'none';
+        // Show/hide load more container and buttons
+        if (loadMoreContainer) {
+            const hasMore = sorted.length > displayCount;
+            const canShowLess = displayCount > CARDS_PER_PAGE;
+
+            loadMoreContainer.style.display = (hasMore || canShowLess) ? 'flex' : 'none';
+            if (loadMoreBtn) loadMoreBtn.style.display = hasMore ? 'inline-block' : 'none';
+            if (showLessBtn) showLessBtn.style.display = canShowLess ? 'inline-block' : 'none';
         }
     }
 
@@ -508,7 +570,11 @@
         const volumeCount = document.getElementById('tab-count-volume');
         const divergencesCount = document.getElementById('tab-count-divergences');
 
-        const withChange = filteredMarkets.filter(m => m.price_change_24h !== null);
+        const MIN_VOLUME_FOR_MOVES = 10000;
+        const withChange = filteredMarkets.filter(m => {
+            const vol = m.total_volume || m.volume || 0;
+            return m.price_change_24h !== null && vol >= MIN_VOLUME_FOR_MOVES;
+        });
         const withVolume = filteredMarkets.filter(m => m.total_volume > 0 || m.volume > 0);
         const divergences = filteredMarkets.filter(m => {
             const isElection = m.entry_type === 'election' || (m.has_both && m.pm_price !== undefined);
@@ -559,6 +625,14 @@
     function loadMore() {
         displayCount += CARDS_PER_PAGE;
         renderCards();
+    }
+
+    function showLess() {
+        displayCount = CARDS_PER_PAGE;
+        renderCards();
+        // Scroll back to top of monitor section
+        const monitor = document.getElementById('monitor');
+        if (monitor) monitor.scrollIntoView({ behavior: 'smooth' });
     }
 
     function onFilterChange() {
@@ -617,6 +691,9 @@
         const loadMoreBtn = document.getElementById('load-more-btn');
         if (loadMoreBtn) loadMoreBtn.addEventListener('click', loadMore);
 
+        const showLessBtn = document.getElementById('show-less-btn');
+        if (showLessBtn) showLessBtn.addEventListener('click', showLess);
+
         const categorySelect = document.getElementById('filter-category');
         const platformSelect = document.getElementById('filter-platform');
         const searchInput = document.getElementById('filter-search');
@@ -648,7 +725,425 @@
         // Initialize review mode
         initReviewMode();
 
+        // Load banner stats
+        loadBannerStats();
+
+        // Load election timeline
+        loadElectionTimeline();
+
         loadMonitorData();
+    }
+
+    // Load summary stats for the research finding banner
+    function loadBannerStats() {
+        fetch('data/summary.json')
+            .then(r => r.json())
+            .then(data => {
+                const accEl = document.getElementById('banner-accuracy');
+                const electionsEl = document.getElementById('banner-elections');
+                const brierEl = document.getElementById('banner-brier');
+
+                if (accEl && data.directional_accuracy) {
+                    accEl.textContent = data.directional_accuracy.toFixed(1) + '%';
+                }
+                if (electionsEl && data.overlapping_elections) {
+                    electionsEl.textContent = data.overlapping_elections.toLocaleString();
+                }
+                if (brierEl && data.combined_brier) {
+                    brierEl.textContent = data.combined_brier.toFixed(2);
+                }
+            })
+            .catch(err => console.warn('Failed to load banner stats:', err));
+    }
+
+    // =============================================================================
+    // ELECTION TIMELINE (Google Civic API Integration)
+    // =============================================================================
+
+    let civicData = null;
+    let activeElectionFilter = null;
+
+    async function loadElectionTimeline() {
+        try {
+            const response = await fetch('data/civic_elections.json');
+            if (!response.ok) {
+                console.warn('Civic elections data not available');
+                hideTimeline();
+                return;
+            }
+            civicData = await response.json();
+            renderTimeline(civicData.elections || []);
+            initTimelineClickHandlers();
+        } catch (err) {
+            console.warn('Failed to load election timeline:', err);
+            hideTimeline();
+        }
+    }
+
+    function hideTimeline() {
+        const timeline = document.getElementById('election-timeline');
+        if (timeline) {
+            timeline.style.display = 'none';
+        }
+    }
+
+    function renderTimeline(elections) {
+        const container = document.getElementById('timeline-content');
+        if (!container) return;
+
+        if (!elections || elections.length === 0) {
+            container.innerHTML = '<div class="timeline-loading">No upcoming elections</div>';
+            return;
+        }
+
+        // Filter to future elections only
+        const futureElections = elections.filter(e => e.daysUntil === null || e.daysUntil >= 0);
+
+        if (futureElections.length === 0) {
+            container.innerHTML = '<div class="timeline-loading">No upcoming elections</div>';
+            return;
+        }
+
+        let html = '<div class="timeline-stem"></div>';
+        html += '<div class="timeline-nodes">';
+
+        // Today marker
+        const today = new Date();
+        const todayStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        html += `
+            <div class="timeline-today">
+                <span class="timeline-today-label">TODAY</span>
+                <span class="timeline-today-date">${todayStr}</span>
+            </div>
+        `;
+
+        // Election nodes
+        futureElections.forEach((election, index) => {
+            const dateStr = formatElectionDate(election.electionDay);
+            const marketCount = election.matchedMarketCount || 0;
+            const spacing = calculateSpacing(election.daysUntil, index);
+
+            html += `
+                <div class="timeline-election" data-election-id="${election.id}" style="margin-top: ${spacing}px;">
+                    <div class="timeline-election-date">${dateStr}</div>
+                    <div class="timeline-election-name">${truncateElectionName(election.name)}</div>
+                    ${marketCount > 0 ? `
+                        <div class="timeline-election-markets">
+                            <span class="timeline-election-markets-count">${marketCount}</span> markets
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    function formatElectionDate(dateStr) {
+        if (!dateStr) return 'TBD';
+        try {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } catch (e) {
+            return dateStr;
+        }
+    }
+
+    function truncateElectionName(name) {
+        if (!name) return 'Election';
+        // Shorten common patterns
+        name = name.replace('General Election', 'General');
+        name = name.replace('Primary Election', 'Primary');
+        name = name.replace('Special Election', 'Special');
+        if (name.length > 28) {
+            return name.substring(0, 25) + '...';
+        }
+        return name;
+    }
+
+    function calculateSpacing(daysUntil, index) {
+        // Base spacing for first item
+        if (index === 0) return 0;
+
+        // Proportional spacing based on days until election
+        // Min 20px, max 60px
+        if (daysUntil === null) return 40;
+
+        if (daysUntil <= 7) return 20;
+        if (daysUntil <= 30) return 30;
+        if (daysUntil <= 90) return 40;
+        if (daysUntil <= 180) return 50;
+        return 60;
+    }
+
+    function initTimelineClickHandlers() {
+        document.querySelectorAll('.timeline-election').forEach(node => {
+            node.addEventListener('click', () => {
+                const electionId = node.dataset.electionId;
+                filterByElection(electionId);
+            });
+        });
+
+        // Dismiss filter chip
+        const dismissBtn = document.getElementById('election-filter-dismiss');
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', clearElectionFilter);
+        }
+    }
+
+    function filterByElection(electionId) {
+        if (!civicData) return;
+
+        const election = civicData.elections.find(e => e.id === electionId);
+        if (!election) return;
+
+        activeElectionFilter = election;
+
+        // Show filter chip
+        const chip = document.getElementById('election-filter-chip');
+        const nameEl = document.getElementById('election-filter-name');
+        if (chip && nameEl) {
+            nameEl.textContent = election.name;
+            chip.style.display = 'flex';
+        }
+
+        // Mark active in timeline
+        document.querySelectorAll('.timeline-election').forEach(node => {
+            node.classList.toggle('active', node.dataset.electionId === electionId);
+        });
+
+        // Filter markets
+        applyElectionFilter(election);
+    }
+
+    // State abbreviation to full name mapping
+    const STATE_NAMES = {
+        'AL': 'alabama', 'AK': 'alaska', 'AZ': 'arizona', 'AR': 'arkansas',
+        'CA': 'california', 'CO': 'colorado', 'CT': 'connecticut', 'DE': 'delaware',
+        'FL': 'florida', 'GA': 'georgia', 'HI': 'hawaii', 'ID': 'idaho',
+        'IL': 'illinois', 'IN': 'indiana', 'IA': 'iowa', 'KS': 'kansas',
+        'KY': 'kentucky', 'LA': 'louisiana', 'ME': 'maine', 'MD': 'maryland',
+        'MA': 'massachusetts', 'MI': 'michigan', 'MN': 'minnesota', 'MS': 'mississippi',
+        'MO': 'missouri', 'MT': 'montana', 'NE': 'nebraska', 'NV': 'nevada',
+        'NH': 'new hampshire', 'NJ': 'new jersey', 'NM': 'new mexico', 'NY': 'new york',
+        'NC': 'north carolina', 'ND': 'north dakota', 'OH': 'ohio', 'OK': 'oklahoma',
+        'OR': 'oregon', 'PA': 'pennsylvania', 'RI': 'rhode island', 'SC': 'south carolina',
+        'SD': 'south dakota', 'TN': 'tennessee', 'TX': 'texas', 'UT': 'utah',
+        'VT': 'vermont', 'VA': 'virginia', 'WA': 'washington', 'WV': 'west virginia',
+        'WI': 'wisconsin', 'WY': 'wyoming', 'DC': 'district of columbia'
+    };
+
+    function applyElectionFilter(election) {
+        if (!election || !election.matchedMarkets || election.matchedMarkets.length === 0) {
+            // No matched markets - filter by state/year/type instead
+            const stateAbbrev = election.state;
+            const stateName = stateAbbrev ? STATE_NAMES[stateAbbrev] : null;
+            const year = election.electionDay ? election.electionDay.substring(0, 4) : null;
+            const electionName = (election.name || '').toLowerCase();
+            const isPrimary = electionName.includes('primary');
+            const isDemocratic = electionName.includes('democratic');
+            const isRepublican = electionName.includes('republican');
+
+            filteredMarkets = allMarkets.filter(m => {
+                // Only Electoral markets (US or general)
+                const cat = (m.category_display || '').toLowerCase();
+                if (!cat.includes('electoral')) return false;
+
+                // Build searchable text from all relevant fields
+                const searchable = [
+                    m.label || '',
+                    m.pm_question || '',
+                    m.k_question || '',
+                    m.location || '',
+                    m.country || '',
+                    m.party || '',
+                    m.type || ''
+                ].join(' ').toLowerCase();
+
+                // Match state if available (check both abbreviation and full name)
+                if (stateAbbrev) {
+                    const stateMatch = searchable.includes(stateAbbrev.toLowerCase()) ||
+                                      (stateName && searchable.includes(stateName));
+                    if (!stateMatch) return false;
+                }
+
+                // Match year if available
+                if (year) {
+                    if (!searchable.includes(year)) return false;
+                }
+
+                // Match election type (primary vs general)
+                if (isPrimary) {
+                    if (!searchable.includes('primary')) return false;
+                }
+
+                // Match party if specified
+                if (isDemocratic) {
+                    if (!searchable.includes('democrat')) return false;
+                }
+                if (isRepublican) {
+                    if (!searchable.includes('republican')) return false;
+                }
+
+                return true;
+            });
+        } else {
+            // Filter to matched market keys
+            const matchedKeys = new Set(election.matchedMarkets);
+            filteredMarkets = allMarkets.filter(m => matchedKeys.has(m.key));
+        }
+
+        displayCount = CARDS_PER_PAGE;
+        updateMarketCount();
+        updateTabCounts();
+        renderCards();
+    }
+
+    function clearElectionFilter() {
+        activeElectionFilter = null;
+
+        // Hide filter chip
+        const chip = document.getElementById('election-filter-chip');
+        if (chip) chip.style.display = 'none';
+
+        // Remove active class from timeline
+        document.querySelectorAll('.timeline-election').forEach(node => {
+            node.classList.remove('active');
+        });
+
+        // Reset to all markets
+        applyFilters();
+        updateMarketCount();
+        renderCards();
+    }
+
+    // =============================================================================
+    // RACE CONTEXT (Modal Enrichment)
+    // =============================================================================
+
+    function getRaceContext(market) {
+        if (!civicData || !civicData.elections) return null;
+
+        // Try to match market to an election with contests
+        const state = extractStateFromMarket(market);
+        const year = extractYearFromMarket(market);
+
+        for (const election of civicData.elections) {
+            if (!election.contests || election.contests.length === 0) continue;
+
+            // Check if this election matches the market
+            const electionYear = election.electionDay ? election.electionDay.substring(0, 4) : null;
+            const electionState = election.state;
+
+            if (state && electionState && state === electionState) {
+                if (!year || !electionYear || year === electionYear) {
+                    return {
+                        election: election,
+                        contests: election.contests
+                    };
+                }
+            }
+        }
+
+        return null;
+    }
+
+    function extractStateFromMarket(market) {
+        const label = (market.label || market.pm_question || market.k_question || '').toUpperCase();
+
+        // Check for state abbreviations
+        const stateAbbrevs = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+                             'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+                             'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+                             'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+                             'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'];
+
+        for (const abbrev of stateAbbrevs) {
+            // Match as word boundary
+            const regex = new RegExp('\\b' + abbrev + '\\b');
+            if (regex.test(label)) {
+                return abbrev;
+            }
+        }
+
+        return null;
+    }
+
+    function extractYearFromMarket(market) {
+        const label = (market.label || market.pm_question || market.k_question || '');
+        const match = label.match(/\b(202[4-9]|203[0-9])\b/);
+        return match ? match[1] : null;
+    }
+
+    function renderRaceContextSection(raceContext) {
+        if (!raceContext || !raceContext.contests || raceContext.contests.length === 0) {
+            return '';
+        }
+
+        const contest = raceContext.contests[0];  // Use first contest
+        const candidates = contest.candidates || [];
+
+        if (candidates.length === 0) {
+            return '';
+        }
+
+        let candidatesHtml = candidates.map(c => {
+            const partyClass = getPartyClass(c.party);
+            const initials = getInitials(c.name);
+            const photoHtml = c.photoUrl
+                ? `<img src="${c.photoUrl}" alt="${c.name}">`
+                : `<div class="candidate-photo-placeholder">${initials}</div>`;
+
+            return `
+                <div class="candidate-card ${partyClass}">
+                    <div class="candidate-photo">${photoHtml}</div>
+                    <div class="candidate-name">${c.name}</div>
+                    <div class="candidate-party ${partyClass}">(${partyAbbrev(c.party)})</div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="modal-race-context">
+                <div class="race-context-header">RACE CONTEXT</div>
+                <div class="race-context-metadata">
+                    <span>${contest.type || 'General'}</span>
+                    <span>${contest.office || 'Office'}</span>
+                </div>
+                <div class="race-candidates">
+                    ${candidatesHtml}
+                </div>
+            </div>
+        `;
+    }
+
+    function getPartyClass(party) {
+        if (!party) return 'other';
+        const p = party.toLowerCase();
+        if (p.includes('democrat')) return 'dem';
+        if (p.includes('republican')) return 'rep';
+        return 'other';
+    }
+
+    function partyAbbrev(party) {
+        if (!party) return '?';
+        const p = party.toLowerCase();
+        if (p.includes('democrat')) return 'D';
+        if (p.includes('republican')) return 'R';
+        if (p.includes('libertarian')) return 'L';
+        if (p.includes('green')) return 'G';
+        if (p.includes('independent')) return 'I';
+        return party.charAt(0).toUpperCase();
+    }
+
+    function getInitials(name) {
+        if (!name) return '?';
+        const parts = name.split(' ');
+        if (parts.length >= 2) {
+            return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+        }
+        return name.charAt(0).toUpperCase();
     }
 
     // =============================================================================

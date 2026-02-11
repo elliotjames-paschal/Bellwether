@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bellwether - Political Prediction Markets Research</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="css/styles.css?v=20260206c">
+    <link rel="stylesheet" href="css/styles.css?v=20260210e">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
@@ -44,33 +44,33 @@
         <div class="hero-content">
             <div class="hero-layout">
                 <div class="hero-text">
-                    <h1>Tracking political prediction markets at scale</h1>
+                    <h1>The information value of political prediction markets</h1>
                     <p class="hero-description">
-                        <span class="brand-inline">Bell</span> tracks <a href="https://polymarket.com" target="_blank" rel="noopener" style="color: var(--pm-color); text-decoration-color: rgba(37,99,235,0.3);">Polymarket</a> and <a href="https://kalshi.com" target="_blank" rel="noopener" style="color: var(--kalshi-color); text-decoration-color: rgba(16,185,129,0.3);">Kalshi</a>—the two largest prediction market platforms—to deliver real-time political risk intelligence.
+                        <span class="brand-inline">Bell</span> studies how prediction markets on <a href="https://kalshi.com" target="_blank" rel="noopener" style="color: var(--gray-900); text-decoration: underline;">Kalshi</a> and <a href="https://polymarket.com" target="_blank" rel="noopener" style="color: var(--gray-900); text-decoration: underline;">Polymarket</a> process political information — from elections and policy to geopolitics and governance.
                     </p>
                 </div>
                 <div class="hero-symbol">
-                    <div id="globe-container"></div>
+                    <div id="hero-globe-container"></div>
                 </div>
             </div>
             <div class="hero-stats">
                 <div class="stat-card">
                     <div class="stat-card-inner">
-                        <span class="stat-value" id="hero-markets">32,492</span>
-                        <span class="stat-label">Markets Tracked</span>
-                        <span class="stat-context">Polymarket + Kalshi combined</span>
+                        <span class="stat-value" id="hero-markets">33,193</span>
+                        <span class="stat-label">Markets Analyzed</span>
+                        <span class="stat-context">Across Polymarket and Kalshi</span>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-inner">
-                        <span class="stat-value" id="hero-elections">1,708</span>
-                        <span class="stat-label">Electoral Events</span>
-                        <span class="stat-context">Unique contests worldwide</span>
+                        <span class="stat-value" id="hero-electoral">11,008</span>
+                        <span class="stat-label">Electoral Markets</span>
+                        <span class="stat-context">Across <span id="hero-countries">54</span> countries worldwide</span>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-inner">
-                        <span class="stat-value" id="hero-volume">$19.1B</span>
+                        <span class="stat-value" id="hero-volume">$21.2B</span>
                         <span class="stat-label">Total Volume</span>
                         <span class="stat-context">Trading volume tracked</span>
                     </div>
@@ -84,12 +84,12 @@
     <section class="research-finding">
         <div class="research-finding-inner">
             <p class="research-finding-quote">
-                Prediction markets call elections correctly <span class="stat-num">85.9%</span> of the time—but only when measured at the right moment.
+                Prediction markets call elections correctly <span class="stat-num" id="banner-accuracy">88.5%</span> of the time—but only when measured at the right moment.
             </p>
             <div class="research-finding-meta">
-                <span class="research-finding-stat">From Bell's analysis of <span class="stat-num" id="banner-electoral">10,856</span> markets</span>
+                <span class="research-finding-stat">Based on election-eve prices</span>
                 <span class="research-finding-divider">·</span>
-                <span class="research-finding-stat"><span class="stat-num">0.08</span> Brier</span>
+                <span class="research-finding-stat"><span class="stat-num" id="banner-brier">0.08</span> Brier</span>
                 <span class="research-finding-divider">·</span>
                 <a href="papers/election-eve-methodology/" class="research-finding-link">Read methodology →</a>
             </div>
@@ -101,10 +101,10 @@
         <div class="container">
             <div class="monitor-header">
                 <div class="monitor-header-left">
-                    <h2>Market Monitor <span class="monitor-live-dot"></span></h2>
+                    <h2>Market Monitor <span class="monitor-live-badge"><span class="monitor-live-dot"></span>LIVE</span></h2>
                 </div>
                 <div class="monitor-header-right">
-                    <span class="monitor-status"><span class="stat-num" id="monitor-market-count">0</span> markets</span>
+                    <span class="monitor-status"><span class="stat-num" id="monitor-market-count">0</span> live markets</span>
                     <span class="monitor-timestamp">Updated <span id="monitor-last-update">just now</span></span>
                 </div>
             </div>
@@ -136,17 +136,38 @@
                 </button>
             </div>
 
-            <!-- Grid: Cards + Sidebar -->
+            <!-- Election Filter Chip (hidden by default) -->
+            <div class="election-filter-chip" id="election-filter-chip" style="display: none;">
+                <span class="election-filter-text">Showing markets for: <strong id="election-filter-name"></strong></span>
+                <button class="election-filter-dismiss" id="election-filter-dismiss">&times;</button>
+            </div>
+
+            <!-- Grid: Timeline + Cards + Sidebar -->
             <div class="monitor-grid">
+                <!-- Left: Election Timeline -->
+                <aside class="election-timeline-sidebar" id="election-timeline">
+                    <div class="timeline-header">US ELECTION CALENDAR</div>
+                    <div class="timeline-content" id="timeline-content">
+                        <!-- Populated by JS -->
+                        <div class="timeline-loading">Loading elections...</div>
+                    </div>
+                    <div class="timeline-footer">
+                        <span class="timeline-footer-text">Click to filter markets</span>
+                    </div>
+                </aside>
+
+                <!-- Center: Cards -->
                 <div>
                     <div class="monitor-cards" id="monitor-cards">
                         <div class="monitor-empty">Loading markets...</div>
                     </div>
                     <div class="monitor-load-more" id="monitor-load-more" style="display: none;">
                         <button id="load-more-btn">Load more markets</button>
+                        <button id="show-less-btn" style="display: none;">Show less</button>
                     </div>
                 </div>
 
+                <!-- Right: Sidebar -->
                 <div class="monitor-sidebar">
                     <!-- Data Helper -->
                     <div class="sidebar-card data-helper-card" id="data-helper">
@@ -167,9 +188,9 @@
                     <!-- Latest Research -->
                     <div class="sidebar-card sidebar-card-featured">
                         <div class="sidebar-card-eyebrow">Latest Research</div>
-                        <div class="sidebar-card-title">When You Measure Matters</div>
-                        <p class="sidebar-card-desc">The field has quietly switched how it samples prediction market prices. The switch biases every accuracy metric.</p>
-                        <a href="papers/election-eve-methodology/" class="sidebar-card-link">Read paper →</a>
+                        <div class="sidebar-card-title">Does Liquidity Predict Accuracy?</div>
+                        <p class="sidebar-card-desc">Tight spreads and deep order books feel trustworthy. We tested whether they actually predict better forecasts.</p>
+                        <a href="papers/liquidity-accuracy/" class="sidebar-card-link">Read paper →</a>
                     </div>
                 </div>
             </div>
@@ -179,10 +200,28 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2024–2025 Hall Lab, Stanford University</p>
-                <div class="footer-links">
-                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="footer-title">Bellwether</span>
+                    <span class="footer-tagline">Political prediction market research</span>
+                </div>
+                <div class="footer-nav">
+                    <a href="research.html">Research</a>
+                    <a href="about.html">About</a>
+                    <a href="https://github.com/hall-lab/prediction-markets" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <span>&copy; 2026 Hall Lab</span>
+                    <span class="footer-sep">·</span>
+                    <a href="https://www.hoover.org" target="_blank" rel="noopener">Hoover Institution</a>
+                </div>
+                <div class="footer-sources">
+                    <span class="footer-sources-label">Data updated daily from</span>
+                    <a href="https://polymarket.com" target="_blank" rel="noopener">Polymarket</a>
+                    <a href="https://kalshi.com" target="_blank" rel="noopener">Kalshi</a>
+                    <a href="https://domeapi.com" target="_blank" rel="noopener">Dome</a>
                 </div>
             </div>
         </div>
@@ -245,7 +284,7 @@
         </div>
     </div>
 
-    <script src="js/globe.js?v=20260203c"></script>
-    <script src="js/monitor.js?v=20260207f"></script>
+    <script src="js/globe-hero.js?v=20260210"></script>
+    <script src="js/monitor.js?v=20260210j"></script>
 </body>
 </html>

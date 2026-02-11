@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research - Bellwether</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="css/styles.css?v=20260203d">
+    <link rel="stylesheet" href="css/styles.css?v=20260210j">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
@@ -217,13 +217,13 @@
     </script>
 
     <!-- Hero -->
-    <section class="hero">
+    <section class="hero" style="padding: 60px 32px; min-height: 400px;">
         <div class="hero-inner">
             <div class="hero-content">
                 <p class="hero-eyebrow">Research</p>
-                <h1><span class="brand-inline">Bell's</span> Research</h1>
+                <h1>Live analysis of prediction market accuracy</h1>
                 <p class="hero-description">
-                    Continuous analysis of political prediction markets across Polymarket and Kalshi, plus published papers from the Hall Lab.
+                    <span class="brand-inline">Bell</span> continuously measures how well Polymarket and Kalshi forecast elections and political events.
                 </p>
             </div>
         </div>
@@ -270,7 +270,7 @@
                 <button class="tab-btn" data-tab="accuracy">Accuracy</button>
                 <button class="tab-btn" data-tab="calibration">Calibration</button>
                 <button class="tab-btn" data-tab="liquidity">Liquidity</button>
-                <button class="tab-btn" data-tab="bias">Partisan Bias</button>
+                <button class="tab-btn" data-tab="bias">Bias</button>
                 <button class="tab-btn" data-tab="platforms">Platforms</button>
             </div>
 
@@ -415,33 +415,59 @@
                 </div>
 
                 <div class="subtab-nav">
-                    <button class="subtab-btn active" onclick="switchSubtab('spread-by-category', this)">Spread by Category</button>
-                    <button class="subtab-btn" onclick="switchSubtab('depth-by-category', this)">Depth by Category</button>
+                    <button class="subtab-btn active" onclick="switchSubtab('liquidity-by-category', this)">By Category</button>
+                    <button class="subtab-btn" onclick="switchSubtab('liquidity-vs-accuracy', this)">Liquidity vs Accuracy</button>
                     <button class="subtab-btn" onclick="switchSubtab('liquidity-platforms', this)">Platform Comparison</button>
                     <button class="subtab-btn" onclick="switchSubtab('spread-vs-volume', this)">Spread vs Volume</button>
                     <button class="subtab-btn" onclick="switchSubtab('liquidity-over-time', this)">Over Time</button>
                 </div>
 
-                <div class="subtab-content active" id="subtab-spread-by-category">
+                <div class="subtab-content active" id="subtab-liquidity-by-category">
                     <div class="chart-row">
                         <div class="chart-card chart-card-wide">
                             <div class="chart-header">
-                                <h3>Bid-Ask Spread by Category</h3>
-                                <p class="chart-description">Median relative spread (%) by political category. Lower spreads indicate tighter markets with better liquidity.</p>
+                                <h3 id="liquidity-category-title">Bid-Ask Spread by Category</h3>
+                                <p class="chart-description" id="liquidity-category-desc">Median relative spread (%) by political category. Lower spreads indicate tighter markets with better liquidity.</p>
                             </div>
-                            <div id="chart-spread-category" class="chart chart-tall"></div>
+                            <div class="chart-toggle-group">
+                                <button class="chart-toggle-btn active" onclick="switchLiquidityCategoryMetric('spread', this)">Spread</button>
+                                <button class="chart-toggle-btn" onclick="switchLiquidityCategoryMetric('depth', this)">Depth</button>
+                            </div>
+                            <div id="chart-liquidity-category" class="chart chart-tall"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="subtab-content" id="subtab-depth-by-category">
+                <div class="subtab-content" id="subtab-liquidity-vs-accuracy">
                     <div class="chart-row">
                         <div class="chart-card chart-card-wide">
                             <div class="chart-header">
-                                <h3>Order Book Depth by Category</h3>
-                                <p class="chart-description">Median total depth (contracts) by political category. Higher depth means more liquidity available at posted prices.</p>
+                                <h3>Liquidity vs Prediction Accuracy</h3>
+                                <p class="chart-description">Each line shows how Brier score changes across liquidity percentiles within a category. Downward slope = higher liquidity improves accuracy. Dot size = number of markets.</p>
                             </div>
-                            <div id="chart-depth-category" class="chart chart-tall"></div>
+                            <div class="chart-controls" style="display: flex; gap: 16px; align-items: center; margin-bottom: 12px;">
+                                <div class="chart-toggle-group" id="liquidity-metric-toggle">
+                                    <button class="chart-toggle-btn" id="btn-metric-spread" onclick="setLiquidityMetric('spread')">Spread</button>
+                                    <button class="chart-toggle-btn active" id="btn-metric-depth" onclick="setLiquidityMetric('depth')">Depth</button>
+                                </div>
+                                <select id="liquidity-category-select" onchange="setLiquidityCategory(this.value)" style="padding: 6px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 14px; background: white; color: #374151; cursor: pointer;">
+                                    <option value="overall" selected>All Markets</option>
+                                    <option value="ELECTORAL">Electoral</option>
+                                    <option value="MILITARY_SECURITY">Military &amp; Security</option>
+                                    <option value="INTERNATIONAL">International</option>
+                                    <option value="MONETARY_POLICY">Monetary Policy</option>
+                                    <option value="APPOINTMENTS">Appointments</option>
+                                    <option value="PARTY_POLITICS">Party Politics</option>
+                                    <option value="GOVERNMENT_OPERATIONS">Government Operations</option>
+                                    <option value="TIMING_EVENTS">Timing Events</option>
+                                    <option value="POLITICAL_SPEECH">Political Speech</option>
+                                    <option value="REGULATORY">Regulatory</option>
+                                    <option value="JUDICIAL">Judicial</option>
+                                    <option value="LEGISLATIVE">Legislative</option>
+                                    <option value="POLLING_APPROVAL">Polling/Approval</option>
+                                </select>
+                            </div>
+                            <div id="chart-liquidity-accuracy" class="chart chart-tall"></div>
                         </div>
                     </div>
                 </div>
@@ -450,19 +476,15 @@
                     <div class="chart-row">
                         <div class="chart-card chart-card-wide">
                             <div class="chart-header">
-                                <h3>Spread Distribution by Platform</h3>
-                                <p class="chart-description">Distribution of relative spreads across platforms. Which platform offers tighter markets?</p>
+                                <h3 id="liquidity-platform-title">Spread Distribution by Platform</h3>
+                                <p class="chart-description" id="liquidity-platform-desc">Distribution of relative spreads across platforms. Which platform offers tighter markets?</p>
+                            </div>
+                            <div class="chart-toggle-group">
+                                <button class="chart-toggle-btn active" onclick="switchLiquidityPlatformMetric('spread', this)">Spread</button>
+                                <button class="chart-toggle-btn" onclick="switchLiquidityPlatformMetric('depth', this)">Depth</button>
                             </div>
                             <div id="chart-liquidity-spread-dist" class="chart chart-tall"></div>
-                        </div>
-                    </div>
-                    <div class="chart-row">
-                        <div class="chart-card chart-card-wide">
-                            <div class="chart-header">
-                                <h3>Depth Distribution by Platform</h3>
-                                <p class="chart-description">Distribution of order book depth across platforms (log scale).</p>
-                            </div>
-                            <div id="chart-liquidity-depth-dist" class="chart chart-tall"></div>
+                            <div id="chart-liquidity-depth-dist" class="chart chart-tall" style="display: none;"></div>
                         </div>
                     </div>
                 </div>
@@ -652,6 +674,13 @@
                                 <h3>Trading Volume Over Time</h3>
                                 <p class="chart-description">Monthly volume in millions USD. November 2024 saw record activity during the US presidential election.</p>
                             </div>
+                            <div class="category-dropdown-container">
+                                <button type="button" class="category-dropdown-toggle" id="volume-dropdown-toggle">
+                                    <span id="volume-dropdown-label">8/8 categories</span>
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                                </button>
+                                <div class="category-dropdown-menu" id="volume-dropdown-menu"></div>
+                            </div>
                             <div id="chart-volume" class="chart chart-tall"></div>
                         </div>
                     </div>
@@ -691,6 +720,16 @@
         <aside class="papers-sidebar">
             <div class="papers-sidebar-header">Papers & Articles</div>
             <div class="papers-sidebar-list">
+                <a href="papers/liquidity-accuracy/" class="paper-card-compact">
+                    <div class="paper-card-compact-meta">
+                        <span class="paper-card-compact-badge article">Article</span>
+                        <span class="paper-card-compact-date">Feb 2026</span>
+                    </div>
+                    <div class="paper-card-compact-title">Does Liquidity Predict Accuracy?</div>
+                    <div class="paper-card-compact-authors"><span class="brand-inline">Bell</span> Team</div>
+                    <span class="paper-card-compact-link">Read &rarr;</span>
+                </a>
+
                 <a href="papers/election-eve-methodology/" class="paper-card-compact">
                     <div class="paper-card-compact-meta">
                         <span class="paper-card-compact-badge article">Article</span>
@@ -736,15 +775,33 @@
 
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2024–2025 Hall Lab, Stanford University</p>
-                <div class="footer-links">
-                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="footer-title">Bellwether</span>
+                    <span class="footer-tagline">Political prediction market research</span>
+                </div>
+                <div class="footer-nav">
+                    <a href="research.html">Research</a>
+                    <a href="about.html">About</a>
+                    <a href="https://github.com/hall-lab/prediction-markets" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <span>&copy; 2026 Hall Lab</span>
+                    <span class="footer-sep">·</span>
+                    <a href="https://www.hoover.org" target="_blank" rel="noopener">Hoover Institution</a>
+                </div>
+                <div class="footer-sources">
+                    <span class="footer-sources-label">Data updated daily from</span>
+                    <a href="https://polymarket.com" target="_blank" rel="noopener">Polymarket</a>
+                    <a href="https://kalshi.com" target="_blank" rel="noopener">Kalshi</a>
+                    <a href="https://domeapi.com" target="_blank" rel="noopener">Dome</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="js/dashboard.js?v=20260207b"></script>
+    <script src="js/dashboard.js?v=20260211"></script>
 </body>
 </html>

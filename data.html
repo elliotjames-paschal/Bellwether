@@ -7,30 +7,6 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="css/styles.css">
     <style>
-        .data-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin: 32px 0;
-        }
-        .data-stat {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-        }
-        .data-stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 4px;
-        }
-        .data-stat-label {
-            font-size: 0.8125rem;
-            color: var(--gray-500);
-        }
-
         .glossary-section {
             margin-top: 48px;
         }
@@ -135,42 +111,36 @@
             border-radius: 50%;
         }
 
-        .file-list {
-            margin-top: 24px;
-        }
-        .file-item {
+        .glossary-toggle-group {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            background: var(--white);
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .glossary-toggle-btn {
+            padding: 8px 16px;
             border: 1px solid var(--gray-200);
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--gray-100);
             border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--gray-500);
-        }
-        .file-name {
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.875rem;
             font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
         }
-        .file-meta {
-            font-size: 0.8125rem;
-            color: var(--gray-500);
+        .glossary-toggle-btn:hover {
+            border-color: var(--pm-color);
+            color: var(--pm-color);
+        }
+        .glossary-toggle-btn.active {
+            background: var(--pm-color);
+            border-color: var(--pm-color);
+            color: white;
+        }
+        .glossary-content {
+            display: none;
+        }
+        .glossary-content.active {
+            display: block;
         }
 
         @media (max-width: 768px) {
@@ -213,241 +183,277 @@
     })();
     </script>
 
-    <section class="hero">
+    <section class="hero" style="padding: 60px 32px; min-height: 400px;">
         <div class="hero-inner">
             <div class="hero-content">
                 <p class="hero-eyebrow">Open Data</p>
                 <h1>Political Prediction Markets Dataset</h1>
                 <p class="hero-description">
-                    Comprehensive data on 23,000+ political prediction markets from Polymarket and Kalshi,
-                    updated daily by Bell.
+<span class="brand-inline">Bell</span> tracks every political prediction market on Polymarket and Kalshi, updated daily. Request access to the full dataset below.
                 </p>
             </div>
         </div>
     </section>
 
-    <section class="section">
+    <section class="section" style="padding-top: 24px;">
         <div class="container">
-            <div class="data-stats">
-                <div class="data-stat">
-                    <div class="data-stat-value" id="stat-markets">23,430</div>
-                    <div class="data-stat-label">Total Markets</div>
-                </div>
-                <div class="data-stat">
-                    <div class="data-stat-value" id="stat-resolved">18,200+</div>
-                    <div class="data-stat-label">Resolved Markets</div>
-                </div>
-                <div class="data-stat">
-                    <div class="data-stat-value" id="stat-prices">12M+</div>
-                    <div class="data-stat-label">Price Observations</div>
-                </div>
-                <div class="data-stat">
-                    <div class="data-stat-value" id="stat-updated">Daily</div>
-                    <div class="data-stat-label">Update Frequency</div>
-                </div>
-            </div>
-
             <div class="glossary-section">
                 <h2>Data Glossary <span class="update-badge">Updated Daily</span></h2>
-                <p style="color: var(--gray-600); margin: 16px 0 24px;">
-                    The master dataset contains one row per market outcome (e.g., "Will Trump win?" has Yes/No rows).
-                    All markets are classified into 15 political categories.
-                </p>
 
-                <h3 style="margin: 32px 0 16px;">Market Identifiers</h3>
-                <table class="glossary-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 200px;">Field</th>
-                            <th style="width: 100px;">Type</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="field-name">market_id</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Unique identifier for the market (platform-specific)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">platform</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Source platform: "polymarket" or "kalshi"</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">condition_id</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Polymarket condition ID (for price lookups)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">ticker</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Kalshi ticker symbol</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="glossary-toggle-group" style="display: flex; gap: 8px; margin: 20px 0 24px;">
+                    <button class="glossary-toggle-btn active" onclick="switchGlossary('master', this)">Master</button>
+                    <button class="glossary-toggle-btn" onclick="switchGlossary('prices', this)">Prices</button>
+                    <button class="glossary-toggle-btn" onclick="switchGlossary('liquidity', this)">Liquidity</button>
+                    <button class="glossary-toggle-btn" onclick="switchGlossary('trades', this)">Trades</button>
+                </div>
 
-                <h3 style="margin: 32px 0 16px;">Market Details</h3>
-                <table class="glossary-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 200px;">Field</th>
-                            <th style="width: 100px;">Type</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="field-name">question</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Full market question text</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">outcome</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Outcome being priced (e.g., "Yes", "Trump", "Republican")</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">political_category</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">One of 15 categories: Electoral, Monetary Policy, Party Politics, Military Security, International, Appointments, Regulatory, Political Speech, etc.</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">volume_usd</span></td>
-                            <td><span class="field-type">float</span></td>
-                            <td class="field-description">Total trading volume in USD</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <!-- Master Dataset Glossary -->
+                <div class="glossary-content active" id="glossary-master">
+                    <p style="color: var(--gray-600); margin: 0 0 24px;">
+                        <strong>political_markets_master.csv</strong> — One row per market outcome. All markets are classified into 15 political categories.
+                    </p>
 
-                <h3 style="margin: 32px 0 16px;">Electoral Markets (subset)</h3>
-                <table class="glossary-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 200px;">Field</th>
-                            <th style="width: 100px;">Type</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="field-name">election_type</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Type of election: Presidential, Senate, House, Governor, Primary, etc.</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">country</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Country of election</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">state</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">State/region (for sub-national elections)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">election_date</span></td>
-                            <td><span class="field-type">date</span></td>
-                            <td class="field-description">Date of the election, sourced from our election dates lookup table</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">election_year</span></td>
-                            <td><span class="field-type">float</span></td>
-                            <td class="field-description">Year of the election (e.g., 2024.0)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">is_primary</span></td>
-                            <td><span class="field-type">boolean</span></td>
-                            <td class="field-description">Whether the market is for a primary election (vs. general)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">election_eve_price</span></td>
-                            <td><span class="field-type">float</span></td>
-                            <td class="field-description">Market price at 00:00 UTC on election day. This is our standard forecast evaluation price for electoral markets. See <a href="papers/election-eve-methodology/" style="color: var(--pm-color);">methodology note</a>.</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">is_winner_market</span></td>
-                            <td><span class="field-type">boolean</span></td>
-                            <td class="field-description">Whether this is a "Will X win?" market (vs. vote share, etc.)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">party</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Political party: "R", "D", or null</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <h3 style="margin: 24px 0 16px;">Identifiers</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">market_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Unique identifier for the market (platform-specific)</td></tr>
+                            <tr><td><span class="field-name">platform</span></td><td><span class="field-type">string</span></td><td class="field-description">Source platform: "polymarket" or "kalshi"</td></tr>
+                            <tr><td><span class="field-name">pm_condition_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Polymarket condition ID (for price lookups)</td></tr>
+                            <tr><td><span class="field-name">pm_token_id_yes</span></td><td><span class="field-type">string</span></td><td class="field-description">Polymarket YES token ID</td></tr>
+                            <tr><td><span class="field-name">pm_token_id_no</span></td><td><span class="field-type">string</span></td><td class="field-description">Polymarket NO token ID</td></tr>
+                            <tr><td><span class="field-name">k_event_ticker</span></td><td><span class="field-type">string</span></td><td class="field-description">Kalshi event ticker symbol</td></tr>
+                        </tbody>
+                    </table>
 
-                <h3 style="margin: 32px 0 16px;">Resolution & Accuracy</h3>
-                <table class="glossary-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 200px;">Field</th>
-                            <th style="width: 100px;">Type</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="field-name">is_closed</span></td>
-                            <td><span class="field-type">boolean</span></td>
-                            <td class="field-description">Whether market has stopped trading</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">actual_outcome</span></td>
-                            <td><span class="field-type">float</span></td>
-                            <td class="field-description">Resolution: 1.0 if outcome occurred, 0.0 if not, null if unresolved</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">close_time</span></td>
-                            <td><span class="field-type">datetime</span></td>
-                            <td class="field-description">When trading closed</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">brier_1d</span></td>
-                            <td><span class="field-type">float</span></td>
-                            <td class="field-description">Brier score using price 1 day before resolution</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">brier_7d</span></td>
-                            <td><span class="field-type">float</span></td>
-                            <td class="field-description">Brier score using price 7 days before resolution</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">brier_30d</span></td>
-                            <td><span class="field-type">float</span></td>
-                            <td class="field-description">Brier score using price 30 days before resolution</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <h3 style="margin: 32px 0 16px;">Market Details</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">question</span></td><td><span class="field-type">string</span></td><td class="field-description">Full market question text</td></tr>
+                            <tr><td><span class="field-name">political_category</span></td><td><span class="field-type">string</span></td><td class="field-description">One of 15 categories: Electoral, Monetary Policy, Party Politics, Military Security, International, Appointments, Regulatory, Political Speech, etc.</td></tr>
+                            <tr><td><span class="field-name">volume_usd</span></td><td><span class="field-type">float</span></td><td class="field-description">Total trading volume in USD</td></tr>
+                            <tr><td><span class="field-name">tags</span></td><td><span class="field-type">string</span></td><td class="field-description">Comma-separated list of market tags from the platform</td></tr>
+                            <tr><td><span class="field-name">date_added</span></td><td><span class="field-type">datetime</span></td><td class="field-description">When the market was first added to our database</td></tr>
+                        </tbody>
+                    </table>
 
-                <h3 style="margin: 32px 0 16px;">Price History (separate file)</h3>
-                <table class="glossary-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 200px;">Field</th>
-                            <th style="width: 100px;">Type</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="field-name">token_id</span></td>
-                            <td><span class="field-type">string</span></td>
-                            <td class="field-description">Market identifier (joins to condition_id or ticker)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">timestamp</span></td>
-                            <td><span class="field-type">datetime</span></td>
-                            <td class="field-description">Price observation time (UTC)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="field-name">price</span></td>
-                            <td><span class="field-type">float</span></td>
-                            <td class="field-description">Market price (0-1, interpretable as probability)</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <h3 style="margin: 32px 0 16px;">Electoral Markets (subset)</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">election_type</span></td><td><span class="field-type">string</span></td><td class="field-description">Type of election: Presidential, Senate, House, Governor, Primary, etc.</td></tr>
+                            <tr><td><span class="field-name">country</span></td><td><span class="field-type">string</span></td><td class="field-description">Country of election</td></tr>
+                            <tr><td><span class="field-name">location</span></td><td><span class="field-type">string</span></td><td class="field-description">State/region (for sub-national elections)</td></tr>
+                            <tr><td><span class="field-name">office</span></td><td><span class="field-type">string</span></td><td class="field-description">Office being contested (e.g., "President", "Senate", "House")</td></tr>
+                            <tr><td><span class="field-name">election_year</span></td><td><span class="field-type">float</span></td><td class="field-description">Year of the election (e.g., 2024.0)</td></tr>
+                            <tr><td><span class="field-name">is_primary</span></td><td><span class="field-type">boolean</span></td><td class="field-description">Whether the market is for a primary election (vs. general)</td></tr>
+                            <tr><td><span class="field-name">party</span></td><td><span class="field-type">string</span></td><td class="field-description">Political party: "R", "D", or null</td></tr>
+                            <tr><td><span class="field-name">candidate</span></td><td><span class="field-type">string</span></td><td class="field-description">Candidate name (if applicable)</td></tr>
+                            <tr><td><span class="field-name">election_eve_price</span></td><td><span class="field-type">float</span></td><td class="field-description">Market price at 00:00 UTC on election day</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">Resolution & Accuracy</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">is_closed</span></td><td><span class="field-type">boolean</span></td><td class="field-description">Whether market has stopped trading</td></tr>
+                            <tr><td><span class="field-name">resolution_outcome</span></td><td><span class="field-type">float</span></td><td class="field-description">Resolution: 1.0 if outcome occurred, 0.0 if not, null if unresolved</td></tr>
+                            <tr><td><span class="field-name">winning_outcome</span></td><td><span class="field-type">string</span></td><td class="field-description">The outcome that won (e.g., "Yes", "Trump")</td></tr>
+                            <tr><td><span class="field-name">trading_close_time</span></td><td><span class="field-type">datetime</span></td><td class="field-description">When trading closed</td></tr>
+                            <tr><td><span class="field-name">scheduled_end_time</span></td><td><span class="field-type">datetime</span></td><td class="field-description">Scheduled market end time</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">Platform-Specific Fields (Kalshi)</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">k_last_price</span></td><td><span class="field-type">float</span></td><td class="field-description">Most recent trade price (0-1)</td></tr>
+                            <tr><td><span class="field-name">k_yes_bid</span></td><td><span class="field-type">float</span></td><td class="field-description">Current best bid for YES</td></tr>
+                            <tr><td><span class="field-name">k_yes_ask</span></td><td><span class="field-type">float</span></td><td class="field-description">Current best ask for YES</td></tr>
+                            <tr><td><span class="field-name">k_volume_contracts</span></td><td><span class="field-type">int</span></td><td class="field-description">Total contracts traded</td></tr>
+                            <tr><td><span class="field-name">k_open_interest</span></td><td><span class="field-type">int</span></td><td class="field-description">Current open interest</td></tr>
+                            <tr><td><span class="field-name">k_liquidity</span></td><td><span class="field-type">float</span></td><td class="field-description">Platform-reported liquidity measure</td></tr>
+                            <tr><td><span class="field-name">k_status</span></td><td><span class="field-type">string</span></td><td class="field-description">Market status: "active", "closed", "settled"</td></tr>
+                            <tr><td><span class="field-name">k_result</span></td><td><span class="field-type">string</span></td><td class="field-description">Settlement result: "yes", "no", null</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Prices Dataset Glossary -->
+                <div class="glossary-content" id="glossary-prices" style="display: none;">
+                    <p style="color: var(--gray-600); margin: 0 0 24px;">
+                        <strong>price_histories.parquet</strong> — Hourly price observations for all tracked markets. Approximately 12M+ rows.
+                    </p>
+
+                    <h3 style="margin: 24px 0 16px;">Price Observation Fields</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">token_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Market identifier — joins to pm_token_id_yes/no or ticker in master file</td></tr>
+                            <tr><td><span class="field-name">platform</span></td><td><span class="field-type">string</span></td><td class="field-description">Source platform: "polymarket" or "kalshi"</td></tr>
+                            <tr><td><span class="field-name">timestamp</span></td><td><span class="field-type">datetime</span></td><td class="field-description">Price observation time (UTC), hourly granularity</td></tr>
+                            <tr><td><span class="field-name">price</span></td><td><span class="field-type">float</span></td><td class="field-description">Market price (0-1), interpretable as probability</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">OHLCV Fields (when available)</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">open</span></td><td><span class="field-type">float</span></td><td class="field-description">Opening price for the period</td></tr>
+                            <tr><td><span class="field-name">high</span></td><td><span class="field-type">float</span></td><td class="field-description">Highest price during the period</td></tr>
+                            <tr><td><span class="field-name">low</span></td><td><span class="field-type">float</span></td><td class="field-description">Lowest price during the period</td></tr>
+                            <tr><td><span class="field-name">close</span></td><td><span class="field-type">float</span></td><td class="field-description">Closing price for the period</td></tr>
+                            <tr><td><span class="field-name">volume</span></td><td><span class="field-type">float</span></td><td class="field-description">Trading volume during the period (USD)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">Derived Fields</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">price_change_1h</span></td><td><span class="field-type">float</span></td><td class="field-description">Price change from previous hour</td></tr>
+                            <tr><td><span class="field-name">price_change_24h</span></td><td><span class="field-type">float</span></td><td class="field-description">Price change from 24 hours ago</td></tr>
+                            <tr><td><span class="field-name">volatility_24h</span></td><td><span class="field-type">float</span></td><td class="field-description">Rolling 24-hour price volatility (std dev)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Liquidity Dataset Glossary -->
+                <div class="glossary-content" id="glossary-liquidity" style="display: none;">
+                    <p style="color: var(--gray-600); margin: 0 0 24px;">
+                        <strong>liquidity_metrics.csv</strong> — Order book snapshots and derived liquidity metrics per market.
+                    </p>
+
+                    <h3 style="margin: 24px 0 16px;">Identifiers</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">market_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Unique market identifier</td></tr>
+                            <tr><td><span class="field-name">token_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Token/ticker identifier for joining</td></tr>
+                            <tr><td><span class="field-name">platform</span></td><td><span class="field-type">string</span></td><td class="field-description">Source platform</td></tr>
+                            <tr><td><span class="field-name">question</span></td><td><span class="field-type">string</span></td><td class="field-description">Market question text</td></tr>
+                            <tr><td><span class="field-name">category</span></td><td><span class="field-type">string</span></td><td class="field-description">Political category</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">Spread Metrics</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">spread_mean</span></td><td><span class="field-type">float</span></td><td class="field-description">Mean bid-ask spread (absolute, in price units 0-1)</td></tr>
+                            <tr><td><span class="field-name">spread_median</span></td><td><span class="field-type">float</span></td><td class="field-description">Median bid-ask spread</td></tr>
+                            <tr><td><span class="field-name">spread_std</span></td><td><span class="field-type">float</span></td><td class="field-description">Standard deviation of spread</td></tr>
+                            <tr><td><span class="field-name">spread_min</span></td><td><span class="field-type">float</span></td><td class="field-description">Minimum observed spread</td></tr>
+                            <tr><td><span class="field-name">spread_max</span></td><td><span class="field-type">float</span></td><td class="field-description">Maximum observed spread</td></tr>
+                            <tr><td><span class="field-name">rel_spread_mean</span></td><td><span class="field-type">float</span></td><td class="field-description">Mean relative spread (spread / midpoint price, as %)</td></tr>
+                            <tr><td><span class="field-name">rel_spread_median</span></td><td><span class="field-type">float</span></td><td class="field-description">Median relative spread</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">Depth Metrics</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">depth_mean</span></td><td><span class="field-type">float</span></td><td class="field-description">Mean total order book depth (contracts at best bid + ask)</td></tr>
+                            <tr><td><span class="field-name">depth_median</span></td><td><span class="field-type">float</span></td><td class="field-description">Median order book depth</td></tr>
+                            <tr><td><span class="field-name">depth_max</span></td><td><span class="field-type">float</span></td><td class="field-description">Maximum observed depth</td></tr>
+                            <tr><td><span class="field-name">bid_depth_mean</span></td><td><span class="field-type">float</span></td><td class="field-description">Mean depth on bid side only</td></tr>
+                            <tr><td><span class="field-name">ask_depth_mean</span></td><td><span class="field-type">float</span></td><td class="field-description">Mean depth on ask side only</td></tr>
+                            <tr><td><span class="field-name">depth_imbalance_mean</span></td><td><span class="field-type">float</span></td><td class="field-description">Mean order book imbalance: (bid - ask) / (bid + ask)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">Sampling Metadata</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">n_snapshots</span></td><td><span class="field-type">int</span></td><td class="field-description">Number of order book snapshots collected</td></tr>
+                            <tr><td><span class="field-name">time_span_hours</span></td><td><span class="field-type">float</span></td><td class="field-description">Time span covered by snapshots</td></tr>
+                            <tr><td><span class="field-name">volume_usd</span></td><td><span class="field-type">float</span></td><td class="field-description">Total trading volume</td></tr>
+                            <tr><td><span class="field-name">price_mean</span></td><td><span class="field-type">float</span></td><td class="field-description">Mean midpoint price during sampling</td></tr>
+                            <tr><td><span class="field-name">price_std</span></td><td><span class="field-type">float</span></td><td class="field-description">Price volatility during sampling</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Trades Dataset Glossary -->
+                <div class="glossary-content" id="glossary-trades" style="display: none;">
+                    <p style="color: var(--gray-600); margin: 0 0 24px;">
+                        <strong>trades.parquet</strong> — Individual trade-level data. Available for Polymarket markets only.
+                    </p>
+
+                    <h3 style="margin: 24px 0 16px;">Trade Fields</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">trade_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Unique trade identifier (transaction hash)</td></tr>
+                            <tr><td><span class="field-name">token_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Token being traded (YES or NO outcome)</td></tr>
+                            <tr><td><span class="field-name">market_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Market identifier (condition_id)</td></tr>
+                            <tr><td><span class="field-name">timestamp</span></td><td><span class="field-type">datetime</span></td><td class="field-description">Trade execution time (UTC)</td></tr>
+                            <tr><td><span class="field-name">price</span></td><td><span class="field-type">float</span></td><td class="field-description">Execution price (0-1)</td></tr>
+                            <tr><td><span class="field-name">size</span></td><td><span class="field-type">float</span></td><td class="field-description">Trade size in shares/contracts</td></tr>
+                            <tr><td><span class="field-name">side</span></td><td><span class="field-type">string</span></td><td class="field-description">Trade direction: "buy" or "sell"</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">Trader Fields</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">maker_address</span></td><td><span class="field-type">string</span></td><td class="field-description">Wallet address of the maker (liquidity provider)</td></tr>
+                            <tr><td><span class="field-name">taker_address</span></td><td><span class="field-type">string</span></td><td class="field-description">Wallet address of the taker (market order)</td></tr>
+                            <tr><td><span class="field-name">fee_amount</span></td><td><span class="field-type">float</span></td><td class="field-description">Trading fee paid (USDC)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin: 32px 0 16px;">Derived Trader Metrics</h3>
+                    <table class="glossary-table">
+                        <thead>
+                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="field-name">trader_volume_usd</span></td><td><span class="field-type">float</span></td><td class="field-description">Cumulative trading volume by this trader</td></tr>
+                            <tr><td><span class="field-name">trader_n_trades</span></td><td><span class="field-type">int</span></td><td class="field-description">Number of trades by this trader</td></tr>
+                            <tr><td><span class="field-name">trader_pnl</span></td><td><span class="field-type">float</span></td><td class="field-description">Realized profit/loss for this trader (when available)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p style="color: var(--gray-500); margin-top: 24px; font-size: 0.875rem;">
+                        <em>Note: Trade-level data is sourced from Polymarket's on-chain settlement. Kalshi trade data is not publicly available.</em>
+                    </p>
+                </div>
             </div>
 
             <div class="glossary-section" style="margin-top: 64px;">
@@ -558,100 +564,87 @@
                 <div class="download-success" id="downloadSuccess">
                     Thanks! Check your email for download instructions.
                 </div>
-
-                <div class="file-list" style="margin-top: 32px;">
-                    <h4 style="margin-bottom: 16px;">Available Files</h4>
-                    <div class="file-item">
-                        <div class="file-info">
-                            <div class="file-icon">CSV</div>
-                            <div>
-                                <div class="file-name">political_markets_master.csv</div>
-                                <div class="file-meta">~45 MB · 23,430 rows · Updated daily</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-item">
-                        <div class="file-info">
-                            <div class="file-icon">JSON</div>
-                            <div>
-                                <div class="file-name">price_histories.json</div>
-                                <div class="file-meta">~800 MB · 12M+ price observations</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="file-item">
-                        <div class="file-info">
-                            <div class="file-icon">CSV</div>
-                            <div>
-                                <div class="file-name">prediction_accuracy.csv</div>
-                                <div class="file-meta">~8 MB · Brier scores at multiple horizons</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
 
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2024–2025 Stanford University</p>
-                <div class="footer-links">
-                    <a href="https://github.com/hall-lab/prediction-markets">GitHub</a>
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="footer-title">Bellwether</span>
+                    <span class="footer-tagline">Political prediction market research</span>
+                </div>
+                <div class="footer-nav">
+                    <a href="research.html">Research</a>
+                    <a href="about.html">About</a>
+                    <a href="https://github.com/hall-lab/prediction-markets" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <span>&copy; 2026 Hall Lab</span>
+                    <span class="footer-sep">·</span>
+                    <a href="https://www.hoover.org" target="_blank" rel="noopener">Hoover Institution</a>
+                </div>
+                <div class="footer-sources">
+                    <span class="footer-sources-label">Data updated daily from</span>
+                    <a href="https://polymarket.com" target="_blank" rel="noopener">Polymarket</a>
+                    <a href="https://kalshi.com" target="_blank" rel="noopener">Kalshi</a>
+                    <a href="https://domeapi.com" target="_blank" rel="noopener">Dome</a>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
-        // Load live stats from summary.json
-        (async function() {
-            try {
-                const resp = await fetch('data/summary.json');
-                const data = await resp.json();
+        // Glossary toggle function
+        function switchGlossary(dataset, btn) {
+            // Update button states
+            document.querySelectorAll('.glossary-toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-                const el = (id) => document.getElementById(id);
+            // Show/hide content
+            document.querySelectorAll('.glossary-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('glossary-' + dataset).classList.add('active');
+            document.getElementById('glossary-' + dataset).style.display = 'block';
 
-                if (data.total_markets) {
-                    el('stat-markets').textContent = data.total_markets.toLocaleString();
+            // Hide others
+            ['master', 'prices', 'liquidity', 'trades'].forEach(d => {
+                if (d !== dataset) {
+                    document.getElementById('glossary-' + d).style.display = 'none';
                 }
-                if (data.resolved_markets) {
-                    el('stat-resolved').textContent = data.resolved_markets.toLocaleString();
-                }
-                if (data.price_observations) {
-                    // Format large numbers: 857K, 1.2M, etc.
-                    var obs = data.price_observations;
-                    if (obs >= 1e6) {
-                        el('stat-prices').textContent = (obs / 1e6).toFixed(1).replace(/\.0$/, '') + 'M+';
-                    } else if (obs >= 1e3) {
-                        el('stat-prices').textContent = Math.round(obs / 1e3).toLocaleString() + 'K+';
-                    } else {
-                        el('stat-prices').textContent = obs.toLocaleString();
-                    }
-                }
-            } catch (e) {
-                // Keep hardcoded fallback values on fetch failure
-            }
-        })();
+            });
+        }
 
         document.getElementById('downloadForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const form = this;
             const success = document.getElementById('downloadSuccess');
+            const btn = form.querySelector('button');
 
-            // Here you would normally submit to a backend or Formspree
-            // For now, just show success message
-            form.style.display = 'none';
-            success.classList.add('visible');
+            // Disable button while submitting
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
 
-            // In production, you'd do something like:
-            // fetch('https://formspree.io/f/YOUR_ID', {
-            //     method: 'POST',
-            //     body: new FormData(form),
-            //     headers: { 'Accept': 'application/json' }
-            // }).then(() => { ... });
+            // Send to Google Sheets
+            fetch('https://script.google.com/macros/s/AKfycbxLZQLGDcyI--Sa8GfQugTRHu1HNRqLCrrBNVRa22Wm9uIWF2PXrAcrx_vrwjAS3S7scA/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: form.name.value,
+                    email: form.email.value
+                })
+            }).then(() => {
+                form.style.display = 'none';
+                success.classList.add('visible');
+            }).catch(() => {
+                // Still show success (no-cors doesn't return response)
+                form.style.display = 'none';
+                success.classList.add('visible');
+            });
         });
     </script>
 </body>
