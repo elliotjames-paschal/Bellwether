@@ -2,14 +2,14 @@
   "buckets": [
     {
       "label": "< 5%",
-      "pm_brier": 0.1886,
+      "pm_brier": 0.2081,
       "k_brier": 0.198,
       "pm_n": 36,
       "k_n": 40
     },
     {
       "label": "5-10%",
-      "pm_brier": 0.0879,
+      "pm_brier": 0.1355,
       "k_brier": 0.153,
       "pm_n": 14,
       "k_n": 7
