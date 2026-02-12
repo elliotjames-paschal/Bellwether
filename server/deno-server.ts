@@ -53,6 +53,7 @@ interface VWAPResult {
 interface MarketMetrics {
   token_id: string;
   platform: string;
+  current_price: number | null;  // Midpoint of best bid/ask
   manipulation_cost: ManipulationResult;
   vwap_6h: VWAPResult;
   fetched_at: string;
@@ -337,9 +338,20 @@ async function getMarketMetrics(platform: string, tokenId: string): Promise<Mark
   const manipulationCost = computeManipulationCost(bids, asks, CONFIG.manipulation_test_amount);
   const vwap = computeVWAP(trades || []);
 
+  // Calculate current price as midpoint of best bid/ask
+  let currentPrice: number | null = null;
+  if (bids.length > 0 && asks.length > 0) {
+    currentPrice = Math.round(((bids[0].price + asks[0].price) / 2) * 10000) / 10000;
+  } else if (asks.length > 0) {
+    currentPrice = asks[0].price;
+  } else if (bids.length > 0) {
+    currentPrice = bids[0].price;
+  }
+
   const metrics: MarketMetrics = {
     token_id: tokenId,
     platform,
+    current_price: currentPrice,
     manipulation_cost: manipulationCost,
     vwap_6h: vwap,
     fetched_at: new Date().toISOString(),
