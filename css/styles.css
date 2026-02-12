@@ -2559,38 +2559,24 @@ a.price-box.clickable:hover {
 }
 
 .card-platforms {
-    display: flex;
-    gap: 8px;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    color: #8e95a3;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.card-platform-text {
+    color: #8e95a3;
 }
 
 .card-platform-link {
-    font-family: var(--font-sans);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+    color: #8e95a3;
     text-decoration: none;
-    padding: 2px 6px;
-    border-radius: 3px;
-    transition: all 0.15s;
 }
 
-.card-platform-link.pm {
-    color: var(--pm-color);
-    background: rgba(37, 99, 235, 0.08);
-}
-
-.card-platform-link.pm:hover {
-    background: rgba(37, 99, 235, 0.15);
-}
-
-.card-platform-link.kalshi {
-    color: var(--kalshi-color);
-    background: rgba(16, 185, 129, 0.08);
-}
-
-.card-platform-link.kalshi:hover {
-    background: rgba(16, 185, 129, 0.15);
+.card-platform-link:hover {
+    color: #4a5060;
 }
 
 /* === QUESTION ROW WITH IMAGE === */

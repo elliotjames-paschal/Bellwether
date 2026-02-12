@@ -431,14 +431,22 @@
             priceMethod = 'Current price';
         }
 
-        // Platform links with arrows
+        // Platform indicators with optional links
         let platformLinksHtml = '';
-        if (e.has_pm && e.pm_url) {
-            platformLinksHtml += `<a href="${e.pm_url}" target="_blank" rel="noopener" class="card-platform-link pm" title="View on Polymarket">PM ↗</a>`;
+        if (e.has_pm) {
+            if (e.pm_url) {
+                platformLinksHtml += `<a href="${e.pm_url}" target="_blank" rel="noopener" class="card-platform-link">PM ↗</a>`;
+            } else {
+                platformLinksHtml += `<span class="card-platform-text">PM</span>`;
+            }
         }
-        if (e.has_k && e.k_url) {
-            if (platformLinksHtml) platformLinksHtml += ' ';
-            platformLinksHtml += `<a href="${e.k_url}" target="_blank" rel="noopener" class="card-platform-link kalshi" title="View on Kalshi">K ↗</a>`;
+        if (e.has_k) {
+            if (platformLinksHtml) platformLinksHtml += ' · ';
+            if (e.k_url) {
+                platformLinksHtml += `<a href="${e.k_url}" target="_blank" rel="noopener" class="card-platform-link">K ↗</a>`;
+            } else {
+                platformLinksHtml += `<span class="card-platform-text">Kalshi</span>`;
+            }
         }
 
         // Image or placeholder
@@ -512,12 +520,20 @@
         const liveData = cardLiveData.get(m.key);
         const isPM = m.platform === 'Polymarket';
 
-        // Platform link with arrow
+        // Platform indicator with optional link
         let platformLinkHtml = '';
-        if (isPM && m.pm_url) {
-            platformLinkHtml = `<a href="${m.pm_url}" target="_blank" rel="noopener" class="card-platform-link pm" title="View on Polymarket">PM ↗</a>`;
-        } else if (!isPM && m.k_url) {
-            platformLinkHtml = `<a href="${m.k_url}" target="_blank" rel="noopener" class="card-platform-link kalshi" title="View on Kalshi">K ↗</a>`;
+        if (isPM) {
+            if (m.pm_url) {
+                platformLinkHtml = `<a href="${m.pm_url}" target="_blank" rel="noopener" class="card-platform-link">PM ↗</a>`;
+            } else {
+                platformLinkHtml = `<span class="card-platform-text">PM</span>`;
+            }
+        } else {
+            if (m.k_url) {
+                platformLinkHtml = `<a href="${m.k_url}" target="_blank" rel="noopener" class="card-platform-link">K ↗</a>`;
+            } else {
+                platformLinkHtml = `<span class="card-platform-text">Kalshi</span>`;
+            }
         }
 
         // Determine tier and fragility
