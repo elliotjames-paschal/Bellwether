@@ -338,14 +338,12 @@ async function getMarketMetrics(platform: string, tokenId: string): Promise<Mark
   const manipulationCost = computeManipulationCost(bids, asks, CONFIG.manipulation_test_amount);
   const vwap = computeVWAP(trades || []);
 
-  // Calculate current price as midpoint of best bid/ask
+  // Get last trade price (most recent trade)
   let currentPrice: number | null = null;
-  if (bids.length > 0 && asks.length > 0) {
-    currentPrice = Math.round(((bids[0].price + asks[0].price) / 2) * 10000) / 10000;
-  } else if (asks.length > 0) {
-    currentPrice = asks[0].price;
-  } else if (bids.length > 0) {
-    currentPrice = bids[0].price;
+  if (trades && trades.length > 0) {
+    // Sort by timestamp descending to get most recent
+    const sortedTrades = [...trades].sort((a, b) => b.timestamp - a.timestamp);
+    currentPrice = sortedTrades[0].price;
   }
 
   const metrics: MarketMetrics = {
