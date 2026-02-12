@@ -107,25 +107,48 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
     const asks: OrderbookLevel[] = [];
 
     // Dome API format differs by platform:
-    // Polymarket: { bids: [...], asks: [...] }
-    // Kalshi: { yes_bids: [...], yes_asks: [...], no_bids: [...], no_asks: [...] }
-    // Prices are already in dollars (e.g., 0.999)
-    const rawBids = latestSnapshot.bids || latestSnapshot.yes_bids || [];
-    const rawAsks = latestSnapshot.asks || latestSnapshot.yes_asks || [];
+    // Polymarket: { bids: [{price, size}, ...], asks: [{price, size}, ...] }
+    // Kalshi: { orderbook: { yes_dollars: [[price_str, qty], ...], no_dollars: [[price_str, qty], ...] } }
 
-    for (const bid of rawBids) {
-      const price = Number(bid.price || bid.p);
-      const size = Number(bid.size || bid.s);
-      if (price > 0 && size > 0) {
-        bids.push({ price, size });
+    if (platform === "kalshi" && latestSnapshot.orderbook) {
+      // Kalshi format: orderbook.yes_dollars = [[price_string, quantity], ...]
+      // yes_dollars are the YES ask prices (cost to buy YES)
+      const yesAsks = latestSnapshot.orderbook.yes_dollars || [];
+      for (const [priceStr, qty] of yesAsks) {
+        const price = Number(priceStr);
+        const size = Number(qty);
+        if (price > 0 && size > 0) {
+          asks.push({ price, size });
+        }
       }
-    }
+      // For bids, we use no_dollars (inverse: buying NO = selling YES)
+      const noBids = latestSnapshot.orderbook.no_dollars || [];
+      for (const [priceStr, qty] of noBids) {
+        const price = 1 - Number(priceStr); // Convert NO price to YES price
+        const size = Number(qty);
+        if (price > 0 && size > 0) {
+          bids.push({ price, size });
+        }
+      }
+    } else {
+      // Polymarket format: { bids: [{price, size}], asks: [{price, size}] }
+      const rawBids = latestSnapshot.bids || [];
+      const rawAsks = latestSnapshot.asks || [];
 
-    for (const ask of rawAsks) {
-      const price = Number(ask.price || ask.p);
-      const size = Number(ask.size || ask.s);
-      if (price > 0 && size > 0) {
-        asks.push({ price, size });
+      for (const bid of rawBids) {
+        const price = Number(bid.price || bid.p);
+        const size = Number(bid.size || bid.s);
+        if (price > 0 && size > 0) {
+          bids.push({ price, size });
+        }
+      }
+
+      for (const ask of rawAsks) {
+        const price = Number(ask.price || ask.p);
+        const size = Number(ask.size || ask.s);
+        if (price > 0 && size > 0) {
+          asks.push({ price, size });
+        }
       }
     }
 
@@ -180,12 +203,20 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
     const tradeList = Array.isArray(data) ? data : (data.trades || data.orders || data.data || []);
 
     for (const trade of tradeList) {
-      // Price: Dome returns in decimal (0-1) format
-      const price = Number(trade.price || trade.p);
-      const size = Number(trade.size || trade.amount || trade.s || 1);
+      // Price: handle both Polymarket and Kalshi formats
+      // Polymarket: trade.price (decimal 0-1)
+      // Kalshi: trade.yes_price_dollars (decimal 0-1)
+      const price = Number(trade.price || trade.p || trade.yes_price_dollars);
 
-      // Normalize timestamp to milliseconds for internal use
-      let timestamp = Number(trade.timestamp || trade.t || trade.time || trade.created_at);
+      // Size: handle both formats
+      // Polymarket: trade.size
+      // Kalshi: trade.count
+      const size = Number(trade.size || trade.amount || trade.s || trade.count || 1);
+
+      // Timestamp: handle both formats
+      // Polymarket: trade.timestamp (might be ms or s)
+      // Kalshi: trade.created_time (seconds)
+      let timestamp = Number(trade.timestamp || trade.t || trade.time || trade.created_at || trade.created_time);
       if (timestamp < 1e12) {
         // Timestamp is in seconds, convert to ms
         timestamp = timestamp * 1000;
