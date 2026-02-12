@@ -143,27 +143,24 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
 async function fetchTrades(platform: string, tokenId: string): Promise<Array<{price: number, size: number, timestamp: number}> | null> {
   if (!DOME_API_KEY) return null;
 
-  // Kalshi: timestamps in seconds, endpoint is /trades
-  // Polymarket: timestamps in milliseconds, endpoint is /orders
-  const nowMs = Date.now();
-  const sixHoursAgoMs = nowMs - (6 * 60 * 60 * 1000);
+  // Both platforms use seconds for timestamps per Dome API docs
+  // Kalshi: /trades endpoint, Polymarket: /orders endpoint
+  const nowSec = Math.floor(Date.now() / 1000);
+  const sixHoursAgoSec = nowSec - (6 * 60 * 60);
 
   let endpoint: string;
   const params = new URLSearchParams();
 
   if (platform === "kalshi") {
-    // Kalshi uses seconds for timestamps and /trades endpoint
-    const nowSec = Math.floor(nowMs / 1000);
-    const sixHoursAgoSec = Math.floor(sixHoursAgoMs / 1000);
     params.set("ticker", tokenId);
     params.set("start_time", sixHoursAgoSec.toString());
     params.set("end_time", nowSec.toString());
     endpoint = `${DOME_REST_BASE}/kalshi/trades?${params}`;
   } else {
-    // Polymarket uses milliseconds and /orders endpoint
+    // Polymarket uses /orders endpoint, timestamps in seconds
     params.set("token_id", tokenId);
-    params.set("start_time", sixHoursAgoMs.toString());
-    params.set("end_time", nowMs.toString());
+    params.set("start_time", sixHoursAgoSec.toString());
+    params.set("end_time", nowSec.toString());
     endpoint = `${DOME_REST_BASE}/polymarket/orders?${params}`;
   }
 
@@ -187,13 +184,14 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
       const price = Number(trade.price || trade.p);
       const size = Number(trade.size || trade.amount || trade.s || 1);
 
-      // Normalize timestamp to milliseconds
+      // Normalize timestamp to milliseconds for internal use
       let timestamp = Number(trade.timestamp || trade.t || trade.time || trade.created_at);
       if (timestamp < 1e12) {
         // Timestamp is in seconds, convert to ms
         timestamp = timestamp * 1000;
       }
 
+      const sixHoursAgoMs = sixHoursAgoSec * 1000;
       if (price > 0 && timestamp >= sixHoursAgoMs) {
         trades.push({ price, size, timestamp });
       }
