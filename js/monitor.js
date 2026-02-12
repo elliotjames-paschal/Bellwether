@@ -1192,6 +1192,9 @@
         // Load banner stats
         loadBannerStats();
 
+        // Load hero findings
+        loadFindings();
+
         // Load election timeline
         loadElectionTimeline();
 
@@ -1218,6 +1221,75 @@
                 }
             })
             .catch(err => console.warn('Failed to load banner stats:', err));
+    }
+
+    // Load hero findings data
+    async function loadFindings() {
+        try {
+            // Finding 1: Accuracy (from election_winner_stats.json)
+            const statsResponse = await fetch('data/election_winner_stats.json');
+            if (statsResponse.ok) {
+                const stats = await statsResponse.json();
+
+                const sharedCountEl = document.getElementById('finding-shared-count');
+                const accuracyEl = document.getElementById('finding-accuracy');
+                const brierEl = document.getElementById('finding-brier');
+
+                if (sharedCountEl && stats.head_to_head?.n_shared) {
+                    sharedCountEl.textContent = stats.head_to_head.n_shared.toLocaleString();
+                }
+                if (accuracyEl && stats.shared_elections?.combined?.accuracy) {
+                    accuracyEl.textContent = Math.round(stats.shared_elections.combined.accuracy * 100) + '%';
+                }
+                if (brierEl && stats.shared_elections?.combined?.brier) {
+                    brierEl.textContent = stats.shared_elections.combined.brier.toFixed(2);
+                }
+            }
+
+            // Finding 2: Overlap (from summary.json)
+            const summaryResponse = await fetch('data/summary.json');
+            if (summaryResponse.ok) {
+                const summary = await summaryResponse.json();
+
+                const matchedEl = document.getElementById('finding-matched');
+                const totalEl = document.getElementById('finding-total');
+
+                if (matchedEl && summary.overlapping_elections) {
+                    matchedEl.textContent = summary.overlapping_elections.toLocaleString();
+                }
+                if (totalEl && summary.unique_elections) {
+                    totalEl.textContent = summary.unique_elections.toLocaleString();
+                }
+            }
+
+            // Finding 3: Fragility (from monitor_summary.json)
+            try {
+                const monitorResponse = await fetch('data/monitor_summary.json');
+                if (monitorResponse.ok) {
+                    const monitor = await monitorResponse.json();
+
+                    const assessedEl = document.getElementById('finding-assessed');
+                    const robustEl = document.getElementById('finding-robust');
+
+                    if (assessedEl && monitor.total_assessed) {
+                        assessedEl.textContent = monitor.total_assessed.toLocaleString();
+                    }
+                    if (robustEl && monitor.robust_count !== undefined) {
+                        robustEl.textContent = monitor.robust_count.toLocaleString();
+                    }
+                } else {
+                    // Hide Finding 3 if data not available
+                    const fragility = document.getElementById('finding-fragility');
+                    if (fragility) fragility.style.display = 'none';
+                }
+            } catch {
+                // Hide Finding 3 if data not available
+                const fragility = document.getElementById('finding-fragility');
+                if (fragility) fragility.style.display = 'none';
+            }
+        } catch (err) {
+            console.warn('Failed to load findings:', err);
+        }
     }
 
     // =============================================================================

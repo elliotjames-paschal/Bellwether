@@ -6,7 +6,7 @@
     <title>Bellwether - Political Prediction Markets Research</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=20260211b">
+    <link rel="stylesheet" href="css/styles.css?v=20260211c">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
@@ -54,27 +54,34 @@
                     <div id="hero-globe-container"></div>
                 </div>
             </div>
-            <div class="hero-stats">
-                <div class="stat-card">
-                    <div class="stat-card-inner">
-                        <span class="stat-value" id="hero-markets">33,228</span>
-                        <span class="stat-label">Markets Analyzed</span>
-                        <span class="stat-context">Across Polymarket and Kalshi</span>
-                    </div>
+            <div class="hero-findings">
+                <div class="finding">
+                    <p class="finding-text">
+                        Across <span class="finding-num" id="finding-shared-count">71</span> shared winner elections,
+                        prediction markets identified the correct winner
+                        <span class="finding-num" id="finding-accuracy">85%</span> of the time at election-eve prices.
+                    </p>
+                    <p class="finding-meta">
+                        <span class="finding-num" id="finding-brier">0.11</span> Brier ·
+                        <a href="papers/election-eve-methodology/">Read methodology →</a>
+                    </p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-card-inner">
-                        <span class="stat-value" id="hero-electoral">11,018</span>
-                        <span class="stat-label">Electoral Markets</span>
-                        <span class="stat-context">Across <span id="hero-countries">54</span> countries worldwide</span>
-                    </div>
+
+                <div class="finding">
+                    <p class="finding-text">
+                        <span class="finding-num" id="finding-matched">330</span> of
+                        <span class="finding-num" id="finding-total">1,822</span> elections
+                        are traded on both platforms — nearly all US races. Most international and policy markets
+                        have no cross-platform comparison.
+                    </p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-card-inner">
-                        <span class="stat-value" id="hero-volume">$21.2B</span>
-                        <span class="stat-label">Total Volume</span>
-                        <span class="stat-context">Trading volume tracked</span>
-                    </div>
+
+                <div class="finding" id="finding-fragility">
+                    <p class="finding-text">
+                        Of <span class="finding-num" id="finding-assessed">—</span> political markets assessed,
+                        only <span class="finding-num" id="finding-robust">—</span> are robust enough to cite —
+                        where manipulation would cost over $100K.
+                    </p>
                 </div>
             </div>
         </div>
@@ -286,6 +293,6 @@
     </div>
 
     <script src="js/globe-hero.js?v=20260210"></script>
-    <script src="js/monitor.js?v=20260212b"></script>
+    <script src="js/monitor.js?v=20260212c"></script>
 </body>
 </html>
