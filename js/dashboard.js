@@ -412,8 +412,14 @@ async function loadBrierByCategory() {
     try {
         const data = await fetchJSON('brier_by_category.json');
 
+        // Filter out "Not Political" category
+        const validIndices = data.categories
+            .map((cat, i) => ({ cat, i }))
+            .filter(({ cat }) => cat !== 'Not Political')
+            .map(({ i }) => i);
+
         // Sort by combined average Brier (best at top for horizontal bar)
-        const indices = data.categories.map((_, i) => i);
+        const indices = validIndices;
         indices.sort((a, b) => {
             const aAvg = ((data.polymarket.brier[a] || 0) + (data.kalshi.brier[a] || 0)) / 2;
             const bAvg = ((data.polymarket.brier[b] || 0) + (data.kalshi.brier[b] || 0)) / 2;
