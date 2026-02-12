@@ -199,7 +199,8 @@ function computeVWAP(trades) {
   };
 }
 
-function computeCostToMove5Cents(asks) {
+// Cost to push price UP 5 cents (buying into asks)
+function computeCostToMoveUp5Cents(asks) {
   if (asks.length === 0) return null;
 
   const startingPrice = asks[0].price;
@@ -215,7 +216,39 @@ function computeCostToMove5Cents(asks) {
     spent += levelCost;
   }
 
-  return null;
+  return null; // Not enough depth
+}
+
+// Cost to push price DOWN 5 cents (selling into bids)
+function computeCostToMoveDown5Cents(bids) {
+  if (bids.length === 0) return null;
+
+  const startingPrice = bids[0].price; // Best bid (highest)
+  const targetPrice = startingPrice - 0.05;
+
+  let value = 0; // Value of shares we need to sell
+
+  for (const bid of bids) {
+    if (bid.price <= targetPrice) {
+      return Math.round(value);
+    }
+    const levelValue = bid.price * bid.size;
+    value += levelValue;
+  }
+
+  return null; // Not enough depth
+}
+
+// Returns minimum cost to move price 5 cents in EITHER direction
+// This is the vulnerability - manipulator picks the cheaper direction
+function computeCostToMove5Cents(bids, asks) {
+  const costUp = computeCostToMoveUp5Cents(asks);
+  const costDown = computeCostToMoveDown5Cents(bids);
+
+  if (costUp === null && costDown === null) return null;
+  if (costUp === null) return costDown;
+  if (costDown === null) return costUp;
+  return Math.min(costUp, costDown);
 }
 
 function computeOrderbookMidpoint(bids, asks) {
@@ -485,8 +518,8 @@ async function getMarketMetrics(platform, tokenId, apiKey, kv) {
   // Compute tiered price
   const tieredPrice = await computeTieredPrice(platform, tokenId, bids, asks, apiKey, kv);
 
-  // Compute robustness
-  const costToMove5c = computeCostToMove5Cents(asks);
+  // Compute robustness (min of up and down directions)
+  const costToMove5c = computeCostToMove5Cents(bids, asks);
   const rawReportability = getBaseReportability(costToMove5c);
 
   // Adjust reportability based on tier
@@ -651,9 +684,9 @@ export default {
         pmToken, kTicker, pmBids, pmAsks, kBids, kAsks, apiKey, kv
       );
 
-      // Use minimum robustness (weakest link)
-      const pmCost = pmAsks.length > 0 ? computeCostToMove5Cents(pmAsks) : null;
-      const kCost = kAsks.length > 0 ? computeCostToMove5Cents(kAsks) : null;
+      // Use minimum robustness (weakest link across platforms AND directions)
+      const pmCost = (pmBids.length > 0 || pmAsks.length > 0) ? computeCostToMove5Cents(pmBids, pmAsks) : null;
+      const kCost = (kBids.length > 0 || kAsks.length > 0) ? computeCostToMove5Cents(kBids, kAsks) : null;
 
       let minCost = null;
       let weakestPlatform = "unknown";
