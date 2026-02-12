@@ -144,8 +144,9 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
   if (!DOME_API_KEY) return null;
 
   // Use orders endpoint for trade history
-  const now = Date.now();
-  const sixHoursAgo = now - (6 * 60 * 60 * 1000);
+  // Dome API expects Unix timestamps in SECONDS, not milliseconds
+  const now = Math.floor(Date.now() / 1000);
+  const sixHoursAgo = now - (6 * 60 * 60);
 
   const params = new URLSearchParams({
     start_time: sixHoursAgo.toString(),

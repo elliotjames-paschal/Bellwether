@@ -28,28 +28,15 @@
 
     // Live data configuration
     const LIVE_DATA_SERVER = 'https://bellwether-62-46t6s4gmaszv.elliotjames-paschal.deno.net';
-    let tokenIdLookup = {};
-
-    // Load token ID lookup
-    async function loadTokenIdLookup() {
-        try {
-            const response = await fetch('data/token_id_lookup.json');
-            if (response.ok) {
-                tokenIdLookup = await response.json();
-                console.log(`Loaded ${Object.keys(tokenIdLookup).length} token ID mappings`);
-            }
-        } catch (e) {
-            console.warn('Could not load token ID lookup:', e);
-        }
-    }
 
     // Fetch live data for a market
-    async function fetchLiveData(marketId, platform = 'polymarket') {
-        const tokenId = tokenIdLookup[marketId];
-        if (!tokenId) return null;
+    // For Polymarket: pass entry.pm_token_id (76-digit token ID)
+    // For Kalshi: pass entry.k_ticker
+    async function fetchLiveData(tokenOrTicker, platform = 'polymarket') {
+        if (!tokenOrTicker) return null;
 
         try {
-            const response = await fetch(`${LIVE_DATA_SERVER}/api/metrics/${platform}/${tokenId}`);
+            const response = await fetch(`${LIVE_DATA_SERVER}/api/metrics/${platform}/${tokenOrTicker}`);
             if (!response.ok) return null;
             return await response.json();
         } catch (e) {
@@ -385,8 +372,8 @@
             raceContextHtml = renderRaceContextSection(raceContext);
         }
 
-        // Live data container (only for PM markets)
-        const liveDataHtml = e.has_pm ? '<div class="modal-live-data-container"></div>' : '';
+        // Live data container
+        const liveDataHtml = '<div class="modal-live-data-container"></div>';
 
         return `
             <div class="modal-header">
@@ -454,7 +441,8 @@
         }
 
         // Live data container (only for PM markets)
-        const liveDataHtml = m.platform === 'Polymarket' ? '<div class="modal-live-data-container"></div>' : '';
+        // Live data container
+        const liveDataHtml = '<div class="modal-live-data-container"></div>';
 
         return `
             <div class="modal-header">
@@ -497,15 +485,24 @@
         const closeBtn = modalContent.querySelector('.modal-close');
         if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
-        // Load live data if available (Polymarket only for now)
-        const marketId = entry.pm_market_id;
-        if (marketId && entry.has_pm) {
-            const liveDataContainer = modalContent.querySelector('.modal-live-data-container');
-            if (liveDataContainer) {
+        // Load live data if available
+        const liveDataContainer = modalContent.querySelector('.modal-live-data-container');
+        if (liveDataContainer) {
+            const pmTokenId = entry.pm_token_id;
+            const kTicker = entry.k_ticker;
+
+            if (pmTokenId) {
                 liveDataContainer.innerHTML = '<div class="modal-live-data"><div class="modal-live-data-header">Live Market Depth</div><div class="modal-live-data-loading">Loading...</div></div>';
-                fetchLiveData(marketId, 'polymarket').then(data => {
+                fetchLiveData(pmTokenId, 'polymarket').then(data => {
                     liveDataContainer.innerHTML = renderLiveDataSection(data);
                 });
+            } else if (kTicker) {
+                liveDataContainer.innerHTML = '<div class="modal-live-data"><div class="modal-live-data-header">Live Market Depth</div><div class="modal-live-data-loading">Loading...</div></div>';
+                fetchLiveData(kTicker, 'kalshi').then(data => {
+                    liveDataContainer.innerHTML = renderLiveDataSection(data);
+                });
+            } else {
+                liveDataContainer.innerHTML = renderLiveDataSection(null);
             }
         }
     }
@@ -758,7 +755,7 @@
 
     async function loadMonitorData() {
         try {
-            const response = await fetch('data/active_markets.json');
+            const response = await fetch('data/active_markets.json?v=' + Date.now());
             if (!response.ok) throw new Error('Failed to load monitor data');
             monitorData = await response.json();
 
@@ -785,9 +782,6 @@
     }
 
     function init() {
-        // Load token ID lookup for live data
-        loadTokenIdLookup();
-
         document.querySelectorAll('.monitor-tab').forEach(tab => {
             tab.addEventListener('click', () => switchView(tab.dataset.view));
         });
