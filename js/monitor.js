@@ -518,20 +518,22 @@
     // Render individual market card (non-electoral) - NEW DESIGN
     function renderMarketCard(m, index) {
         const liveData = cardLiveData.get(m.key);
-        const isPM = m.platform === 'Polymarket';
+        const isPM = m.has_pm || m.platform === 'Polymarket';
+        const isK = m.has_k || m.platform === 'Kalshi';
 
-        // Platform indicator with optional link
+        // Platform indicator with optional link - show all available platforms
         let platformLinkHtml = '';
-        if (isPM) {
-            if (m.pm_url) {
-                platformLinkHtml = `<a href="${m.pm_url}" target="_blank" rel="noopener" class="card-platform-link">PM ↗</a>`;
-            } else {
+        if (m.pm_url) {
+            platformLinkHtml += `<a href="${m.pm_url}" target="_blank" rel="noopener" class="card-platform-link">PM ↗</a>`;
+        }
+        if (m.k_url) {
+            platformLinkHtml += `<a href="${m.k_url}" target="_blank" rel="noopener" class="card-platform-link">K ↗</a>`;
+        }
+        // Fallback if no URLs but we know the platform
+        if (!platformLinkHtml) {
+            if (isPM) {
                 platformLinkHtml = `<span class="card-platform-text">PM</span>`;
-            }
-        } else {
-            if (m.k_url) {
-                platformLinkHtml = `<a href="${m.k_url}" target="_blank" rel="noopener" class="card-platform-link">K ↗</a>`;
-            } else {
+            } else if (isK) {
                 platformLinkHtml = `<span class="card-platform-text">Kalshi</span>`;
             }
         }
