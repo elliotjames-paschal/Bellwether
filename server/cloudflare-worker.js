@@ -4,8 +4,7 @@
  * Tiered Pricing System:
  * - Tier 1: 6h VWAP (10+ trades) - Full reportability
  * - Tier 2: 12h/24h VWAP (10+ trades) - Reportability downgraded one level
- * - Tier 3: Order book midpoint (no trades) - Capped at Caution
- * - Tier 4: Last known VWAP (stale) - Always Fragile
+ * - Tier 3: Stale VWAP or insufficient data - Always Fragile
  *
  * Deploy: npx wrangler deploy
  */
@@ -383,27 +382,13 @@ async function computeTieredPrice(platform, tokenId, bids, asks, apiKey, kv) {
     }
   }
 
-  // Tier 3: No sufficient trades even in 24h - try orderbook midpoint
-  const midpoint = computeOrderbookMidpoint(bids, asks);
-  if (midpoint !== null) {
-    return {
-      tier: 3,
-      price: midpoint,
-      label: "Order book midpoint",
-      window_hours: null,
-      trade_count: 0,
-      total_volume: 0,
-      source: "orderbook_midpoint",
-    };
-  }
-
-  // Tier 4: No orderbook either - use stale VWAP if available
+  // No sufficient trades - try stale VWAP
   const stale = await getStaleVWAP(kv, tokenId);
   if (stale) {
     return {
-      tier: 4,
+      tier: 3,
       price: stale.price,
-      label: "Last VWAP (stale)",
+      label: "Stale VWAP",
       window_hours: stale.window_hours,
       trade_count: stale.trade_count,
       total_volume: 0,
@@ -411,15 +396,15 @@ async function computeTieredPrice(platform, tokenId, bids, asks, apiKey, kv) {
     };
   }
 
-  // No data at all
+  // No data at all - return null price, always fragile
   return {
-    tier: 4,
+    tier: 3,
     price: null,
-    label: "No data",
+    label: "Insufficient data",
     window_hours: null,
     trade_count: 0,
     total_volume: 0,
-    source: "stale_vwap",
+    source: "no_data",
   };
 }
 
@@ -468,27 +453,13 @@ async function computeCrossplatformTieredPrice(pmToken, kTicker, pmBids, pmAsks,
     }
   }
 
-  // Tier 3: Orderbook midpoint
-  const midpoint = computeOrderbookMidpoint(allBids, allAsks);
-  if (midpoint !== null) {
-    return {
-      tier: 3,
-      price: midpoint,
-      label: "Order book midpoint",
-      window_hours: null,
-      trade_count: 0,
-      total_volume: 0,
-      source: "orderbook_midpoint",
-    };
-  }
-
-  // Tier 4: Stale VWAP
+  // No sufficient trades - try stale VWAP
   const stale = await getStaleVWAP(kv, cacheKey);
   if (stale) {
     return {
-      tier: 4,
+      tier: 3,
       price: stale.price,
-      label: "Last VWAP (stale)",
+      label: "Stale VWAP",
       window_hours: stale.window_hours,
       trade_count: stale.trade_count,
       total_volume: 0,
@@ -496,14 +467,15 @@ async function computeCrossplatformTieredPrice(pmToken, kTicker, pmBids, pmAsks,
     };
   }
 
+  // No data at all - return null price, always fragile
   return {
-    tier: 4,
+    tier: 3,
     price: null,
-    label: "No data",
+    label: "Insufficient data",
     window_hours: null,
     trade_count: 0,
     total_volume: 0,
-    source: "stale_vwap",
+    source: "no_data",
   };
 }
 
@@ -537,9 +509,8 @@ async function getMarketMetrics(platform, tokenId, apiKey, kv) {
     reportability = rawReportability;
   } else if (tieredPrice.tier === 2) {
     reportability = downgradeReportability(rawReportability);
-  } else if (tieredPrice.tier === 3) {
-    reportability = capReportability(rawReportability, "caution");
   } else {
+    // Tier 3 (stale/insufficient data) is always fragile
     reportability = "fragile";
   }
 
@@ -553,6 +524,10 @@ async function getMarketMetrics(platform, tokenId, apiKey, kv) {
 
   const midpoint = computeOrderbookMidpoint(bids, asks);
 
+  // Debug: compute both directions separately
+  const costUp = computeCostToMoveUp5Cents(asks);
+  const costDown = computeCostToMoveDown5Cents(bids);
+
   const metrics = {
     token_id: tokenId,
     platform,
@@ -563,6 +538,8 @@ async function getMarketMetrics(platform, tokenId, apiKey, kv) {
     current_price: currentPrice,
     robustness: {
       cost_to_move_5c: costToMove5c,
+      cost_to_move_up_5c: costUp,
+      cost_to_move_down_5c: costDown,
       reportability,
       raw_reportability: rawReportability,
     },
@@ -572,6 +549,14 @@ async function getMarketMetrics(platform, tokenId, apiKey, kv) {
       total_volume: tieredPrice.total_volume,
     },
     orderbook_midpoint: midpoint,
+    orderbook_summary: {
+      bid_levels: bids.length,
+      ask_levels: asks.length,
+      best_bid: bids.length > 0 ? bids[0].price : null,
+      best_ask: asks.length > 0 ? asks[0].price : null,
+      top_5_bids: bids.slice(0, 5).map(b => ({ price: b.price, size: b.size })),
+      top_5_asks: asks.slice(0, 5).map(a => ({ price: a.price, size: a.size })),
+    },
     fetched_at: new Date().toISOString(),
     cached: false,
   };
@@ -633,8 +618,7 @@ export default {
           price_tiers: {
             1: "6h VWAP (10+ trades) - Full reportability",
             2: "12h/24h VWAP (10+ trades) - Reportability downgraded one level",
-            3: "Order book midpoint - Capped at Caution",
-            4: "Last known VWAP (stale) - Always Fragile",
+            3: "Stale VWAP or insufficient data - Always Fragile",
           },
         }),
         { headers: corsHeaders }
@@ -719,9 +703,8 @@ export default {
         reportability = rawReportability;
       } else if (tieredPrice.tier === 2) {
         reportability = downgradeReportability(rawReportability);
-      } else if (tieredPrice.tier === 3) {
-        reportability = capReportability(rawReportability, "caution");
       } else {
+        // Tier 3 (stale/insufficient data) is always fragile
         reportability = "fragile";
       }
 
