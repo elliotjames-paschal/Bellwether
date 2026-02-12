@@ -27,7 +27,7 @@
     let selectedMarkets = new Set();
 
     // Live data configuration
-    const LIVE_DATA_SERVER = 'https://bellwether-62.elliotjames-paschal.deno.net';
+    const LIVE_DATA_SERVER = 'https://bellwether-api.paschal-145.workers.dev';
 
     // Fetch live data for a single-platform market
     async function fetchLiveData(tokenOrTicker, platform = 'polymarket') {
