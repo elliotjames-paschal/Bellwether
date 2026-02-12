@@ -133,11 +133,18 @@
                     if (rawData) {
                         const data = normalizeServerResponse(rawData, isCombined);
                         cardLiveData.set(m.key, data);
+                        console.log(`Live data received for ${m.key}:`, {
+                            bellwether_price: data.bellwether_price,
+                            trade_count: data.vwap_6h?.trade_count,
+                            vwap_label: data.vwap_label
+                        });
                         // Update the card in place
                         updateCardWithLiveData(m.key, data, m);
+                    } else {
+                        console.warn(`No data returned for ${m.key}`);
                     }
                 } catch (e) {
-                    console.warn(`Failed to fetch live data for ${m.key}:`, e);
+                    console.error(`Failed to fetch live data for ${m.key}:`, e);
                 }
             })();
         }
@@ -146,16 +153,24 @@
     // Update a card with live data without re-rendering the entire grid
     function updateCardWithLiveData(key, data, market) {
         const card = document.querySelector(`.market-card[data-market-key="${key}"]`);
-        if (!card) return;
+        if (!card) {
+            console.warn('Card not found for key:', key);
+            return;
+        }
 
         // Update bellwether price
         const bwPriceEl = card.querySelector('.bw-price');
         const methodEl = card.querySelector('.card-price-method');
-        if (bwPriceEl && data.bellwether_price !== null) {
-            bwPriceEl.textContent = Math.round(data.bellwether_price * 100) + '%';
-            if (methodEl) {
+
+        if (bwPriceEl && methodEl) {
+            if (data.bellwether_price !== null && data.bellwether_price !== undefined) {
+                // We have VWAP data - show it
+                bwPriceEl.textContent = Math.round(data.bellwether_price * 100) + '%';
                 methodEl.textContent = data.vwap_label ||
                     (market.has_both ? '6h VWAP across platforms' : '6h VWAP · single platform');
+            } else if (data.vwap_6h && data.vwap_6h.trade_count === 0) {
+                // Data was fetched but no trades in window - show this explicitly
+                methodEl.textContent = market.has_both ? 'No recent trades' : 'No recent trades';
             }
         }
 
