@@ -2,9 +2,10 @@
  * Bellwether Live Data Server (Deno Deploy - Serverless version)
  *
  * Features:
- * 1. Manipulation Cost: Simulates "$100K buy", reports price impact
- * 2. 6-Hour VWAP: Volume-weighted average price (Duffie method)
- * 3. On-demand fetching with Deno KV caching
+ * 1. Robustness Score: Cost to move price 5 cents (reportable/caution/fragile)
+ * 2. 6-Hour VWAP: Volume-weighted average price (Bellwether price)
+ * 3. Cross-platform combined metrics for PM + Kalshi
+ * 4. On-demand fetching with Deno KV caching
  *
  * Deploy: https://dash.deno.com
  */
@@ -19,7 +20,6 @@ const DOME_REST_BASE = "https://api.domeapi.io/v1";
 const CONFIG = {
   cache_ttl_ms: 60000, // 60 seconds cache TTL
   vwap_window_hours: 6,
-  manipulation_test_amount: 100000, // $100K
 };
 
 // Use Deno KV for persistent caching
@@ -34,13 +34,9 @@ interface OrderbookLevel {
   size: number;
 }
 
-interface ManipulationResult {
-  price_impact_cents: number | null;
-  volume_consumed: number;
-  levels_consumed: number;
-  dollars_spent: number;
-  starting_price: number | null;
-  ending_price: number | null;
+interface RobustnessResult {
+  cost_to_move_5c: number | null;  // Dollar amount needed to move price 5 cents
+  reportability: "reportable" | "caution" | "fragile";
 }
 
 interface VWAPResult {
@@ -53,8 +49,9 @@ interface VWAPResult {
 interface MarketMetrics {
   token_id: string;
   platform: string;
-  current_price: number | null;  // Midpoint of best bid/ask
-  manipulation_cost: ManipulationResult;
+  current_price: number | null;  // Last trade price (spot)
+  bellwether_price: number | null;  // 6h VWAP
+  robustness: RobustnessResult;
   vwap_6h: VWAPResult;
   fetched_at: string;
   cached: boolean;
@@ -202,63 +199,43 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
 // CALCULATION FUNCTIONS
 // =============================================================================
 
-function computeManipulationCost(bids: OrderbookLevel[], asks: OrderbookLevel[], testAmount: number): ManipulationResult {
-  // Simulate a BUY order walking through asks
-  let remaining = testAmount;
+/**
+ * Compute the dollar amount needed to move the price 5 cents (0.05) by walking through asks.
+ * Returns null if there's not enough orderbook depth.
+ */
+function computeCostToMove5Cents(asks: OrderbookLevel[]): number | null {
+  if (asks.length === 0) return null;
+
+  const startingPrice = asks[0].price;
+  const targetPrice = startingPrice + 0.05;  // 5 cents higher
+
   let spent = 0;
-  let volumeConsumed = 0;
-  let levelsConsumed = 0;
-  let startingPrice: number | null = null;
-  let endingPrice: number | null = null;
-
-  if (asks.length === 0) {
-    return {
-      price_impact_cents: null,
-      volume_consumed: 0,
-      levels_consumed: 0,
-      dollars_spent: 0,
-      starting_price: null,
-      ending_price: null,
-    };
-  }
-
-  startingPrice = asks[0].price;
 
   for (const ask of asks) {
-    if (remaining <= 0) break;
-
-    const levelCost = ask.price * ask.size;
-
-    if (levelCost <= remaining) {
-      // Consume entire level
-      spent += levelCost;
-      volumeConsumed += ask.size;
-      remaining -= levelCost;
-      levelsConsumed++;
-      endingPrice = ask.price;
-    } else {
-      // Partial fill
-      const sharesToBuy = remaining / ask.price;
-      spent += remaining;
-      volumeConsumed += sharesToBuy;
-      remaining = 0;
-      levelsConsumed++;
-      endingPrice = ask.price;
+    if (ask.price >= targetPrice) {
+      // We've reached the target price movement
+      return Math.round(spent);
     }
+
+    // Consume this entire level
+    const levelCost = ask.price * ask.size;
+    spent += levelCost;
   }
 
-  const priceImpact = (startingPrice && endingPrice)
-    ? Math.round((endingPrice - startingPrice) * 100) // in cents
-    : null;
+  // Not enough depth to move 5 cents
+  return null;
+}
 
-  return {
-    price_impact_cents: priceImpact,
-    volume_consumed: Math.round(volumeConsumed),
-    levels_consumed: levelsConsumed,
-    dollars_spent: Math.round(spent),
-    starting_price: startingPrice,
-    ending_price: endingPrice,
-  };
+/**
+ * Determine reportability label based on cost to move price 5 cents.
+ * - Reportable: >= $100K (robust enough for news)
+ * - Caution: $10K - $100K (use with care)
+ * - Fragile: < $10K (easily manipulated)
+ */
+function getReportabilityLabel(costToMove5c: number | null): "reportable" | "caution" | "fragile" {
+  if (costToMove5c === null || costToMove5c < 10000) return "fragile";
+  if (costToMove5c < 100000) return "caution";
+  return "reportable";
 }
 
 function computeVWAP(trades: Array<{price: number, size: number, timestamp: number}>): VWAPResult {
@@ -335,7 +312,8 @@ async function getMarketMetrics(platform: string, tokenId: string): Promise<Mark
   }
 
   const [bids, asks] = orderbook;
-  const manipulationCost = computeManipulationCost(bids, asks, CONFIG.manipulation_test_amount);
+  const costToMove5c = computeCostToMove5Cents(asks);
+  const reportability = getReportabilityLabel(costToMove5c);
   const vwap = computeVWAP(trades || []);
 
   // Get last trade price (most recent trade)
@@ -350,7 +328,11 @@ async function getMarketMetrics(platform: string, tokenId: string): Promise<Mark
     token_id: tokenId,
     platform,
     current_price: currentPrice,
-    manipulation_cost: manipulationCost,
+    bellwether_price: vwap.vwap,
+    robustness: {
+      cost_to_move_5c: costToMove5c,
+      reportability,
+    },
     vwap_6h: vwap,
     fetched_at: new Date().toISOString(),
     cached: false,
@@ -401,9 +383,11 @@ async function handleRequest(request: Request): Promise<Response> {
         version: "2.0.0-serverless",
         endpoints: {
           "/health": "Server health check",
-          "/api/metrics/:platform/:token_id": "Get manipulation cost + VWAP for a market",
+          "/api/metrics/:platform/:token_id": "Get robustness + VWAP for a single-platform market",
+          "/api/metrics/combined": "Get cross-platform VWAP + min robustness (query: pm_token, k_ticker)",
         },
         example: "/api/metrics/polymarket/21742633143463906290569050155826241533067272736897614950488156847949938836455",
+        example_combined: "/api/metrics/combined?pm_token=XXX&k_ticker=YYY",
         docs: "https://github.com/elliotjames-paschal/Bellwether",
       }),
       { headers: corsHeaders }
@@ -431,6 +415,67 @@ async function handleRequest(request: Request): Promise<Response> {
     return new Response(JSON.stringify(metrics), { headers: corsHeaders });
   }
 
+  // GET /api/metrics/combined - Cross-platform VWAP and min robustness
+  if (url.pathname === "/api/metrics/combined") {
+    const pmToken = url.searchParams.get("pm_token");
+    const kTicker = url.searchParams.get("k_ticker");
+
+    if (!pmToken && !kTicker) {
+      return new Response(
+        JSON.stringify({
+          error: "Missing parameters",
+          hint: "Provide at least one of: pm_token, k_ticker"
+        }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // Fetch metrics from both platforms in parallel
+    const [pmMetrics, kMetrics] = await Promise.all([
+      pmToken ? getMarketMetrics("polymarket", pmToken) : null,
+      kTicker ? getMarketMetrics("kalshi", kTicker) : null,
+    ]);
+
+    // Combine trades for cross-platform VWAP
+    const allTrades: Array<{price: number, size: number, timestamp: number}> = [];
+
+    if (pmToken) {
+      const pmTrades = await fetchTrades("polymarket", pmToken);
+      if (pmTrades) allTrades.push(...pmTrades);
+    }
+    if (kTicker) {
+      const kTrades = await fetchTrades("kalshi", kTicker);
+      if (kTrades) allTrades.push(...kTrades);
+    }
+
+    const combinedVwap = computeVWAP(allTrades);
+
+    // Use minimum robustness (weakest link)
+    const pmCost = pmMetrics?.robustness?.cost_to_move_5c ?? Infinity;
+    const kCost = kMetrics?.robustness?.cost_to_move_5c ?? Infinity;
+    const minCost = Math.min(pmCost, kCost);
+    const costToMove5c = minCost === Infinity ? null : minCost;
+    const reportability = getReportabilityLabel(costToMove5c);
+
+    const combined = {
+      bellwether_price: combinedVwap.vwap,
+      vwap_label: (pmMetrics && kMetrics) ? "6h VWAP across platforms" : "6h VWAP · single platform",
+      platform_prices: {
+        polymarket: pmMetrics?.current_price ?? null,
+        kalshi: kMetrics?.current_price ?? null,
+      },
+      robustness: {
+        cost_to_move_5c: costToMove5c,
+        reportability,
+        weakest_platform: pmCost <= kCost ? "polymarket" : "kalshi",
+      },
+      vwap_6h: combinedVwap,
+      fetched_at: new Date().toISOString(),
+    };
+
+    return new Response(JSON.stringify(combined), { headers: corsHeaders });
+  }
+
   // Legacy endpoint support: /metrics/:token_id (assumes polymarket)
   const legacyMatch = url.pathname.match(/^\/metrics\/(.+)$/);
   if (legacyMatch) {
@@ -450,7 +495,7 @@ async function handleRequest(request: Request): Promise<Response> {
   return new Response(
     JSON.stringify({
       error: "Not found",
-      available_endpoints: ["/", "/health", "/api/metrics/:platform/:token_id"]
+      available_endpoints: ["/", "/health", "/api/metrics/:platform/:token_id", "/api/metrics/combined"]
     }),
     { status: 404, headers: corsHeaders }
   );

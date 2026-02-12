@@ -29,9 +29,7 @@
     // Live data configuration
     const LIVE_DATA_SERVER = 'https://bellwether-62-46t6s4gmaszv.elliotjames-paschal.deno.net';
 
-    // Fetch live data for a market
-    // For Polymarket: pass entry.pm_token_id (76-digit token ID)
-    // For Kalshi: pass entry.k_ticker
+    // Fetch live data for a single-platform market
     async function fetchLiveData(tokenOrTicker, platform = 'polymarket') {
         if (!tokenOrTicker) return null;
 
@@ -45,8 +43,159 @@
         }
     }
 
-    // Render live data section
-    function renderLiveDataSection(data) {
+    // Fetch combined live data for cross-platform markets
+    async function fetchCombinedLiveData(pmToken, kTicker) {
+        if (!pmToken && !kTicker) return null;
+
+        try {
+            const params = new URLSearchParams();
+            if (pmToken) params.set('pm_token', pmToken);
+            if (kTicker) params.set('k_ticker', kTicker);
+
+            const response = await fetch(`${LIVE_DATA_SERVER}/api/metrics/combined?${params}`);
+            if (!response.ok) return null;
+            return await response.json();
+        } catch (e) {
+            console.warn('Combined live data fetch failed:', e);
+            return null;
+        }
+    }
+
+    // Store live data for cards
+    const cardLiveData = new Map();
+
+    // Normalize server response to handle both old and new API formats
+    function normalizeServerResponse(data, isCombined = false) {
+        if (!data) return null;
+
+        // If already in new format, return as-is
+        if (data.robustness && data.bellwether_price !== undefined) {
+            return data;
+        }
+
+        // Convert old format to new format
+        const normalized = {
+            bellwether_price: data.vwap_6h?.vwap ?? null,
+            vwap_label: isCombined ? '6h VWAP across platforms' : '6h VWAP · single platform',
+            current_price: data.current_price ?? null,
+            robustness: {
+                cost_to_move_5c: data.manipulation_cost?.dollars_spent ?? null,
+                reportability: getReportabilityFromCost(data.manipulation_cost?.dollars_spent)
+            },
+            vwap_6h: data.vwap_6h,
+            fetched_at: data.fetched_at
+        };
+
+        // For combined data, add platform_prices
+        if (isCombined && data.platform_prices) {
+            normalized.platform_prices = data.platform_prices;
+        }
+
+        return normalized;
+    }
+
+    // Compute reportability label from cost (for old server format)
+    function getReportabilityFromCost(cost) {
+        if (cost === null || cost === undefined || cost < 10000) return 'fragile';
+        if (cost < 100000) return 'caution';
+        return 'reportable';
+    }
+
+    // Fetch live data for visible cards (async, updates cards when data arrives)
+    async function fetchLiveDataForCards(markets) {
+        for (const m of markets) {
+            // Skip if we already have data for this card
+            if (cardLiveData.has(m.key)) continue;
+
+            // Handle different field names for tokens/tickers
+            const pmToken = m.pm_token_id || m.token_id || null;
+            const kTicker = m.k_ticker || m.ticker || null;
+
+            // Skip if no identifiers available
+            if (!pmToken && !kTicker) continue;
+
+            // Fetch in background, don't await
+            (async () => {
+                try {
+                    let rawData = null;
+                    let isCombined = false;
+
+                    if (pmToken && kTicker) {
+                        // Cross-platform - use combined endpoint
+                        rawData = await fetchCombinedLiveData(pmToken, kTicker);
+                        isCombined = true;
+                    } else if (pmToken) {
+                        rawData = await fetchLiveData(pmToken, 'polymarket');
+                    } else if (kTicker) {
+                        rawData = await fetchLiveData(kTicker, 'kalshi');
+                    }
+
+                    if (rawData) {
+                        const data = normalizeServerResponse(rawData, isCombined);
+                        cardLiveData.set(m.key, data);
+                        // Update the card in place
+                        updateCardWithLiveData(m.key, data, m);
+                    }
+                } catch (e) {
+                    console.warn(`Failed to fetch live data for ${m.key}:`, e);
+                }
+            })();
+        }
+    }
+
+    // Update a card with live data without re-rendering the entire grid
+    function updateCardWithLiveData(key, data, market) {
+        const card = document.querySelector(`.market-card[data-market-key="${key}"]`);
+        if (!card) return;
+
+        // Update bellwether price
+        const bwPriceEl = card.querySelector('.bw-price');
+        const methodEl = card.querySelector('.card-price-method');
+        if (bwPriceEl && data.bellwether_price !== null) {
+            bwPriceEl.textContent = Math.round(data.bellwether_price * 100) + '%';
+            if (methodEl) {
+                methodEl.textContent = data.vwap_label ||
+                    (market.has_both ? '6h VWAP across platforms' : '6h VWAP · single platform');
+            }
+        }
+
+        // Update reportability
+        const reportabilityContainer = card.querySelector('.card-reportability');
+        if (reportabilityContainer && data.robustness) {
+            const cost = data.robustness.cost_to_move_5c;
+            const label = data.robustness.reportability;
+            let html = `<span class="report-badge ${label}">${label.charAt(0).toUpperCase() + label.slice(1)}</span>`;
+            if (cost !== null) {
+                html += `<span class="report-detail"><strong>${formatReportabilityCost(cost)}</strong> to move 5¢</span>`;
+            }
+            reportabilityContainer.innerHTML = html;
+        }
+
+        // Update platform spot prices if combined data
+        if (data.platform_prices) {
+            const platformCols = card.querySelectorAll('.card-platform-col');
+            if (platformCols.length >= 2) {
+                const pmVal = platformCols[0].querySelector('.plat-val');
+                const kVal = platformCols[1].querySelector('.plat-val');
+                if (pmVal && data.platform_prices.polymarket !== null) {
+                    pmVal.textContent = formatPrice(data.platform_prices.polymarket);
+                }
+                if (kVal && data.platform_prices.kalshi !== null) {
+                    kVal.textContent = formatPrice(data.platform_prices.kalshi);
+                }
+            }
+        }
+
+        // Add/remove fragile class
+        if (data.robustness?.reportability === 'fragile') {
+            card.classList.add('fragile');
+        } else {
+            card.classList.remove('fragile');
+        }
+    }
+
+    // Render live data section in modal
+    function renderLiveDataSection(data, isCombined = false) {
         if (!data) {
             return `<div class="modal-live-data">
                 <div class="modal-live-data-header">Live Market Depth</div>
@@ -54,33 +203,78 @@
             </div>`;
         }
 
-        const mc = data.manipulation_cost;
+        const robustness = data.robustness;
         const vwap = data.vwap_6h;
 
-        const priceImpact = mc.price_impact_cents !== null
-            ? `${mc.price_impact_cents}¢`
+        const costToMove = robustness.cost_to_move_5c !== null
+            ? formatVolume(robustness.cost_to_move_5c)
             : 'N/A';
 
-        const vwapValue = vwap.vwap !== null
-            ? `${Math.round(vwap.vwap * 100)}%`
+        const vwapValue = data.bellwether_price !== null
+            ? `${Math.round(data.bellwether_price * 100)}%`
             : 'No trades';
+
+        const vwapLabel = data.vwap_label || '6h VWAP';
+
+        // Badge class based on reportability
+        const badgeClass = robustness.reportability === 'reportable' ? 'reportable' :
+                          robustness.reportability === 'caution' ? 'caution' : 'fragile';
+        const badgeLabel = robustness.reportability.charAt(0).toUpperCase() + robustness.reportability.slice(1);
+
+        // Platform prices for combined data
+        let platformPricesHtml = '';
+        if (isCombined && data.platform_prices) {
+            const pmPrice = data.platform_prices.polymarket !== null
+                ? formatPrice(data.platform_prices.polymarket) : '—';
+            const kPrice = data.platform_prices.kalshi !== null
+                ? formatPrice(data.platform_prices.kalshi) : '—';
+
+            platformPricesHtml = `
+                <div class="modal-live-data-platforms">
+                    <div class="modal-live-data-platform">
+                        <span class="platform-badge pm">PM</span>
+                        <span class="platform-price">${pmPrice}</span>
+                    </div>
+                    <div class="modal-live-data-platform">
+                        <span class="platform-badge kalshi">K</span>
+                        <span class="platform-price">${kPrice}</span>
+                    </div>
+                </div>
+            `;
+        }
 
         return `<div class="modal-live-data">
             <div class="modal-live-data-header">Live Market Depth</div>
             <div class="modal-live-data-grid">
                 <div class="modal-live-data-item">
-                    <div class="modal-live-data-label">$100K Buy Impact</div>
-                    <div class="modal-live-data-value">${priceImpact}</div>
-                    <div class="modal-live-data-sub">${mc.levels_consumed} levels consumed</div>
+                    <div class="modal-live-data-label">Cost to Move 5¢</div>
+                    <div class="modal-live-data-value">${costToMove}</div>
+                    <div class="modal-live-data-badge ${badgeClass}">${badgeLabel}</div>
                 </div>
                 <div class="modal-live-data-item">
-                    <div class="modal-live-data-label">6h VWAP</div>
+                    <div class="modal-live-data-label">${vwapLabel}</div>
                     <div class="modal-live-data-value">${vwapValue}</div>
                     <div class="modal-live-data-sub">${vwap.trade_count} trades</div>
                 </div>
             </div>
+            ${platformPricesHtml}
             <div class="modal-live-data-timestamp">Updated ${new Date(data.fetched_at).toLocaleTimeString()}</div>
         </div>`;
+    }
+
+    // Format reportability cost for cards
+    function formatReportabilityCost(cost) {
+        if (cost === null) return '—';
+        if (cost >= 1e6) return '$' + (cost / 1e6).toFixed(1) + 'M';
+        if (cost >= 1e3) return '$' + Math.round(cost / 1e3) + 'K';
+        return '$' + cost;
+    }
+
+    // Get badge HTML for reportability
+    function getReportabilityBadgeHtml(reportability) {
+        if (!reportability) return '';
+        const label = reportability.charAt(0).toUpperCase() + reportability.slice(1);
+        return `<span class="reportability-badge ${reportability}">${label}</span>`;
     }
 
     // Format currency
@@ -153,120 +347,197 @@
     // CARD RENDERING
     // =========================================================================
 
-    // Render election card (cross-platform comparison)
+    // Render election card (cross-platform comparison) - NEW DESIGN
     function renderElectionCard(e, index) {
-        const change = formatChange(e.price_change_24h);
+        const liveData = cardLiveData.get(e.key);
         const spread = formatSpread(e.pm_price, e.k_price);
-        const spreadStatus = getSpreadStatus(spread.pts);
-        const cardClass = index === 0 ? 'market-card is-featured clickable' : 'market-card clickable';
 
         // Use question as title, fall back to label
         const title = e.pm_question || e.k_question || e.label || 'Unknown market';
 
-        const pmPrice = formatPrice(e.pm_price);
-        const kPrice = formatPrice(e.k_price);
+        // Determine if card is fragile
+        const isFragile = liveData?.robustness?.reportability === 'fragile';
+        let cardClass = 'market-card clickable';
+        if (isFragile) cardClass += ' fragile';
 
-        const pmBox = `<div class="price-box">
-            <div class="price-box-label">Polymarket</div>
-            <div class="price-box-value pm">${pmPrice}</div>
-        </div>`;
+        // Divergence flag: |PM - K| > 10pp
+        const hasDivergence = e.has_both && spread.pts !== null && spread.pts > 10;
 
-        const kBox = `<div class="price-box">
-            <div class="price-box-label">Kalshi</div>
-            <div class="price-box-value kalshi">${kPrice}</div>
-        </div>`;
-
-        const spreadClass = spreadStatus.class ? `spread ${spreadStatus.class}` : 'spread';
-        const spreadBox = `<div class="price-box">
-            <div class="price-box-label">Spread</div>
-            <div class="price-box-value ${spreadClass}">${spread.text}</div>
-        </div>`;
-
-        let pricesHtml;
-        if (e.has_both) {
-            pricesHtml = `<div class="market-card-prices three-col">${pmBox}${kBox}${spreadBox}</div>`;
-        } else if (e.has_pm) {
-            pricesHtml = `<div class="market-card-prices single-col">${pmBox}</div>`;
-        } else {
-            pricesHtml = `<div class="market-card-prices single-col">${kBox}</div>`;
+        // Bellwether price: VWAP if available, else average of platforms
+        let bwPrice = '—';
+        let priceMethod = '6h VWAP across platforms';
+        if (liveData?.bellwether_price !== null && liveData?.bellwether_price !== undefined) {
+            bwPrice = Math.round(liveData.bellwether_price * 100) + '%';
+            priceMethod = liveData.vwap_label || (e.has_both ? '6h VWAP across platforms' : '6h VWAP · single platform');
+        } else if (e.has_both && e.pm_price !== null && e.k_price !== null) {
+            bwPrice = Math.round((e.pm_price + e.k_price) * 50) + '%';
+            priceMethod = 'Avg. across platforms';
+        } else if (e.pm_price !== null) {
+            bwPrice = Math.round(e.pm_price * 100) + '%';
+            priceMethod = 'Current price';
+        } else if (e.k_price !== null) {
+            bwPrice = Math.round(e.k_price * 100) + '%';
+            priceMethod = 'Current price';
         }
 
-        let noteHtml = spreadStatus.note ? `<div class="market-card-note">${spreadStatus.note}</div>` : '';
-
-        const changeArrow = change.raw > 0 ? '↑' : change.raw < 0 ? '↓' : '';
-        const changeText = change.raw !== 0 ? `${changeArrow} ${change.text} (24h)` : change.text;
-
-        // Image thumbnail (PM only)
-        const imageHtml = e.image ? `<div class="market-card-image"><img src="${e.image}" alt="" loading="lazy"></div>` : '';
-        const headerClass = e.image ? 'market-card-header has-image' : 'market-card-header';
-
-        // Platform badges
-        let platformBadges = '';
+        // Platform text (PM · Kalshi)
+        let platformsText = '';
         if (e.has_both) {
-            platformBadges = '<span class="platform-badge pm">PM</span><span class="platform-badge kalshi">K</span>';
+            platformsText = 'PM · Kalshi';
         } else if (e.has_pm) {
-            platformBadges = '<span class="platform-badge pm">PM</span>';
+            platformsText = 'PM';
         } else if (e.has_k) {
-            platformBadges = '<span class="platform-badge kalshi">K</span>';
+            platformsText = 'Kalshi';
         }
+
+        // Image or placeholder
+        let imageHtml = '<div class="card-market-img-placeholder">📊</div>';
+        if (e.image) {
+            imageHtml = `<img src="${e.image}" alt="" loading="lazy">`;
+        }
+
+        // Platform prices
+        const pmSpot = liveData?.platform_prices?.polymarket ?? e.pm_price;
+        const kSpot = liveData?.platform_prices?.kalshi ?? e.k_price;
+        const pmValHtml = e.has_pm ? `<div class="plat-val">${formatPrice(pmSpot)}</div>` : '<div class="plat-none">No market</div>';
+        const kValHtml = e.has_k ? `<div class="plat-val">${formatPrice(kSpot)}</div>` : '<div class="plat-none">No market</div>';
+
+        // Reportability
+        let reportBadgeHtml = '';
+        let reportDetailHtml = '';
+        if (liveData?.robustness) {
+            const label = liveData.robustness.reportability;
+            const cost = liveData.robustness.cost_to_move_5c;
+            reportBadgeHtml = `<span class="report-badge ${label}">${label.charAt(0).toUpperCase() + label.slice(1)}</span>`;
+            if (cost !== null) {
+                reportDetailHtml = `<span class="report-detail"><strong>${formatReportabilityCost(cost)}</strong> to move 5¢</span>`;
+            }
+        }
+
+        // Divergence flag in meta
+        const divergenceHtml = hasDivergence ? '<span class="card-divergence-flag"> · Divergence</span>' : '';
 
         return `
-            <div class="${cardClass}" data-market-key="${e.key}">
-                <div class="${headerClass}">
-                    ${imageHtml}
-                    <div class="market-card-header-text">
-                        <div class="market-card-badges">
-                            ${platformBadges}
-                            <span class="category-tag">${e.category_display || 'Electoral'}</span>
-                        </div>
-                        <div class="market-card-title">${truncate(title, 100)}</div>
+            <div class="${cardClass}" data-market-key="${e.key}" data-pm-token="${e.pm_token_id || ''}" data-k-ticker="${e.k_ticker || ''}">
+                <div class="card-meta">
+                    <div class="card-meta-left">
+                        <span class="card-category">${e.category_display || 'Electoral'}</span>
+                        ${divergenceHtml}
+                    </div>
+                    <span class="card-platforms">${platformsText}</span>
+                </div>
+                <div class="card-question-row">
+                    <div class="card-market-img">${imageHtml}</div>
+                    <div class="card-question">${truncate(title, 100)}</div>
+                </div>
+                <div class="card-price-row">
+                    <span class="bw-price">${bwPrice}</span>
+                    <span class="bw-label">Bellwether</span>
+                </div>
+                <div class="card-price-method">${priceMethod}</div>
+                <div class="card-platform-row">
+                    <div class="card-platform-col">
+                        <div class="plat-name">Polymarket</div>
+                        ${pmValHtml}
+                    </div>
+                    <div class="card-platform-col">
+                        <div class="plat-name">Kalshi</div>
+                        ${kValHtml}
                     </div>
                 </div>
-                ${pricesHtml}
-                <div class="market-card-footer">
-                    <span class="market-card-change ${change.class}">${changeText}</span>
-                    <span class="market-card-volume">${formatVolume(e.total_volume)}</span>
+                <div class="card-footer">
+                    <div class="card-reportability">
+                        ${reportBadgeHtml}
+                        ${reportDetailHtml}
+                    </div>
+                    <span class="card-volume">${formatVolume(e.total_volume)} vol</span>
                 </div>
-                ${noteHtml}
             </div>
         `;
     }
 
-    // Render individual market card (non-electoral)
+    // Render individual market card (non-electoral) - NEW DESIGN
     function renderMarketCard(m, index) {
-        const change = formatChange(m.price_change_24h);
-        const cardClass = index === 0 ? 'market-card is-featured clickable' : 'market-card clickable';
-        const platformClass = m.platform === 'Polymarket' ? 'pm' : 'kalshi';
-        const platformLabel = m.platform === 'Polymarket' ? 'PM' : 'K';
+        const liveData = cardLiveData.get(m.key);
+        const isPM = m.platform === 'Polymarket';
+        const platformsText = isPM ? 'PM' : 'Kalshi';
 
-        const changeArrow = change.raw > 0 ? '↑' : change.raw < 0 ? '↓' : '';
-        const changeText = change.raw !== 0 ? `${changeArrow} ${change.text}` : change.text;
+        // Determine if card is fragile
+        const isFragile = liveData?.robustness?.reportability === 'fragile';
+        let cardClass = 'market-card clickable';
+        if (isFragile) cardClass += ' fragile';
 
-        // Image thumbnail (PM only)
-        const imageHtml = m.image ? `<div class="market-card-image"><img src="${m.image}" alt="" loading="lazy"></div>` : '';
-        const headerClass = m.image ? 'market-card-header has-image' : 'market-card-header';
+        // Bellwether price: VWAP if available, else current price
+        let bwPrice = '—';
+        let priceMethod = '6h VWAP · single platform';
+        if (liveData?.bellwether_price !== null && liveData?.bellwether_price !== undefined) {
+            bwPrice = Math.round(liveData.bellwether_price * 100) + '%';
+        } else if (m.price !== null && m.price !== undefined) {
+            bwPrice = Math.round(m.price * 100) + '%';
+            priceMethod = 'Current price';
+        }
+
+        // Spot price
+        const spotPrice = liveData?.current_price ?? m.price;
+
+        // Token/ticker for live data fetching
+        const tokenAttr = isPM
+            ? `data-pm-token="${m.pm_token_id || m.token_id || ''}"`
+            : `data-k-ticker="${m.k_ticker || m.ticker || ''}"`;
+
+        // Image or placeholder
+        let imageHtml = '<div class="card-market-img-placeholder">📊</div>';
+        if (m.image) {
+            imageHtml = `<img src="${m.image}" alt="" loading="lazy">`;
+        }
+
+        // Platform prices - only show the one we have
+        const pmValHtml = isPM ? `<div class="plat-val">${formatPrice(spotPrice)}</div>` : '<div class="plat-none">No market</div>';
+        const kValHtml = !isPM ? `<div class="plat-val">${formatPrice(spotPrice)}</div>` : '<div class="plat-none">No market</div>';
+
+        // Reportability
+        let reportBadgeHtml = '';
+        let reportDetailHtml = '';
+        if (liveData?.robustness) {
+            const label = liveData.robustness.reportability;
+            const cost = liveData.robustness.cost_to_move_5c;
+            reportBadgeHtml = `<span class="report-badge ${label}">${label.charAt(0).toUpperCase() + label.slice(1)}</span>`;
+            if (cost !== null) {
+                reportDetailHtml = `<span class="report-detail"><strong>${formatReportabilityCost(cost)}</strong> to move 5¢</span>`;
+            }
+        }
 
         return `
-            <div class="${cardClass}" data-market-key="${m.key}">
-                <div class="${headerClass}">
-                    ${imageHtml}
-                    <div class="market-card-header-text">
-                        <div class="market-card-badges">
-                            <span class="platform-badge ${platformClass}">${platformLabel}</span>
-                            <span class="category-tag">${m.category_display || 'Other'}</span>
-                        </div>
-                        <div class="market-card-title">${truncate(m.label, 100)}</div>
+            <div class="${cardClass}" data-market-key="${m.key}" ${tokenAttr}>
+                <div class="card-meta">
+                    <span class="card-category">${m.category_display || 'Other'}</span>
+                    <span class="card-platforms">${platformsText}</span>
+                </div>
+                <div class="card-question-row">
+                    <div class="card-market-img">${imageHtml}</div>
+                    <div class="card-question">${truncate(m.label, 100)}</div>
+                </div>
+                <div class="card-price-row">
+                    <span class="bw-price">${bwPrice}</span>
+                    <span class="bw-label">Bellwether</span>
+                </div>
+                <div class="card-price-method">${priceMethod}</div>
+                <div class="card-platform-row">
+                    <div class="card-platform-col">
+                        <div class="plat-name">Polymarket</div>
+                        ${pmValHtml}
+                    </div>
+                    <div class="card-platform-col">
+                        <div class="plat-name">Kalshi</div>
+                        ${kValHtml}
                     </div>
                 </div>
-                <div class="market-card-prices single-col">
-                    <div class="price-box">
-                        <div class="price-box-label">${m.platform}</div>
-                        <div class="price-box-value ${platformClass}">${formatPrice(m.price)}</div>
+                <div class="card-footer">
+                    <div class="card-reportability">
+                        ${reportBadgeHtml}
+                        ${reportDetailHtml}
                     </div>
-                </div>
-                <div class="market-card-footer">
-                    <span class="market-card-change ${change.class}">${changeText}</span>
-                    <span class="market-card-volume">${formatVolume(m.volume || m.total_volume)}</span>
+                    <span class="card-volume">${formatVolume(m.volume || m.total_volume)} vol</span>
                 </div>
             </div>
         `;
@@ -491,15 +762,20 @@
             const pmTokenId = entry.pm_token_id;
             const kTicker = entry.k_ticker;
 
-            if (pmTokenId) {
-                liveDataContainer.innerHTML = '<div class="modal-live-data"><div class="modal-live-data-header">Live Market Depth</div><div class="modal-live-data-loading">Loading...</div></div>';
+            liveDataContainer.innerHTML = '<div class="modal-live-data"><div class="modal-live-data-header">Live Market Depth</div><div class="modal-live-data-loading">Loading...</div></div>';
+
+            if (pmTokenId && kTicker) {
+                // Cross-platform: use combined endpoint
+                fetchCombinedLiveData(pmTokenId, kTicker).then(data => {
+                    liveDataContainer.innerHTML = renderLiveDataSection(data, true);
+                });
+            } else if (pmTokenId) {
                 fetchLiveData(pmTokenId, 'polymarket').then(data => {
-                    liveDataContainer.innerHTML = renderLiveDataSection(data);
+                    liveDataContainer.innerHTML = renderLiveDataSection(data, false);
                 });
             } else if (kTicker) {
-                liveDataContainer.innerHTML = '<div class="modal-live-data"><div class="modal-live-data-header">Live Market Depth</div><div class="modal-live-data-loading">Loading...</div></div>';
                 fetchLiveData(kTicker, 'kalshi').then(data => {
-                    liveDataContainer.innerHTML = renderLiveDataSection(data);
+                    liveDataContainer.innerHTML = renderLiveDataSection(data, false);
                 });
             } else {
                 liveDataContainer.innerHTML = renderLiveDataSection(null);
@@ -646,6 +922,9 @@
         container.innerHTML = toShow.map((m, i) => renderCard(m, i)).join('');
 
         setupCardClickHandlers();
+
+        // Fetch live data for visible cards
+        fetchLiveDataForCards(toShow);
 
         // Re-add checkboxes if in review mode
         if (reviewMode) {
