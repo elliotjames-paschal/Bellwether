@@ -1113,7 +1113,8 @@
 
     async function loadMonitorData() {
         try {
-            const response = await fetch('data/active_markets.json?v=' + Date.now());
+            // Don't cache-bust - we want to hit the Cloudflare cache
+            const response = await fetch('data/active_markets.json');
             if (!response.ok) throw new Error('Failed to load monitor data');
             monitorData = await response.json();
 
@@ -1126,9 +1127,16 @@
             updateTabCounts();
             renderCards();
 
+            // Show when the cache was last updated using the Date header
             const timestampEl = document.getElementById('monitor-last-update');
-            if (timestampEl && monitorData.generated_at) {
-                timestampEl.textContent = formatRelativeTime(monitorData.generated_at);
+            if (timestampEl) {
+                const dateHeader = response.headers.get('Date');
+                if (dateHeader) {
+                    const cacheDate = new Date(dateHeader);
+                    timestampEl.textContent = formatRelativeTime(cacheDate.toISOString());
+                } else {
+                    timestampEl.textContent = 'just now';
+                }
             }
         } catch (err) {
             console.error('Error loading monitor data:', err);
