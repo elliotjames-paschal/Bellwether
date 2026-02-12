@@ -18,7 +18,7 @@ const DOME_API_KEY = Deno.env.get("DOME_API_KEY") || "";
 const DOME_REST_BASE = "https://api.domeapi.io/v1";
 
 const CONFIG = {
-  cache_ttl_ms: 60000, // 60 seconds cache TTL
+  cache_ttl_ms: 300000, // 5 minutes cache TTL (reduced API calls)
   min_trades_for_vwap: 10, // Minimum trades needed for reliable VWAP
   vwap_windows: [6, 12, 24], // Hours to try for VWAP (in order)
 };
@@ -318,10 +318,15 @@ async function computeTieredPrice(
   bids: OrderbookLevel[],
   asks: OrderbookLevel[]
 ): Promise<TieredPriceResult> {
-  // Try progressively larger windows until we get enough trades
+  // Fetch 24h trades once, then filter for smaller windows in memory
+  const allTrades = await fetchTrades(platform, tokenId, 24);
+  const now = Date.now();
+
+  // Try progressively larger windows by filtering the same trade data
   for (const windowHours of CONFIG.vwap_windows) {
-    const trades = await fetchTrades(platform, tokenId, windowHours);
-    const vwapResult = computeVWAP(trades);
+    const cutoff = now - (windowHours * 60 * 60 * 1000);
+    const windowTrades = allTrades.filter(t => t.timestamp >= cutoff);
+    const vwapResult = computeVWAP(windowTrades);
 
     if (vwapResult.trade_count >= CONFIG.min_trades_for_vwap) {
       // Success! Store this as the last known good VWAP
@@ -397,20 +402,24 @@ async function computeCrossplatformTieredPrice(
 
   const cacheKey = `${pmToken || ""}_${kTicker || ""}`;
 
-  // Try progressively larger windows until we get enough trades
+  // Fetch 24h trades once from each platform, then filter for smaller windows
+  const allTrades: Trade[] = [];
+  if (pmToken) {
+    const pmTrades = await fetchTrades("polymarket", pmToken, 24);
+    allTrades.push(...pmTrades);
+  }
+  if (kTicker) {
+    const kTrades = await fetchTrades("kalshi", kTicker, 24);
+    allTrades.push(...kTrades);
+  }
+
+  const now = Date.now();
+
+  // Try progressively larger windows by filtering the same trade data
   for (const windowHours of CONFIG.vwap_windows) {
-    const allTrades: Trade[] = [];
-
-    if (pmToken) {
-      const pmTrades = await fetchTrades("polymarket", pmToken, windowHours);
-      allTrades.push(...pmTrades);
-    }
-    if (kTicker) {
-      const kTrades = await fetchTrades("kalshi", kTicker, windowHours);
-      allTrades.push(...kTrades);
-    }
-
-    const vwapResult = computeVWAP(allTrades);
+    const cutoff = now - (windowHours * 60 * 60 * 1000);
+    const windowTrades = allTrades.filter(t => t.timestamp >= cutoff);
+    const vwapResult = computeVWAP(windowTrades);
 
     if (vwapResult.trade_count >= CONFIG.min_trades_for_vwap) {
       await storeLastVWAP(cacheKey, vwapResult.vwap!, windowHours, vwapResult.trade_count);
