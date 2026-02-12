@@ -17,7 +17,7 @@
 const DOME_REST_BASE = "https://api.domeapi.io/v1";
 
 const CONFIG = {
-  cache_ttl_ms: 300000, // 5 minutes cache TTL
+  cache_ttl_ms: 600000, // 10 minutes cache TTL
   min_trades_for_vwap: 10,
   vwap_windows: [6, 12, 24],
 };
