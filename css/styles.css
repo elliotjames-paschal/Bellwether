@@ -233,7 +233,7 @@ a:hover {
 
 /* Hero */
 .hero {
-    padding: 100px 32px 220px;
+    padding: 100px 32px 280px;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     overflow: visible;
 }
@@ -277,31 +277,31 @@ a:hover {
 .hero-stats-list {
     list-style: none;
     padding: 0;
-    margin: 24px 0 0 0;
+    margin: 28px 0 0 0;
+    padding-left: 18px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     max-width: 540px;
 }
 
 .hero-stats-list li {
-    font-size: 1.0625rem;
+    font-size: 1rem;
     color: var(--gray-700);
     line-height: 1.5;
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    gap: 12px;
 }
 
 .stat-bullet {
     display: inline-block;
-    width: 8px;
-    height: 8px;
-    min-width: 8px;
+    width: 7px;
+    height: 7px;
+    min-width: 7px;
     background: linear-gradient(135deg, var(--pm-color), var(--kalshi-color));
     border-radius: 50%;
-    position: relative;
-    top: -1px;
+    flex-shrink: 0;
 }
 
 /* Hero layout with symbol */
