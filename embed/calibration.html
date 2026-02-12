@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calibration - Bellwether</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0d1117; }
+        #chart { width: 100%; height: 100vh; }
+        .watermark { position: absolute; bottom: 8px; right: 12px; font-size: 11px; color: rgba(255,255,255,0.5); }
+        .watermark a { color: rgba(255,255,255,0.7); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    <div class="watermark"><a href="https://bellwether.stanford.edu/research" target="_blank">bellwether.stanford.edu</a></div>
+    <script>
+        const COLORS = { bg: '#0d1117', text: '#c9d1d9', line: '#30363d' };
+        const COLORS_SOFT = { pm: 'rgba(79, 140, 201, 0.85)', kalshi: 'rgba(201, 133, 79, 0.85)' };
+
+        async function loadChart() {
+            try {
+                const response = await fetch('../data/calibration.json');
+                const data = await response.json();
+
+                const perfect = {
+                    x: [0, 1], y: [0, 1],
+                    mode: 'lines',
+                    line: { color: 'rgba(255,255,255,0.3)', width: 1, dash: 'dash' },
+                    showlegend: false, hoverinfo: 'skip', name: 'Perfect Calibration'
+                };
+
+                const pm = {
+                    x: data.polymarket.bins,
+                    y: data.polymarket.outcomes,
+                    mode: 'lines+markers',
+                    name: 'Polymarket',
+                    line: { color: COLORS_SOFT.pm, width: 2 },
+                    marker: { size: 8 },
+                    hovertemplate: 'Predicted: %{x:.0%}<br>Actual: %{y:.0%}<extra>Polymarket</extra>'
+                };
+
+                const kalshi = {
+                    x: data.kalshi.bins,
+                    y: data.kalshi.outcomes,
+                    mode: 'lines+markers',
+                    name: 'Kalshi',
+                    line: { color: COLORS_SOFT.kalshi, width: 2 },
+                    marker: { size: 8 },
+                    hovertemplate: 'Predicted: %{x:.0%}<br>Actual: %{y:.0%}<extra>Kalshi</extra>'
+                };
+
+                const layout = {
+                    paper_bgcolor: COLORS.bg,
+                    plot_bgcolor: COLORS.bg,
+                    font: { color: COLORS.text, family: '-apple-system, BlinkMacSystemFont, sans-serif' },
+                    xaxis: { title: 'Predicted Probability', range: [0, 1], gridcolor: COLORS.line, zeroline: false, tickformat: '.0%' },
+                    yaxis: { title: 'Actual Outcome Rate', range: [0, 1], gridcolor: COLORS.line, zeroline: false, tickformat: '.0%' },
+                    margin: { l: 60, r: 30, t: 40, b: 50 },
+                    legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)' }
+                };
+
+                Plotly.newPlot('chart', [perfect, pm, kalshi], layout, { responsive: true, displayModeBar: false });
+            } catch (e) {
+                document.getElementById('chart').innerHTML = '<p style="color:#c9d1d9;padding:20px;">Error loading chart</p>';
+            }
+        }
+
+        loadChart();
+    </script>
+</body>
+</html>
