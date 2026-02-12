@@ -2466,7 +2466,6 @@ a.price-box.clickable:hover {
     border: 1px solid #e1e5eb;
     border-radius: 8px;
     padding: 22px 24px 18px;
-    cursor: pointer;
     transition: border-color 0.15s;
     display: flex;
     flex-direction: column;
@@ -2560,11 +2559,38 @@ a.price-box.clickable:hover {
 }
 
 .card-platforms {
+    display: flex;
+    gap: 8px;
+}
+
+.card-platform-link {
     font-family: var(--font-sans);
     font-size: 10px;
-    color: #8e95a3;
+    font-weight: 500;
     letter-spacing: 0.02em;
     text-transform: uppercase;
+    text-decoration: none;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: all 0.15s;
+}
+
+.card-platform-link.pm {
+    color: var(--pm-color);
+    background: rgba(37, 99, 235, 0.08);
+}
+
+.card-platform-link.pm:hover {
+    background: rgba(37, 99, 235, 0.15);
+}
+
+.card-platform-link.kalshi {
+    color: var(--kalshi-color);
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.card-platform-link.kalshi:hover {
+    background: rgba(16, 185, 129, 0.15);
 }
 
 /* === QUESTION ROW WITH IMAGE === */
@@ -3455,16 +3481,6 @@ a.price-box.clickable:hover {
     .modal-price-value {
         font-size: 1.375rem;
     }
-}
-
-/* Make cards clickable */
-.market-card.clickable {
-    cursor: pointer;
-}
-
-.market-card.clickable:hover {
-    border-color: var(--gray-400);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* =============================================================================

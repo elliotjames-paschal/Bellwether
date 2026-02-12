@@ -407,7 +407,7 @@
         // Determine tier and fragility
         const tier = liveData?.price_tier || 0;
         const isFragile = liveData?.robustness?.reportability === 'fragile';
-        let cardClass = 'market-card clickable';
+        let cardClass = 'market-card';
         if (isFragile) cardClass += ' fragile';
         if (tier > 0) cardClass += ` tier-${tier}`;
 
@@ -431,14 +431,14 @@
             priceMethod = 'Current price';
         }
 
-        // Platform text (PM · Kalshi)
-        let platformsText = '';
-        if (e.has_both) {
-            platformsText = 'PM · Kalshi';
-        } else if (e.has_pm) {
-            platformsText = 'PM';
-        } else if (e.has_k) {
-            platformsText = 'Kalshi';
+        // Platform links with arrows
+        let platformLinksHtml = '';
+        if (e.has_pm && e.pm_url) {
+            platformLinksHtml += `<a href="${e.pm_url}" target="_blank" rel="noopener" class="card-platform-link pm" title="View on Polymarket">PM ↗</a>`;
+        }
+        if (e.has_k && e.k_url) {
+            if (platformLinksHtml) platformLinksHtml += ' ';
+            platformLinksHtml += `<a href="${e.k_url}" target="_blank" rel="noopener" class="card-platform-link kalshi" title="View on Kalshi">K ↗</a>`;
         }
 
         // Image or placeholder
@@ -475,7 +475,7 @@
                         <span class="card-category">${e.category_display || 'Electoral'}</span>
                         ${divergenceHtml}
                     </div>
-                    <span class="card-platforms">${platformsText}</span>
+                    <div class="card-platforms">${platformLinksHtml}</div>
                 </div>
                 <div class="card-question-row">
                     <div class="card-market-img">${imageHtml}</div>
@@ -511,12 +511,19 @@
     function renderMarketCard(m, index) {
         const liveData = cardLiveData.get(m.key);
         const isPM = m.platform === 'Polymarket';
-        const platformsText = isPM ? 'PM' : 'Kalshi';
+
+        // Platform link with arrow
+        let platformLinkHtml = '';
+        if (isPM && m.pm_url) {
+            platformLinkHtml = `<a href="${m.pm_url}" target="_blank" rel="noopener" class="card-platform-link pm" title="View on Polymarket">PM ↗</a>`;
+        } else if (!isPM && m.k_url) {
+            platformLinkHtml = `<a href="${m.k_url}" target="_blank" rel="noopener" class="card-platform-link kalshi" title="View on Kalshi">K ↗</a>`;
+        }
 
         // Determine tier and fragility
         const tier = liveData?.price_tier || 0;
         const isFragile = liveData?.robustness?.reportability === 'fragile';
-        let cardClass = 'market-card clickable';
+        let cardClass = 'market-card';
         if (isFragile) cardClass += ' fragile';
         if (tier > 0) cardClass += ` tier-${tier}`;
 
@@ -565,7 +572,7 @@
             <div class="${cardClass}" data-market-key="${m.key}" ${tokenAttr}>
                 <div class="card-meta">
                     <span class="card-category">${m.category_display || 'Other'}</span>
-                    <span class="card-platforms">${platformsText}</span>
+                    <div class="card-platforms">${platformLinkHtml}</div>
                 </div>
                 <div class="card-question-row">
                     <div class="card-market-img">${imageHtml}</div>
