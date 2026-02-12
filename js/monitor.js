@@ -489,11 +489,11 @@
                     <div class="card-market-img">${imageHtml}</div>
                     <div class="card-question">${truncate(title, 100)}</div>
                 </div>
-                <div class="card-price-row">
+                <div class="card-price-row" title="Volume-weighted average price across platforms, resistant to manipulation">
                     <span class="bw-price">${bwPrice}</span>
                     <span class="bw-label">Bellwether</span>
                 </div>
-                <div class="card-price-method">${priceMethod}</div>
+                <div class="card-price-method" title="VWAP = Volume-Weighted Average Price. Weights recent trades by size to reduce noise and manipulation.">${priceMethod}</div>
                 <div class="card-platform-row">
                     <div class="card-platform-col">
                         <div class="plat-name">Polymarket</div>
@@ -505,7 +505,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div class="card-reportability">
+                    <div class="card-reportability" title="How much money it would cost to move the price by 5¢. Higher = more robust and reliable.">
                         ${reportBadgeHtml}
                         ${reportDetailHtml}
                     </div>
@@ -596,11 +596,11 @@
                     <div class="card-market-img">${imageHtml}</div>
                     <div class="card-question">${truncate(m.label, 100)}</div>
                 </div>
-                <div class="card-price-row">
+                <div class="card-price-row" title="Volume-weighted average price across platforms, resistant to manipulation">
                     <span class="bw-price">${bwPrice}</span>
                     <span class="bw-label">Bellwether</span>
                 </div>
-                <div class="card-price-method">${priceMethod}</div>
+                <div class="card-price-method" title="VWAP = Volume-Weighted Average Price. Weights recent trades by size to reduce noise and manipulation.">${priceMethod}</div>
                 <div class="card-platform-row">
                     <div class="card-platform-col">
                         <div class="plat-name">Polymarket</div>
@@ -612,7 +612,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <div class="card-reportability">
+                    <div class="card-reportability" title="How much money it would cost to move the price by 5¢. Higher = more robust and reliable.">
                         ${reportBadgeHtml}
                         ${reportDetailHtml}
                     </div>
