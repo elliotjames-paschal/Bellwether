@@ -15,6 +15,11 @@
     --pm-color: #2563eb;
     --kalshi-color: #10b981;
     --live-indicator: #10b981;
+
+    /* Typography - Three fonts, three jobs */
+    --font-serif: 'Source Serif 4', Georgia, serif;        /* Content: quotes, findings, headlines */
+    --font-mono: 'IBM Plex Mono', monospace;               /* Data: prices, volumes, scores */
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;  /* UI: labels, nav, badges */
 }
 
 * {
@@ -38,6 +43,7 @@ body {
 
 /* Typography */
 h1, h2, h3 {
+    font-family: var(--font-serif);
     font-weight: 600;
     line-height: 1.25;
     letter-spacing: -0.02em;
@@ -394,8 +400,9 @@ a:hover {
 }
 
 .stat-value {
+    font-family: var(--font-mono);
     font-size: 2.5rem;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--gray-900);
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
@@ -404,6 +411,7 @@ a:hover {
 }
 
 .stat-label {
+    font-family: var(--font-sans);
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--gray-600);
@@ -411,6 +419,7 @@ a:hover {
 }
 
 .stat-context {
+    font-family: var(--font-sans);
     font-size: 0.75rem;
     color: var(--gray-500);
     font-weight: 400;
@@ -504,6 +513,7 @@ a:hover {
 }
 
 .research-finding-quote {
+    font-family: var(--font-serif);
     font-size: 1.125rem;
     font-weight: 500;
     color: var(--gray-900);
@@ -530,7 +540,7 @@ a:hover {
 }
 
 .stat-num {
-    font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
+    font-family: var(--font-mono);
     font-weight: 500;
     color: var(--gray-700);
 }
@@ -587,7 +597,7 @@ a:hover {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--gray-900);
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
 }
 
 .modal-live-data-sub {
@@ -933,8 +943,9 @@ a:hover {
 }
 
 .insight-value {
+    font-family: var(--font-mono);
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--gray-900);
     letter-spacing: -0.02em;
     line-height: 1;
@@ -942,6 +953,7 @@ a:hover {
 }
 
 .insight-label {
+    font-family: var(--font-sans);
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--gray-700);
@@ -949,6 +961,7 @@ a:hover {
 }
 
 .insight-context {
+    font-family: var(--font-sans);
     font-size: 0.75rem;
     color: var(--gray-500);
 }
@@ -965,6 +978,7 @@ a:hover {
 }
 
 .tab-btn {
+    font-family: var(--font-sans);
     padding: 14px 24px;
     font-size: 0.9375rem;
     font-weight: 500;
@@ -2013,6 +2027,7 @@ a:hover {
 }
 
 .monitor-header-left h2 {
+    font-family: var(--font-sans);
     margin: 0;
     font-size: 1.75rem;
     display: flex;
@@ -2120,6 +2135,7 @@ a:hover {
 }
 
 .monitor-tab {
+    font-family: var(--font-sans);
     padding: 12px 20px;
     background: transparent;
     border: none;
@@ -2152,7 +2168,7 @@ a:hover {
     padding: 2px 7px;
     font-size: 0.75rem;
     font-weight: 600;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     border-radius: 4px;
     background: var(--gray-100);
     color: var(--gray-500);
@@ -2423,7 +2439,7 @@ a.price-box.clickable:hover {
 
 .market-card-change {
     font-weight: 600;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
 }
 
 .market-card-change.positive { color: #16a34a; }
@@ -2432,7 +2448,7 @@ a.price-box.clickable:hover {
 
 .market-card-volume {
     color: var(--gray-400);
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
 }
 
 .market-card-countdown {
@@ -2492,6 +2508,7 @@ a.price-box.clickable:hover {
 }
 
 .card-category {
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.05em;
@@ -2508,10 +2525,11 @@ a.price-box.clickable:hover {
 }
 
 .card-platforms {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 10px;
     color: #8e95a3;
     letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
 /* === QUESTION ROW WITH IMAGE === */
@@ -2546,7 +2564,7 @@ a.price-box.clickable:hover {
 
 /* === QUESTION === */
 .card-question {
-    font-family: 'Source Serif 4', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 16px;
     font-weight: 600;
     line-height: 1.35;
@@ -2562,7 +2580,7 @@ a.price-box.clickable:hover {
 }
 
 .bw-price {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 32px;
     font-weight: 500;
     color: #1a1d23;
@@ -2571,9 +2589,11 @@ a.price-box.clickable:hover {
 }
 
 .bw-label {
+    font-family: var(--font-sans);
     font-size: 11px;
     color: #8e95a3;
     letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
 .bw-label::before {
@@ -2586,7 +2606,7 @@ a.price-box.clickable:hover {
 }
 
 .card-price-method {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: #b0b6c3;
     margin-bottom: 18px;
@@ -2611,13 +2631,15 @@ a.price-box.clickable:hover {
 }
 
 .plat-name {
+    font-family: var(--font-sans);
     font-size: 11px;
     color: #8e95a3;
     margin-bottom: 3px;
+    text-transform: uppercase;
 }
 
 .plat-val {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 17px;
     font-weight: 500;
     color: #4a5060;
@@ -2646,6 +2668,7 @@ a.price-box.clickable:hover {
 }
 
 .report-badge {
+    font-family: var(--font-sans);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -2675,13 +2698,13 @@ a.price-box.clickable:hover {
 }
 
 .report-detail strong {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 500;
     color: #4a5060;
 }
 
 .card-volume {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: #8e95a3;
 }
@@ -2732,7 +2755,7 @@ a.price-box.clickable:hover {
 .modal-live-data-platform .platform-price {
     font-size: 1.125rem;
     font-weight: 600;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     color: var(--gray-700);
 }
 
@@ -2820,7 +2843,7 @@ a.price-box.clickable:hover {
 .sidebar-election-days {
     color: var(--gray-400);
     font-size: 0.6875rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
 }
 
 /* Featured Research Card */
@@ -2834,6 +2857,7 @@ a.price-box.clickable:hover {
 }
 
 .sidebar-card-featured .sidebar-card-title {
+    font-family: var(--font-serif);
     color: var(--white);
     margin-bottom: 8px;
     text-transform: none;
@@ -3055,7 +3079,7 @@ a.price-box.clickable:hover {
 
 .modal-candidate {
     font-size: 0.8125rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     color: var(--gray-600);
     font-weight: 500;
 }
@@ -3135,7 +3159,7 @@ a.price-box.clickable:hover {
 .modal-price-label {
     font-size: 0.625rem;
     font-weight: 700;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 4px;
@@ -3148,7 +3172,7 @@ a.price-box.clickable:hover {
 .modal-price-value {
     font-size: 1.75rem;
     font-weight: 600;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     line-height: 1;
     margin-bottom: 4px;
 }
@@ -3160,7 +3184,7 @@ a.price-box.clickable:hover {
 
 .modal-price-sub {
     font-size: 0.625rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     color: var(--gray-400);
 }
 
@@ -3209,7 +3233,7 @@ a.price-box.clickable:hover {
 
 .modal-link-platform {
     font-size: 0.6875rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -3240,7 +3264,7 @@ a.price-box.clickable:hover {
 .modal-embeds-header {
     font-size: 0.625rem;
     font-weight: 700;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     color: var(--gray-500);
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -3273,7 +3297,7 @@ a.price-box.clickable:hover {
 
 .modal-embed-header span {
     font-size: 0.6875rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: var(--white);
     text-transform: uppercase;
@@ -3282,7 +3306,7 @@ a.price-box.clickable:hover {
 
 .modal-embed-header a {
     font-size: 0.625rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     color: var(--gray-400);
     text-decoration: none;
     transition: color 0.1s;
@@ -3330,7 +3354,7 @@ a.price-box.clickable:hover {
 
 .modal-embed-placeholder-text {
     font-size: 0.75rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
 }
 
 /* Single Platform Notice */
@@ -3354,7 +3378,7 @@ a.price-box.clickable:hover {
 
 .modal-single-notice-text {
     font-size: 0.75rem;
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     color: var(--gray-500);
     line-height: 1.4;
 }
@@ -3837,7 +3861,7 @@ body.review-mode .market-card.selected {
 .timeline-today-date {
     font-size: 0.6875rem;
     color: var(--gray-500);
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
 }
 
 /* Election Node */
@@ -3878,7 +3902,7 @@ body.review-mode .market-card.selected {
 .timeline-election-date {
     font-size: 0.625rem;
     color: var(--gray-400);
-    font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+    font-family: var(--font-mono);
     margin-bottom: 2px;
 }
 
@@ -4119,7 +4143,7 @@ body.review-mode .market-card.selected {
     .timeline-strip-date {
         font-size: 0.625rem;
         color: var(--gray-400);
-        font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+        font-family: var(--font-mono);
     }
 
     .timeline-strip-name {
