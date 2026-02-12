@@ -233,7 +233,7 @@ a:hover {
 
 /* Hero */
 .hero {
-    padding: 100px 32px 280px;
+    padding: 100px 32px 340px;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     overflow: visible;
 }
@@ -278,7 +278,7 @@ a:hover {
     list-style: none;
     padding: 0;
     margin: 28px 0 0 0;
-    padding-left: 18px;
+    padding-left: 28px;
     display: flex;
     flex-direction: column;
     gap: 10px;
