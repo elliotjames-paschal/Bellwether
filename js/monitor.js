@@ -64,29 +64,51 @@
     // Store live data for cards
     const cardLiveData = new Map();
 
-    // Normalize server response to handle both old and new API formats
+    // Normalize server response to handle tiered pricing format
     function normalizeServerResponse(data, isCombined = false) {
         if (!data) return null;
 
-        // If already in new format, return as-is
-        if (data.robustness && data.bellwether_price !== undefined) {
-            return data;
+        // New tiered format has price_tier and price_label
+        if (data.price_tier !== undefined) {
+            return {
+                bellwether_price: data.bellwether_price,
+                price_tier: data.price_tier,
+                price_label: data.price_label,
+                price_source: data.price_source,
+                current_price: data.current_price ?? null,
+                robustness: data.robustness,
+                vwap_details: data.vwap_details,
+                orderbook_midpoint: data.orderbook_midpoint,
+                platform_prices: data.platform_prices,
+                fetched_at: data.fetched_at
+            };
         }
 
-        // Convert old format to new format
+        // Legacy format support
+        if (data.robustness && data.bellwether_price !== undefined) {
+            return {
+                ...data,
+                price_tier: 1,
+                price_label: isCombined ? '6h VWAP across platforms' : '6h VWAP',
+                price_source: '6h_vwap'
+            };
+        }
+
+        // Very old format conversion
         const normalized = {
             bellwether_price: data.vwap_6h?.vwap ?? null,
-            vwap_label: isCombined ? '6h VWAP across platforms' : '6h VWAP · single platform',
+            price_tier: data.vwap_6h?.vwap ? 1 : 4,
+            price_label: isCombined ? '6h VWAP across platforms' : '6h VWAP',
+            price_source: '6h_vwap',
             current_price: data.current_price ?? null,
             robustness: {
                 cost_to_move_5c: data.manipulation_cost?.dollars_spent ?? null,
                 reportability: getReportabilityFromCost(data.manipulation_cost?.dollars_spent)
             },
-            vwap_6h: data.vwap_6h,
+            vwap_details: data.vwap_6h,
             fetched_at: data.fetched_at
         };
 
-        // For combined data, add platform_prices
         if (isCombined && data.platform_prices) {
             normalized.platform_prices = data.platform_prices;
         }
@@ -135,8 +157,9 @@
                         cardLiveData.set(m.key, data);
                         console.log(`Live data received for ${m.key}:`, {
                             bellwether_price: data.bellwether_price,
-                            trade_count: data.vwap_6h?.trade_count,
-                            vwap_label: data.vwap_label
+                            price_tier: data.price_tier,
+                            price_label: data.price_label,
+                            trade_count: data.vwap_details?.trade_count
                         });
                         // Update the card in place
                         updateCardWithLiveData(m.key, data, m);
@@ -158,21 +181,25 @@
             return;
         }
 
-        // Update bellwether price
+        // Update bellwether price and label
         const bwPriceEl = card.querySelector('.bw-price');
         const methodEl = card.querySelector('.card-price-method');
 
         if (bwPriceEl && methodEl) {
             if (data.bellwether_price !== null && data.bellwether_price !== undefined) {
-                // We have VWAP data - show it
+                // We have price data - show it with the tier-appropriate label
                 bwPriceEl.textContent = Math.round(data.bellwether_price * 100) + '%';
-                methodEl.textContent = data.vwap_label ||
-                    (market.has_both ? '6h VWAP across platforms' : '6h VWAP · single platform');
-            } else if (data.vwap_6h && data.vwap_6h.trade_count === 0) {
-                // Data was fetched but no trades in window - show this explicitly
-                methodEl.textContent = market.has_both ? 'No recent trades' : 'No recent trades';
+                methodEl.textContent = data.price_label || 'Price';
+            } else {
+                // No price available
+                methodEl.textContent = 'No data';
             }
         }
+
+        // Update tier-based visual styling
+        const tier = data.price_tier || 1;
+        card.classList.remove('tier-1', 'tier-2', 'tier-3', 'tier-4');
+        card.classList.add(`tier-${tier}`);
 
         // Update reportability
         const reportabilityContainer = card.querySelector('.card-reportability');
@@ -370,20 +397,22 @@
         // Use question as title, fall back to label
         const title = e.pm_question || e.k_question || e.label || 'Unknown market';
 
-        // Determine if card is fragile
+        // Determine tier and fragility
+        const tier = liveData?.price_tier || 0;
         const isFragile = liveData?.robustness?.reportability === 'fragile';
         let cardClass = 'market-card clickable';
         if (isFragile) cardClass += ' fragile';
+        if (tier > 0) cardClass += ` tier-${tier}`;
 
         // Divergence flag: |PM - K| > 10pp
         const hasDivergence = e.has_both && spread.pts !== null && spread.pts > 10;
 
-        // Bellwether price: VWAP if available, else average of platforms
+        // Bellwether price: Use tiered price from server, else fallback to average
         let bwPrice = '—';
-        let priceMethod = '6h VWAP across platforms';
+        let priceMethod = 'Loading...';
         if (liveData?.bellwether_price !== null && liveData?.bellwether_price !== undefined) {
             bwPrice = Math.round(liveData.bellwether_price * 100) + '%';
-            priceMethod = liveData.vwap_label || (e.has_both ? '6h VWAP across platforms' : '6h VWAP · single platform');
+            priceMethod = liveData.price_label || '6h VWAP';
         } else if (e.has_both && e.pm_price !== null && e.k_price !== null) {
             bwPrice = Math.round((e.pm_price + e.k_price) * 50) + '%';
             priceMethod = 'Avg. across platforms';
@@ -477,16 +506,19 @@
         const isPM = m.platform === 'Polymarket';
         const platformsText = isPM ? 'PM' : 'Kalshi';
 
-        // Determine if card is fragile
+        // Determine tier and fragility
+        const tier = liveData?.price_tier || 0;
         const isFragile = liveData?.robustness?.reportability === 'fragile';
         let cardClass = 'market-card clickable';
         if (isFragile) cardClass += ' fragile';
+        if (tier > 0) cardClass += ` tier-${tier}`;
 
-        // Bellwether price: VWAP if available, else current price
+        // Bellwether price: Use tiered price from server, else fallback
         let bwPrice = '—';
-        let priceMethod = '6h VWAP · single platform';
+        let priceMethod = 'Loading...';
         if (liveData?.bellwether_price !== null && liveData?.bellwether_price !== undefined) {
             bwPrice = Math.round(liveData.bellwether_price * 100) + '%';
+            priceMethod = liveData.price_label || '6h VWAP';
         } else if (m.price !== null && m.price !== undefined) {
             bwPrice = Math.round(m.price * 100) + '%';
             priceMethod = 'Current price';

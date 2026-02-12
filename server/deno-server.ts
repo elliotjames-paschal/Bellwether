@@ -1,11 +1,11 @@
 /**
  * Bellwether Live Data Server (Deno Deploy - Serverless version)
  *
- * Features:
- * 1. Robustness Score: Cost to move price 5 cents (reportable/caution/fragile)
- * 2. 6-Hour VWAP: Volume-weighted average price (Bellwether price)
- * 3. Cross-platform combined metrics for PM + Kalshi
- * 4. On-demand fetching with Deno KV caching
+ * Tiered Pricing System:
+ * - Tier 1: 6h VWAP (10+ trades) - Full reportability
+ * - Tier 2: 12h/24h VWAP (10+ trades) - Reportability downgraded one level
+ * - Tier 3: Order book midpoint (no trades) - Capped at Caution
+ * - Tier 4: Last known VWAP (stale) - Always Fragile
  *
  * Deploy: https://dash.deno.com
  */
@@ -19,7 +19,8 @@ const DOME_REST_BASE = "https://api.domeapi.io/v1";
 
 const CONFIG = {
   cache_ttl_ms: 60000, // 60 seconds cache TTL
-  vwap_window_hours: 6,
+  min_trades_for_vwap: 10, // Minimum trades needed for reliable VWAP
+  vwap_windows: [6, 12, 24], // Hours to try for VWAP (in order)
 };
 
 // Use Deno KV for persistent caching
@@ -34,27 +35,55 @@ interface OrderbookLevel {
   size: number;
 }
 
-interface RobustnessResult {
-  cost_to_move_5c: number | null;  // Dollar amount needed to move price 5 cents
-  reportability: "reportable" | "caution" | "fragile";
+interface Trade {
+  price: number;
+  size: number;
+  timestamp: number;
 }
 
-interface VWAPResult {
-  vwap: number | null;
+type Reportability = "reportable" | "caution" | "fragile";
+type PriceTier = 1 | 2 | 3 | 4;
+
+interface TieredPriceResult {
+  tier: PriceTier;
+  price: number | null;
+  label: string;
+  window_hours: number | null;
   trade_count: number;
   total_volume: number;
-  window_hours: number;
+  source: "6h_vwap" | "12h_vwap" | "24h_vwap" | "orderbook_midpoint" | "stale_vwap";
+}
+
+interface RobustnessResult {
+  cost_to_move_5c: number | null;
+  reportability: Reportability;
+  raw_reportability: Reportability; // Before tier adjustment
 }
 
 interface MarketMetrics {
   token_id: string;
   platform: string;
-  current_price: number | null;  // Last trade price (spot)
-  bellwether_price: number | null;  // 6h VWAP
+  bellwether_price: number | null;
+  price_tier: PriceTier;
+  price_label: string;
+  price_source: string;
+  current_price: number | null;
   robustness: RobustnessResult;
-  vwap_6h: VWAPResult;
+  vwap_details: {
+    window_hours: number | null;
+    trade_count: number;
+    total_volume: number;
+  };
+  orderbook_midpoint: number | null;
   fetched_at: string;
   cached: boolean;
+}
+
+interface StaleVWAP {
+  price: number;
+  window_hours: number;
+  trade_count: number;
+  stored_at: string;
 }
 
 // =============================================================================
@@ -67,7 +96,6 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
     return null;
   }
 
-  // Fetch CURRENT orderbook (no time params = latest snapshot)
   const params = new URLSearchParams();
 
   if (platform === "kalshi") {
@@ -93,8 +121,6 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
 
     const data = await response.json();
 
-    // Parse orderbook from the response
-    // Response format: { snapshots: [...], pagination: {...} }
     const snapshots = data.snapshots || data.data || (Array.isArray(data) ? data : []);
     if (snapshots.length === 0) {
       console.error("No orderbook snapshots returned");
@@ -106,13 +132,7 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
     const bids: OrderbookLevel[] = [];
     const asks: OrderbookLevel[] = [];
 
-    // Dome API format differs by platform:
-    // Polymarket: { bids: [{price, size}, ...], asks: [{price, size}, ...] }
-    // Kalshi: { orderbook: { yes_dollars: [[price_str, qty], ...], no_dollars: [[price_str, qty], ...] } }
-
     if (platform === "kalshi" && latestSnapshot.orderbook) {
-      // Kalshi format: orderbook.yes_dollars = [[price_string, quantity], ...]
-      // yes_dollars are the YES ask prices (cost to buy YES)
       const yesAsks = latestSnapshot.orderbook.yes_dollars || [];
       for (const [priceStr, qty] of yesAsks) {
         const price = Number(priceStr);
@@ -121,17 +141,15 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
           asks.push({ price, size });
         }
       }
-      // For bids, we use no_dollars (inverse: buying NO = selling YES)
       const noBids = latestSnapshot.orderbook.no_dollars || [];
       for (const [priceStr, qty] of noBids) {
-        const price = 1 - Number(priceStr); // Convert NO price to YES price
+        const price = 1 - Number(priceStr);
         const size = Number(qty);
         if (price > 0 && size > 0) {
           bids.push({ price, size });
         }
       }
     } else {
-      // Polymarket format: { bids: [{price, size}], asks: [{price, size}] }
       const rawBids = latestSnapshot.bids || [];
       const rawAsks = latestSnapshot.asks || [];
 
@@ -152,7 +170,6 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
       }
     }
 
-    // Sort: bids descending, asks ascending
     bids.sort((a, b) => b.price - a.price);
     asks.sort((a, b) => a.price - b.price);
 
@@ -163,26 +180,23 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
   }
 }
 
-async function fetchTrades(platform: string, tokenId: string): Promise<Array<{price: number, size: number, timestamp: number}> | null> {
-  if (!DOME_API_KEY) return null;
+async function fetchTrades(platform: string, tokenId: string, windowHours: number): Promise<Trade[]> {
+  if (!DOME_API_KEY) return [];
 
-  // Both platforms use seconds for timestamps per Dome API docs
-  // Kalshi: /trades endpoint, Polymarket: /orders endpoint
   const nowSec = Math.floor(Date.now() / 1000);
-  const sixHoursAgoSec = nowSec - (6 * 60 * 60);
+  const startSec = nowSec - (windowHours * 60 * 60);
 
   let endpoint: string;
   const params = new URLSearchParams();
 
   if (platform === "kalshi") {
     params.set("ticker", tokenId);
-    params.set("start_time", sixHoursAgoSec.toString());
+    params.set("start_time", startSec.toString());
     params.set("end_time", nowSec.toString());
     endpoint = `${DOME_REST_BASE}/kalshi/trades?${params}`;
   } else {
-    // Polymarket uses /orders endpoint, timestamps in seconds
     params.set("token_id", tokenId);
-    params.set("start_time", sixHoursAgoSec.toString());
+    params.set("start_time", startSec.toString());
     params.set("end_time", nowSec.toString());
     endpoint = `${DOME_REST_BASE}/polymarket/orders?${params}`;
   }
@@ -198,32 +212,22 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
     }
 
     const data = await response.json();
-    const trades: Array<{price: number, size: number, timestamp: number}> = [];
+    const trades: Trade[] = [];
 
     const tradeList = Array.isArray(data) ? data : (data.trades || data.orders || data.data || []);
 
+    const startMs = startSec * 1000;
+
     for (const trade of tradeList) {
-      // Price: handle both Polymarket and Kalshi formats
-      // Polymarket: trade.price (decimal 0-1)
-      // Kalshi: trade.yes_price_dollars (decimal 0-1)
       const price = Number(trade.price || trade.p || trade.yes_price_dollars);
-
-      // Size: handle both formats
-      // Polymarket: trade.size
-      // Kalshi: trade.count
       const size = Number(trade.size || trade.amount || trade.s || trade.count || 1);
-
-      // Timestamp: handle both formats
-      // Polymarket: trade.timestamp (might be ms or s)
-      // Kalshi: trade.created_time (seconds)
       let timestamp = Number(trade.timestamp || trade.t || trade.time || trade.created_at || trade.created_time);
+
       if (timestamp < 1e12) {
-        // Timestamp is in seconds, convert to ms
         timestamp = timestamp * 1000;
       }
 
-      const sixHoursAgoMs = sixHoursAgoSec * 1000;
-      if (price > 0 && timestamp >= sixHoursAgoMs) {
+      if (price > 0 && timestamp >= startMs) {
         trades.push({ price, size, timestamp });
       }
     }
@@ -239,73 +243,251 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
 // CALCULATION FUNCTIONS
 // =============================================================================
 
-/**
- * Compute the dollar amount needed to move the price 5 cents (0.05) by walking through asks.
- * Returns null if there's not enough orderbook depth.
- */
-function computeCostToMove5Cents(asks: OrderbookLevel[]): number | null {
-  if (asks.length === 0) return null;
-
-  const startingPrice = asks[0].price;
-  const targetPrice = startingPrice + 0.05;  // 5 cents higher
-
-  let spent = 0;
-
-  for (const ask of asks) {
-    if (ask.price >= targetPrice) {
-      // We've reached the target price movement
-      return Math.round(spent);
-    }
-
-    // Consume this entire level
-    const levelCost = ask.price * ask.size;
-    spent += levelCost;
-  }
-
-  // Not enough depth to move 5 cents
-  return null;
-}
-
-/**
- * Determine reportability label based on cost to move price 5 cents.
- * - Reportable: >= $100K (robust enough for news)
- * - Caution: $10K - $100K (use with care)
- * - Fragile: < $10K (easily manipulated)
- */
-function getReportabilityLabel(costToMove5c: number | null): "reportable" | "caution" | "fragile" {
-  if (costToMove5c === null || costToMove5c < 10000) return "fragile";
-  if (costToMove5c < 100000) return "caution";
-  return "reportable";
-}
-
-function computeVWAP(trades: Array<{price: number, size: number, timestamp: number}>): VWAPResult {
-  const sixHoursAgo = Date.now() - (CONFIG.vwap_window_hours * 60 * 60 * 1000);
-
-  const recentTrades = trades.filter(t => t.timestamp >= sixHoursAgo);
-
-  if (recentTrades.length === 0) {
-    return {
-      vwap: null,
-      trade_count: 0,
-      total_volume: 0,
-      window_hours: CONFIG.vwap_window_hours,
-    };
+function computeVWAP(trades: Trade[]): { vwap: number | null; trade_count: number; total_volume: number } {
+  if (trades.length === 0) {
+    return { vwap: null, trade_count: 0, total_volume: 0 };
   }
 
   let sumPriceVolume = 0;
   let sumVolume = 0;
 
-  for (const trade of recentTrades) {
+  for (const trade of trades) {
     sumPriceVolume += trade.price * trade.size;
     sumVolume += trade.size;
   }
 
   return {
     vwap: sumVolume > 0 ? Math.round((sumPriceVolume / sumVolume) * 10000) / 10000 : null,
-    trade_count: recentTrades.length,
+    trade_count: trades.length,
     total_volume: Math.round(sumVolume),
-    window_hours: CONFIG.vwap_window_hours,
   };
+}
+
+function computeCostToMove5Cents(asks: OrderbookLevel[]): number | null {
+  if (asks.length === 0) return null;
+
+  const startingPrice = asks[0].price;
+  const targetPrice = startingPrice + 0.05;
+
+  let spent = 0;
+
+  for (const ask of asks) {
+    if (ask.price >= targetPrice) {
+      return Math.round(spent);
+    }
+    const levelCost = ask.price * ask.size;
+    spent += levelCost;
+  }
+
+  return null;
+}
+
+function computeOrderbookMidpoint(bids: OrderbookLevel[], asks: OrderbookLevel[]): number | null {
+  if (bids.length === 0 || asks.length === 0) return null;
+  const bestBid = bids[0].price;
+  const bestAsk = asks[0].price;
+  return Math.round(((bestBid + bestAsk) / 2) * 10000) / 10000;
+}
+
+function getBaseReportability(costToMove5c: number | null): Reportability {
+  if (costToMove5c === null || costToMove5c < 10000) return "fragile";
+  if (costToMove5c < 100000) return "caution";
+  return "reportable";
+}
+
+function downgradeReportability(r: Reportability): Reportability {
+  if (r === "reportable") return "caution";
+  if (r === "caution") return "fragile";
+  return "fragile";
+}
+
+function capReportability(r: Reportability, maxLevel: Reportability): Reportability {
+  const levels: Reportability[] = ["fragile", "caution", "reportable"];
+  const currentIdx = levels.indexOf(r);
+  const maxIdx = levels.indexOf(maxLevel);
+  return levels[Math.min(currentIdx, maxIdx)];
+}
+
+// =============================================================================
+// TIERED PRICE CALCULATION
+// =============================================================================
+
+async function computeTieredPrice(
+  platform: string,
+  tokenId: string,
+  bids: OrderbookLevel[],
+  asks: OrderbookLevel[]
+): Promise<TieredPriceResult> {
+  // Try progressively larger windows until we get enough trades
+  for (const windowHours of CONFIG.vwap_windows) {
+    const trades = await fetchTrades(platform, tokenId, windowHours);
+    const vwapResult = computeVWAP(trades);
+
+    if (vwapResult.trade_count >= CONFIG.min_trades_for_vwap) {
+      // Success! Store this as the last known good VWAP
+      await storeLastVWAP(tokenId, vwapResult.vwap!, windowHours, vwapResult.trade_count);
+
+      const tier: PriceTier = windowHours === 6 ? 1 : 2;
+      const source = windowHours === 6 ? "6h_vwap" : (windowHours === 12 ? "12h_vwap" : "24h_vwap");
+      const label = `${windowHours}h VWAP`;
+
+      return {
+        tier,
+        price: vwapResult.vwap,
+        label,
+        window_hours: windowHours,
+        trade_count: vwapResult.trade_count,
+        total_volume: vwapResult.total_volume,
+        source,
+      };
+    }
+  }
+
+  // Tier 3: No sufficient trades even in 24h - try orderbook midpoint
+  const midpoint = computeOrderbookMidpoint(bids, asks);
+  if (midpoint !== null) {
+    return {
+      tier: 3,
+      price: midpoint,
+      label: "Order book midpoint",
+      window_hours: null,
+      trade_count: 0,
+      total_volume: 0,
+      source: "orderbook_midpoint",
+    };
+  }
+
+  // Tier 4: No orderbook either - use stale VWAP if available
+  const stale = await getLastVWAP(tokenId);
+  if (stale) {
+    return {
+      tier: 4,
+      price: stale.price,
+      label: "Last VWAP (stale)",
+      window_hours: stale.window_hours,
+      trade_count: stale.trade_count,
+      total_volume: 0,
+      source: "stale_vwap",
+    };
+  }
+
+  // No data at all
+  return {
+    tier: 4,
+    price: null,
+    label: "No data",
+    window_hours: null,
+    trade_count: 0,
+    total_volume: 0,
+    source: "stale_vwap",
+  };
+}
+
+async function computeCrossplatformTieredPrice(
+  pmToken: string | null,
+  kTicker: string | null,
+  pmBids: OrderbookLevel[],
+  pmAsks: OrderbookLevel[],
+  kBids: OrderbookLevel[],
+  kAsks: OrderbookLevel[]
+): Promise<TieredPriceResult> {
+  // Combine orderbooks for midpoint calculation
+  const allBids = [...pmBids, ...kBids].sort((a, b) => b.price - a.price);
+  const allAsks = [...pmAsks, ...kAsks].sort((a, b) => a.price - b.price);
+
+  const cacheKey = `${pmToken || ""}_${kTicker || ""}`;
+
+  // Try progressively larger windows until we get enough trades
+  for (const windowHours of CONFIG.vwap_windows) {
+    const allTrades: Trade[] = [];
+
+    if (pmToken) {
+      const pmTrades = await fetchTrades("polymarket", pmToken, windowHours);
+      allTrades.push(...pmTrades);
+    }
+    if (kTicker) {
+      const kTrades = await fetchTrades("kalshi", kTicker, windowHours);
+      allTrades.push(...kTrades);
+    }
+
+    const vwapResult = computeVWAP(allTrades);
+
+    if (vwapResult.trade_count >= CONFIG.min_trades_for_vwap) {
+      await storeLastVWAP(cacheKey, vwapResult.vwap!, windowHours, vwapResult.trade_count);
+
+      const tier: PriceTier = windowHours === 6 ? 1 : 2;
+      const source = windowHours === 6 ? "6h_vwap" : (windowHours === 12 ? "12h_vwap" : "24h_vwap");
+      const label = `${windowHours}h VWAP across platforms`;
+
+      return {
+        tier,
+        price: vwapResult.vwap,
+        label,
+        window_hours: windowHours,
+        trade_count: vwapResult.trade_count,
+        total_volume: vwapResult.total_volume,
+        source,
+      };
+    }
+  }
+
+  // Tier 3: Orderbook midpoint
+  const midpoint = computeOrderbookMidpoint(allBids, allAsks);
+  if (midpoint !== null) {
+    return {
+      tier: 3,
+      price: midpoint,
+      label: "Order book midpoint",
+      window_hours: null,
+      trade_count: 0,
+      total_volume: 0,
+      source: "orderbook_midpoint",
+    };
+  }
+
+  // Tier 4: Stale VWAP
+  const stale = await getLastVWAP(cacheKey);
+  if (stale) {
+    return {
+      tier: 4,
+      price: stale.price,
+      label: "Last VWAP (stale)",
+      window_hours: stale.window_hours,
+      trade_count: stale.trade_count,
+      total_volume: 0,
+      source: "stale_vwap",
+    };
+  }
+
+  return {
+    tier: 4,
+    price: null,
+    label: "No data",
+    window_hours: null,
+    trade_count: 0,
+    total_volume: 0,
+    source: "stale_vwap",
+  };
+}
+
+// =============================================================================
+// STALE VWAP STORAGE
+// =============================================================================
+
+async function storeLastVWAP(key: string, price: number, windowHours: number, tradeCount: number): Promise<void> {
+  const stale: StaleVWAP = {
+    price,
+    window_hours: windowHours,
+    trade_count: tradeCount,
+    stored_at: new Date().toISOString(),
+  };
+  // Store indefinitely (no expiration) - this is the last known good value
+  await kv.set(["stale_vwap", key], stale);
+}
+
+async function getLastVWAP(key: string): Promise<StaleVWAP | null> {
+  const result = await kv.get<StaleVWAP>(["stale_vwap", key]);
+  return result.value || null;
 }
 
 // =============================================================================
@@ -317,10 +499,9 @@ async function getCachedMetrics(tokenId: string): Promise<MarketMetrics | null> 
 
   if (!result.value) return null;
 
-  // Check if cache is still valid
   const fetchedAt = new Date(result.value.fetched_at).getTime();
   if (Date.now() - fetchedAt > CONFIG.cache_ttl_ms) {
-    return null; // Cache expired
+    return null;
   }
 
   return { ...result.value, cached: true };
@@ -335,50 +516,70 @@ async function cacheMetrics(tokenId: string, metrics: MarketMetrics): Promise<vo
 // =============================================================================
 
 async function getMarketMetrics(platform: string, tokenId: string): Promise<MarketMetrics | null> {
-  // Check cache first
   const cached = await getCachedMetrics(tokenId);
   if (cached) {
     return cached;
   }
 
-  // Fetch fresh data
-  const [orderbook, trades] = await Promise.all([
-    fetchOrderbook(platform, tokenId),
-    fetchTrades(platform, tokenId),
-  ]);
-
+  const orderbook = await fetchOrderbook(platform, tokenId);
   if (!orderbook) {
     return null;
   }
 
   const [bids, asks] = orderbook;
-  const costToMove5c = computeCostToMove5Cents(asks);
-  const reportability = getReportabilityLabel(costToMove5c);
-  const vwap = computeVWAP(trades || []);
 
-  // Get last trade price (most recent trade)
+  // Compute tiered price
+  const tieredPrice = await computeTieredPrice(platform, tokenId, bids, asks);
+
+  // Compute robustness
+  const costToMove5c = computeCostToMove5Cents(asks);
+  const rawReportability = getBaseReportability(costToMove5c);
+
+  // Adjust reportability based on tier
+  let reportability: Reportability;
+  if (tieredPrice.tier === 1) {
+    reportability = rawReportability;
+  } else if (tieredPrice.tier === 2) {
+    reportability = downgradeReportability(rawReportability);
+  } else if (tieredPrice.tier === 3) {
+    reportability = capReportability(rawReportability, "caution");
+  } else {
+    reportability = "fragile";
+  }
+
+  // Get current price (most recent trade in any window)
+  const recentTrades = await fetchTrades(platform, tokenId, 24);
   let currentPrice: number | null = null;
-  if (trades && trades.length > 0) {
-    // Sort by timestamp descending to get most recent
-    const sortedTrades = [...trades].sort((a, b) => b.timestamp - a.timestamp);
+  if (recentTrades.length > 0) {
+    const sortedTrades = [...recentTrades].sort((a, b) => b.timestamp - a.timestamp);
     currentPrice = sortedTrades[0].price;
   }
+
+  const midpoint = computeOrderbookMidpoint(bids, asks);
 
   const metrics: MarketMetrics = {
     token_id: tokenId,
     platform,
+    bellwether_price: tieredPrice.price,
+    price_tier: tieredPrice.tier,
+    price_label: tieredPrice.label,
+    price_source: tieredPrice.source,
     current_price: currentPrice,
-    bellwether_price: vwap.vwap,
     robustness: {
       cost_to_move_5c: costToMove5c,
       reportability,
+      raw_reportability: rawReportability,
     },
-    vwap_6h: vwap,
+    vwap_details: {
+      window_hours: tieredPrice.window_hours,
+      trade_count: tieredPrice.trade_count,
+      total_volume: tieredPrice.total_volume,
+    },
+    orderbook_midpoint: midpoint,
     fetched_at: new Date().toISOString(),
     cached: false,
   };
 
-  // Cache the result
   await cacheMetrics(tokenId, metrics);
 
   return metrics;
@@ -410,6 +611,8 @@ async function handleRequest(request: Request): Promise<Response> {
         mode: "serverless",
         cache_ttl_seconds: CONFIG.cache_ttl_ms / 1000,
         dome_api_configured: !!DOME_API_KEY,
+        min_trades_for_vwap: CONFIG.min_trades_for_vwap,
+        vwap_windows: CONFIG.vwap_windows,
       }),
       { headers: corsHeaders }
     );
@@ -420,15 +623,19 @@ async function handleRequest(request: Request): Promise<Response> {
     return new Response(
       JSON.stringify({
         name: "Bellwether Live Data Server",
-        version: "2.0.0-serverless",
+        version: "3.0.0-tiered",
+        description: "Tiered pricing: 6h VWAP → 12h/24h VWAP → Orderbook midpoint → Stale VWAP",
         endpoints: {
           "/health": "Server health check",
-          "/api/metrics/:platform/:token_id": "Get robustness + VWAP for a single-platform market",
-          "/api/metrics/combined": "Get cross-platform VWAP + min robustness (query: pm_token, k_ticker)",
+          "/api/metrics/:platform/:token_id": "Get tiered price + robustness for a single-platform market",
+          "/api/metrics/combined": "Get cross-platform tiered price + min robustness (query: pm_token, k_ticker)",
         },
-        example: "/api/metrics/polymarket/21742633143463906290569050155826241533067272736897614950488156847949938836455",
-        example_combined: "/api/metrics/combined?pm_token=XXX&k_ticker=YYY",
-        docs: "https://github.com/elliotjames-paschal/Bellwether",
+        price_tiers: {
+          1: "6h VWAP (10+ trades) - Full reportability",
+          2: "12h/24h VWAP (10+ trades) - Reportability downgraded one level",
+          3: "Order book midpoint - Capped at Caution",
+          4: "Last known VWAP (stale) - Always Fragile",
+        },
       }),
       { headers: corsHeaders }
     );
@@ -455,7 +662,7 @@ async function handleRequest(request: Request): Promise<Response> {
     return new Response(JSON.stringify(metrics), { headers: corsHeaders });
   }
 
-  // GET /api/metrics/combined - Cross-platform VWAP and min robustness
+  // GET /api/metrics/combined - Cross-platform tiered price and min robustness
   if (url.pathname === "/api/metrics/combined") {
     const pmToken = url.searchParams.get("pm_token");
     const kTicker = url.searchParams.get("k_ticker");
@@ -470,53 +677,102 @@ async function handleRequest(request: Request): Promise<Response> {
       );
     }
 
-    // Fetch metrics from both platforms in parallel
-    const [pmMetrics, kMetrics] = await Promise.all([
-      pmToken ? getMarketMetrics("polymarket", pmToken) : null,
-      kTicker ? getMarketMetrics("kalshi", kTicker) : null,
+    // Fetch orderbooks from both platforms in parallel
+    const [pmOrderbook, kOrderbook] = await Promise.all([
+      pmToken ? fetchOrderbook("polymarket", pmToken) : null,
+      kTicker ? fetchOrderbook("kalshi", kTicker) : null,
     ]);
 
-    // Combine trades for cross-platform VWAP
-    const allTrades: Array<{price: number, size: number, timestamp: number}> = [];
+    const pmBids = pmOrderbook?.[0] || [];
+    const pmAsks = pmOrderbook?.[1] || [];
+    const kBids = kOrderbook?.[0] || [];
+    const kAsks = kOrderbook?.[1] || [];
 
-    if (pmToken) {
-      const pmTrades = await fetchTrades("polymarket", pmToken);
-      if (pmTrades) allTrades.push(...pmTrades);
-    }
-    if (kTicker) {
-      const kTrades = await fetchTrades("kalshi", kTicker);
-      if (kTrades) allTrades.push(...kTrades);
-    }
-
-    const combinedVwap = computeVWAP(allTrades);
+    // Compute tiered price across platforms
+    const tieredPrice = await computeCrossplatformTieredPrice(
+      pmToken, kTicker, pmBids, pmAsks, kBids, kAsks
+    );
 
     // Use minimum robustness (weakest link)
-    const pmCost = pmMetrics?.robustness?.cost_to_move_5c ?? Infinity;
-    const kCost = kMetrics?.robustness?.cost_to_move_5c ?? Infinity;
-    const minCost = Math.min(pmCost, kCost);
-    const costToMove5c = minCost === Infinity ? null : minCost;
-    const reportability = getReportabilityLabel(costToMove5c);
+    const pmCost = pmAsks.length > 0 ? computeCostToMove5Cents(pmAsks) : null;
+    const kCost = kAsks.length > 0 ? computeCostToMove5Cents(kAsks) : null;
+
+    let minCost: number | null = null;
+    let weakestPlatform = "unknown";
+
+    if (pmCost !== null && kCost !== null) {
+      minCost = Math.min(pmCost, kCost);
+      weakestPlatform = pmCost <= kCost ? "polymarket" : "kalshi";
+    } else if (pmCost !== null) {
+      minCost = pmCost;
+      weakestPlatform = "polymarket";
+    } else if (kCost !== null) {
+      minCost = kCost;
+      weakestPlatform = "kalshi";
+    }
+
+    const rawReportability = getBaseReportability(minCost);
+
+    // Adjust reportability based on tier
+    let reportability: Reportability;
+    if (tieredPrice.tier === 1) {
+      reportability = rawReportability;
+    } else if (tieredPrice.tier === 2) {
+      reportability = downgradeReportability(rawReportability);
+    } else if (tieredPrice.tier === 3) {
+      reportability = capReportability(rawReportability, "caution");
+    } else {
+      reportability = "fragile";
+    }
+
+    // Get current prices from each platform
+    let pmCurrentPrice: number | null = null;
+    let kCurrentPrice: number | null = null;
+
+    if (pmToken) {
+      const pmTrades = await fetchTrades("polymarket", pmToken, 24);
+      if (pmTrades.length > 0) {
+        pmCurrentPrice = [...pmTrades].sort((a, b) => b.timestamp - a.timestamp)[0].price;
+      }
+    }
+    if (kTicker) {
+      const kTrades = await fetchTrades("kalshi", kTicker, 24);
+      if (kTrades.length > 0) {
+        kCurrentPrice = [...kTrades].sort((a, b) => b.timestamp - a.timestamp)[0].price;
+      }
+    }
 
     const combined = {
-      bellwether_price: combinedVwap.vwap,
-      vwap_label: (pmMetrics && kMetrics) ? "6h VWAP across platforms" : "6h VWAP · single platform",
+      bellwether_price: tieredPrice.price,
+      price_tier: tieredPrice.tier,
+      price_label: tieredPrice.label,
+      price_source: tieredPrice.source,
       platform_prices: {
-        polymarket: pmMetrics?.current_price ?? null,
-        kalshi: kMetrics?.current_price ?? null,
+        polymarket: pmCurrentPrice,
+        kalshi: kCurrentPrice,
       },
       robustness: {
-        cost_to_move_5c: costToMove5c,
+        cost_to_move_5c: minCost,
         reportability,
-        weakest_platform: pmCost <= kCost ? "polymarket" : "kalshi",
+        raw_reportability: rawReportability,
+        weakest_platform: weakestPlatform,
       },
-      vwap_6h: combinedVwap,
+      vwap_details: {
+        window_hours: tieredPrice.window_hours,
+        trade_count: tieredPrice.trade_count,
+        total_volume: tieredPrice.total_volume,
+      },
+      orderbook_midpoint: computeOrderbookMidpoint(
+        [...pmBids, ...kBids].sort((a, b) => b.price - a.price),
+        [...pmAsks, ...kAsks].sort((a, b) => a.price - b.price)
+      ),
       fetched_at: new Date().toISOString(),
     };
 
     return new Response(JSON.stringify(combined), { headers: corsHeaders });
   }
 
-  // Legacy endpoint support: /metrics/:token_id (assumes polymarket)
+  // Legacy endpoint support
   const legacyMatch = url.pathname.match(/^\/metrics\/(.+)$/);
   if (legacyMatch) {
     const tokenId = legacyMatch[1];

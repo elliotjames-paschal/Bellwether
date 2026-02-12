@@ -2493,6 +2493,41 @@ a.price-box.clickable:hover {
     color: #9ca3af;
 }
 
+/* Tier-based visual styling */
+/* Tier 1: Fresh 6h VWAP - default styling, no changes */
+.market-card.tier-1 {
+    /* Default styling - fresh data */
+}
+
+/* Tier 2: Extended window (12h/24h) - slightly dimmed */
+.market-card.tier-2 .card-price-method {
+    color: #92400e;
+}
+
+/* Tier 3: Orderbook midpoint - visually warn */
+.market-card.tier-3 {
+    border-left: 3px solid #fbbf24;
+}
+
+.market-card.tier-3 .card-price-method {
+    color: #b45309;
+}
+
+/* Tier 4: Stale data - most visually muted */
+.market-card.tier-4 {
+    background: #f5f5f5;
+    border-left: 3px solid #d4d4d4;
+}
+
+.market-card.tier-4 .bw-price {
+    color: #9ca3af;
+}
+
+.market-card.tier-4 .card-price-method {
+    color: #a3a3a3;
+    font-style: italic;
+}
+
 /* === META === */
 .card-meta {
     display: flex;
