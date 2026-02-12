@@ -183,8 +183,8 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
     const tradeList = Array.isArray(data) ? data : (data.trades || data.orders || data.data || []);
 
     for (const trade of tradeList) {
-      // Price: Dome returns in cents (0-100), convert to decimal (0-1)
-      const price = Number(trade.price || trade.p) / 100;
+      // Price: Dome returns in decimal (0-1) format
+      const price = Number(trade.price || trade.p);
       const size = Number(trade.size || trade.amount || trade.s || 1);
 
       // Normalize timestamp to milliseconds
