@@ -1038,7 +1038,7 @@
             if (!response.ok) throw new Error('Failed to load monitor data');
             monitorData = await response.json();
 
-            allMarkets = monitorData.markets || monitorData.elections || [];
+            allMarkets = monitorData.elections || monitorData.markets || [];
             filteredMarkets = [...allMarkets];
 
             populateCategoryFilter();
