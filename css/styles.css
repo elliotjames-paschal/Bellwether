@@ -319,8 +319,7 @@ a:hover {
 }
 
 /* Globe expanded state */
-.hero-text,
-.hero-findings {
+.hero-text {
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
 }
 
@@ -333,12 +332,6 @@ a:hover {
 
 .hero.globe-expanded .hero-text {
     transform: translateX(-80px);
-    opacity: 0;
-    pointer-events: none;
-}
-
-.hero.globe-expanded .hero-findings {
-    transform: translateY(40px);
     opacity: 0;
     pointer-events: none;
 }
@@ -364,54 +357,6 @@ a:hover {
 .globe-expanded-backdrop.visible {
     opacity: 1;
     pointer-events: auto;
-}
-
-/* Hero Findings */
-.hero-findings {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    margin-top: 80px;
-    max-width: 680px;
-    position: relative;
-    z-index: 2;
-}
-
-.finding {
-    animation: fadeInUp 0.5s ease-out;
-}
-
-.finding:nth-child(1) { animation-delay: 0.1s; animation-fill-mode: both; }
-.finding:nth-child(2) { animation-delay: 0.2s; animation-fill-mode: both; }
-.finding:nth-child(3) { animation-delay: 0.3s; animation-fill-mode: both; }
-
-.finding-text {
-    font-family: var(--font-serif);
-    font-size: 1.125rem;
-    line-height: 1.6;
-    color: var(--gray-900);
-    margin: 0;
-}
-
-.finding-num {
-    font-family: var(--font-mono);
-    font-weight: 500;
-}
-
-.finding-meta {
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    color: var(--gray-500);
-    margin-top: 8px;
-}
-
-.finding-meta a {
-    color: var(--gray-900);
-    text-decoration: none;
-}
-
-.finding-meta a:hover {
-    text-decoration: underline;
 }
 
 /* Number animation on load */
@@ -452,62 +397,10 @@ a:hover {
     50% { opacity: 0.5; }
 }
 
-/* Research Finding - Utilitarian style */
-.research-finding {
-    background: var(--white);
-    padding: 24px 32px;
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.research-finding-inner {
-    max-width: 900px;
-    margin: 0 auto;
-    padding-left: 16px;
-    border-left: 2px solid var(--pm-color);
-}
-
-.research-finding-quote {
-    font-family: var(--font-serif);
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: var(--gray-900);
-    line-height: 1.5;
-    margin: 0 0 8px;
-    letter-spacing: -0.01em;
-}
-
-.research-finding-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.research-finding-stat {
-    font-size: 0.75rem;
-    color: var(--gray-500);
-}
-
-.research-finding-divider {
-    color: var(--gray-300);
-    font-size: 0.75rem;
-}
-
+/* Inline stat numbers (IBM Plex Mono) */
 .stat-num {
     font-family: var(--font-mono);
     font-weight: 500;
-    color: var(--gray-700);
-}
-
-.research-finding-link {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--pm-color);
-    text-decoration: none;
-}
-
-.research-finding-link:hover {
-    text-decoration: underline;
 }
 
 /* Live Data Section */
@@ -1636,15 +1529,6 @@ a:hover {
 
     .hero-symbol {
         display: none;
-    }
-
-    .hero-findings {
-        gap: 32px;
-        margin-top: 48px;
-    }
-
-    .finding-text {
-        font-size: 1rem;
     }
 
     .insights-row {

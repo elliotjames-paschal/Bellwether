@@ -6,7 +6,7 @@
     <title>Bellwether - Political Prediction Markets Research</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=20260211c">
+    <link rel="stylesheet" href="css/styles.css?v=20260212">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
@@ -47,60 +47,14 @@
                 <div class="hero-text">
                     <h1>The information value of political prediction markets</h1>
                     <p class="hero-description">
-                        <span class="brand-inline">Bell</span> studies how prediction markets on <a href="https://kalshi.com" target="_blank" rel="noopener" style="color: var(--gray-900); text-decoration: underline;">Kalshi</a> and <a href="https://polymarket.com" target="_blank" rel="noopener" style="color: var(--gray-900); text-decoration: underline;">Polymarket</a> process political information — from elections and policy to geopolitics and governance.
+                        <span class="brand-inline">Bell</span> studies how prediction markets on <a href="https://kalshi.com" target="_blank" rel="noopener" style="color: var(--gray-900); text-decoration: underline;">Kalshi</a> and <a href="https://polymarket.com" target="_blank" rel="noopener" style="color: var(--gray-900); text-decoration: underline;">Polymarket</a> process political information. Shared markets call winners correctly <span class="stat-num" id="hero-accuracy">85%</span> of the time — but only <span class="stat-num" id="hero-overlap">330</span> of <span class="stat-num" id="hero-total">1,822</span> elections exist on both platforms, and only <span class="stat-num" id="hero-robust-pct">0.4%</span> of markets are robust enough to cite.
                     </p>
                 </div>
                 <div class="hero-symbol">
                     <div id="hero-globe-container"></div>
                 </div>
             </div>
-            <div class="hero-findings">
-                <div class="finding">
-                    <p class="finding-text">
-                        Across <span class="finding-num" id="finding-shared-count">71</span> shared winner elections,
-                        prediction markets identified the correct winner
-                        <span class="finding-num" id="finding-accuracy">85%</span> of the time at election-eve prices.
-                    </p>
-                    <p class="finding-meta">
-                        <span class="finding-num" id="finding-brier">0.11</span> Brier ·
-                        <a href="papers/election-eve-methodology/">Read methodology →</a>
-                    </p>
-                </div>
-
-                <div class="finding">
-                    <p class="finding-text">
-                        <span class="finding-num" id="finding-matched">330</span> of
-                        <span class="finding-num" id="finding-total">1,822</span> elections
-                        are traded on both platforms — nearly all US races. Most international and policy markets
-                        have no cross-platform comparison.
-                    </p>
-                </div>
-
-                <div class="finding" id="finding-fragility">
-                    <p class="finding-text">
-                        Of <span class="finding-num" id="finding-assessed">—</span> political markets assessed,
-                        only <span class="finding-num" id="finding-robust">—</span> are robust enough to cite —
-                        where manipulation would cost over $100K.
-                    </p>
-                </div>
-            </div>
         </div>
-        </div>
-    </section>
-
-    <!-- Research Finding -->
-    <section class="research-finding">
-        <div class="research-finding-inner">
-            <p class="research-finding-quote">
-                Prediction markets call elections correctly <span class="stat-num" id="banner-accuracy">88.5%</span> of the time—but only when measured at the right moment.
-            </p>
-            <div class="research-finding-meta">
-                <span class="research-finding-stat">Based on election-eve prices</span>
-                <span class="research-finding-divider">·</span>
-                <span class="research-finding-stat"><span class="stat-num" id="banner-brier">0.08</span> Brier</span>
-                <span class="research-finding-divider">·</span>
-                <a href="papers/election-eve-methodology/" class="research-finding-link">Read methodology →</a>
-            </div>
         </div>
     </section>
 
@@ -293,6 +247,6 @@
     </div>
 
     <script src="js/globe-hero.js?v=20260210"></script>
-    <script src="js/monitor.js?v=20260212c"></script>
+    <script src="js/monitor.js?v=20260212d"></script>
 </body>
 </html>
