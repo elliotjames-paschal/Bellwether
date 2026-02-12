@@ -1063,8 +1063,8 @@
                 <div class="globe-filter-group">
                     <div class="globe-filter-label">Category</div>
                     <div class="globe-filter-pills globe-filter-pills-wrap" id="filter-category">
-                        <button class="globe-filter-pill active" data-value="all">All</button>
-                        <button class="globe-filter-pill" data-value="Electoral" data-color="#3b82f6">Electoral</button>
+                        <button class="globe-filter-pill" data-value="all">All</button>
+                        <button class="globe-filter-pill active" data-value="Electoral" data-color="#3b82f6">Electoral</button>
                         <button class="globe-filter-pill" data-value="Monetary Policy" data-color="#10b981">Monetary</button>
                         <button class="globe-filter-pill" data-value="International" data-color="#06b6d4">Intl</button>
                         <button class="globe-filter-pill" data-value="Military & Security" data-color="#64748b">Military</button>
@@ -1157,9 +1157,9 @@
             'Timing & Events', 'Polling & Approval', 'Crisis & Emergency'
         ];
 
-        // Filter state
+        // Filter state - default to Electoral (blue dots) for cleaner initial view
         let filters = {
-            category: 'all',
+            category: 'Electoral',
             region: 'all',
             search: ''
         };

@@ -422,7 +422,7 @@ function initGlobe(containerId, options) {
     var completedElections = [];
     var allMarkets = [];
     var categoryColors = {};
-    var activeFilter = { category: 'all', region: 'all' };
+    var activeFilter = { category: 'Electoral', region: 'all' };
     var activeVdemIndex = 'v2x_polyarchy'; // Default V-Dem index to display
     var hoveredMarker = null;
     var zoomLevel = 1;

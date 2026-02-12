@@ -69,20 +69,29 @@ async function fetchOrderbook(platform, tokenId, apiKey) {
     const asks = [];
 
     if (platform === "kalshi" && latestSnapshot.orderbook) {
-      const yesAsks = latestSnapshot.orderbook.yes_dollars || [];
-      for (const [priceStr, qty] of yesAsks) {
-        const price = Number(priceStr);
-        const size = Number(qty);
-        if (price > 0 && size > 0) {
-          asks.push({ price, size });
-        }
-      }
-      const noBids = latestSnapshot.orderbook.no_dollars || [];
-      for (const [priceStr, qty] of noBids) {
-        const price = 1 - Number(priceStr);
+      // Kalshi format: yes/no arrays with [price_in_cents, quantity]
+      // yes = bids to buy Yes tokens
+      // no = bids to buy No tokens (= asks to sell Yes tokens when converted)
+      const yesOrders = latestSnapshot.orderbook.yes_dollars || latestSnapshot.orderbook.yes || [];
+      const noOrders = latestSnapshot.orderbook.no_dollars || latestSnapshot.orderbook.no || [];
+
+      // Yes orders are BIDS (people wanting to buy Yes)
+      for (const [priceVal, qty] of yesOrders) {
+        // Convert cents to dollars if needed (cents if < 1, dollars if >= 1)
+        const price = Number(priceVal) < 1 ? Number(priceVal) : Number(priceVal) / 100;
         const size = Number(qty);
         if (price > 0 && size > 0) {
           bids.push({ price, size });
+        }
+      }
+
+      // No orders become ASKS (buying No at X = selling Yes at 1-X)
+      for (const [priceVal, qty] of noOrders) {
+        const noPrice = Number(priceVal) < 1 ? Number(priceVal) : Number(priceVal) / 100;
+        const price = 1 - noPrice; // Convert No price to Yes price
+        const size = Number(qty);
+        if (price > 0 && price < 1 && size > 0) {
+          asks.push({ price, size });
         }
       }
     } else {
