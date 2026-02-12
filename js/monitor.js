@@ -123,8 +123,14 @@
         return 'reportable';
     }
 
-    // Fetch live data for visible cards (async, updates cards when data arrives)
+    // Small delay helper
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Fetch live data for visible cards (throttled to reduce server memory spikes)
     async function fetchLiveDataForCards(markets) {
+        // Process sequentially with delays to avoid overwhelming the server
         for (const m of markets) {
             // Skip if we already have data for this card
             if (cardLiveData.has(m.key)) continue;
@@ -136,40 +142,41 @@
             // Skip if no identifiers available
             if (!pmToken && !kTicker) continue;
 
-            // Fetch in background, don't await
-            (async () => {
-                try {
-                    let rawData = null;
-                    let isCombined = false;
+            // Fetch sequentially (not in parallel) to reduce server load
+            try {
+                let rawData = null;
+                let isCombined = false;
 
-                    if (pmToken && kTicker) {
-                        // Cross-platform - use combined endpoint
-                        rawData = await fetchCombinedLiveData(pmToken, kTicker);
-                        isCombined = true;
-                    } else if (pmToken) {
-                        rawData = await fetchLiveData(pmToken, 'polymarket');
-                    } else if (kTicker) {
-                        rawData = await fetchLiveData(kTicker, 'kalshi');
-                    }
-
-                    if (rawData) {
-                        const data = normalizeServerResponse(rawData, isCombined);
-                        cardLiveData.set(m.key, data);
-                        console.log(`Live data received for ${m.key}:`, {
-                            bellwether_price: data.bellwether_price,
-                            price_tier: data.price_tier,
-                            price_label: data.price_label,
-                            trade_count: data.vwap_details?.trade_count
-                        });
-                        // Update the card in place
-                        updateCardWithLiveData(m.key, data, m);
-                    } else {
-                        console.warn(`No data returned for ${m.key}`);
-                    }
-                } catch (e) {
-                    console.error(`Failed to fetch live data for ${m.key}:`, e);
+                if (pmToken && kTicker) {
+                    // Cross-platform - use combined endpoint
+                    rawData = await fetchCombinedLiveData(pmToken, kTicker);
+                    isCombined = true;
+                } else if (pmToken) {
+                    rawData = await fetchLiveData(pmToken, 'polymarket');
+                } else if (kTicker) {
+                    rawData = await fetchLiveData(kTicker, 'kalshi');
                 }
-            })();
+
+                if (rawData) {
+                    const data = normalizeServerResponse(rawData, isCombined);
+                    cardLiveData.set(m.key, data);
+                    console.log(`Live data received for ${m.key}:`, {
+                        bellwether_price: data.bellwether_price,
+                        price_tier: data.price_tier,
+                        price_label: data.price_label,
+                        trade_count: data.vwap_details?.trade_count
+                    });
+                    // Update the card in place
+                    updateCardWithLiveData(m.key, data, m);
+                } else {
+                    console.warn(`No data returned for ${m.key}`);
+                }
+            } catch (e) {
+                console.error(`Failed to fetch live data for ${m.key}:`, e);
+            }
+
+            // Small delay between requests to avoid server memory spikes
+            await delay(150);
         }
     }
 
