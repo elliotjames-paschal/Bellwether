@@ -156,7 +156,7 @@ async function fetchTrades(platform, tokenId, windowHours, apiKey) {
 
     for (const trade of tradeList) {
       const price = Number(trade.price || trade.p || trade.yes_price_dollars);
-      const size = Number(trade.size || trade.amount || trade.s || trade.count || 1);
+      const size = Number(trade.shares_normalized || trade.shares || trade.size || trade.amount || trade.s || trade.count || 1);
       let timestamp = Number(trade.timestamp || trade.t || trade.time || trade.created_at || trade.created_time);
 
       if (timestamp < 1e12) {
