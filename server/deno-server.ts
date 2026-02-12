@@ -108,10 +108,12 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
     const bids: OrderbookLevel[] = [];
     const asks: OrderbookLevel[] = [];
 
-    // Dome API format: { bids: [...], asks: [...] }
+    // Dome API format differs by platform:
+    // Polymarket: { bids: [...], asks: [...] }
+    // Kalshi: { yes_bids: [...], yes_asks: [...], no_bids: [...], no_asks: [...] }
     // Prices are already in dollars (e.g., 0.999)
-    const rawBids = latestSnapshot.bids || [];
-    const rawAsks = latestSnapshot.asks || [];
+    const rawBids = latestSnapshot.bids || latestSnapshot.yes_bids || [];
+    const rawAsks = latestSnapshot.asks || latestSnapshot.yes_asks || [];
 
     for (const bid of rawBids) {
       const price = Number(bid.price || bid.p);
