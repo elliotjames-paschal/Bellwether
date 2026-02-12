@@ -233,7 +233,7 @@ a:hover {
 
 /* Hero */
 .hero {
-    padding: 100px 32px 340px;
+    padding: 100px 32px 300px;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     overflow: visible;
 }
