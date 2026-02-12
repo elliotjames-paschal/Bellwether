@@ -143,22 +143,27 @@ async function fetchOrderbook(platform: string, tokenId: string): Promise<Orderb
 async function fetchTrades(platform: string, tokenId: string): Promise<Array<{price: number, size: number, timestamp: number}> | null> {
   if (!DOME_API_KEY) return null;
 
-  // Use orders endpoint for trade history
-  // Dome API expects Unix timestamps in SECONDS, not milliseconds
-  const now = Math.floor(Date.now() / 1000);
-  const sixHoursAgo = now - (6 * 60 * 60);
-
-  const params = new URLSearchParams({
-    start_time: sixHoursAgo.toString(),
-    end_time: now.toString(),
-  });
+  // Kalshi: timestamps in seconds, endpoint is /trades
+  // Polymarket: timestamps in milliseconds, endpoint is /orders
+  const nowMs = Date.now();
+  const sixHoursAgoMs = nowMs - (6 * 60 * 60 * 1000);
 
   let endpoint: string;
+  const params = new URLSearchParams();
+
   if (platform === "kalshi") {
+    // Kalshi uses seconds for timestamps and /trades endpoint
+    const nowSec = Math.floor(nowMs / 1000);
+    const sixHoursAgoSec = Math.floor(sixHoursAgoMs / 1000);
     params.set("ticker", tokenId);
-    endpoint = `${DOME_REST_BASE}/kalshi/orders?${params}`;
+    params.set("start_time", sixHoursAgoSec.toString());
+    params.set("end_time", nowSec.toString());
+    endpoint = `${DOME_REST_BASE}/kalshi/trades?${params}`;
   } else {
+    // Polymarket uses milliseconds and /orders endpoint
     params.set("token_id", tokenId);
+    params.set("start_time", sixHoursAgoMs.toString());
+    params.set("end_time", nowMs.toString());
     endpoint = `${DOME_REST_BASE}/polymarket/orders?${params}`;
   }
 
@@ -168,7 +173,6 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
     });
 
     if (!response.ok) {
-      // Trades endpoint might not exist - fallback gracefully
       console.log(`Trades fetch returned ${response.status}, using empty trades`);
       return [];
     }
@@ -176,14 +180,21 @@ async function fetchTrades(platform: string, tokenId: string): Promise<Array<{pr
     const data = await response.json();
     const trades: Array<{price: number, size: number, timestamp: number}> = [];
 
-    const tradeList = Array.isArray(data) ? data : (data.trades || data.data || []);
+    const tradeList = Array.isArray(data) ? data : (data.trades || data.orders || data.data || []);
 
     for (const trade of tradeList) {
-      const price = Number(trade.price || trade.p) / 100; // Convert cents to dollars
+      // Price: Dome returns in cents (0-100), convert to decimal (0-1)
+      const price = Number(trade.price || trade.p) / 100;
       const size = Number(trade.size || trade.amount || trade.s || 1);
-      const timestamp = Number(trade.timestamp || trade.t || trade.time) * (trade.timestamp > 1e12 ? 1 : 1000);
 
-      if (price > 0 && timestamp >= sixHoursAgo) {
+      // Normalize timestamp to milliseconds
+      let timestamp = Number(trade.timestamp || trade.t || trade.time || trade.created_at);
+      if (timestamp < 1e12) {
+        // Timestamp is in seconds, convert to ms
+        timestamp = timestamp * 1000;
+      }
+
+      if (price > 0 && timestamp >= sixHoursAgoMs) {
         trades.push({ price, size, timestamp });
       }
     }
