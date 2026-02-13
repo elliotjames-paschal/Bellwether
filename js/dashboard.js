@@ -944,12 +944,14 @@ async function loadVolumeTimeseries() {
     try {
         volumeData = await fetchJSON('volume_timeseries.json');
 
-        // Initialize with default categories (top 8)
+        // Initialize with default categories (top 8), excluding "Not Political"
         if (volumeData.defaultCategories && volumeData.defaultCategories.length > 0) {
-            volumeActiveCategories = new Set(volumeData.defaultCategories);
+            volumeActiveCategories = new Set(
+                volumeData.defaultCategories.filter(cat => cat !== 'Not Political')
+            );
         } else {
-            // Take first 8 categories if no defaults specified
-            const allCats = Object.keys(volumeData.categories);
+            // Take first 8 categories if no defaults specified, excluding "Not Political"
+            const allCats = Object.keys(volumeData.categories).filter(cat => cat !== 'Not Political');
             volumeActiveCategories = new Set(allCats.slice(0, MAX_VOLUME_CATEGORIES));
         }
 
@@ -972,8 +974,10 @@ function buildVolumeCategoryDropdown() {
 
     menu.innerHTML = '';
 
-    // Create checkbox items for each category
+    // Create checkbox items for each category (exclude "Not Political")
     for (const cat of Object.keys(volumeData.categories)) {
+        if (cat === 'Not Political') continue;
+
         const isChecked = volumeActiveCategories.has(cat);
         const item = document.createElement('div');
         item.className = 'category-dropdown-item';
