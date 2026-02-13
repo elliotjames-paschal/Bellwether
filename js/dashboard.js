@@ -254,6 +254,9 @@ async function loadAggregateStatistics() {
         `;
 
         for (let i = 0; i < data.categories.length; i++) {
+            // Skip "Not Political" category
+            if (data.categories[i] === 'Not Political') continue;
+
             const marketPct = (data.total_markets[i] / maxMarkets) * 100;
             const volumePct = (data.total_volume_m[i] / maxVolume) * 100;
 
@@ -872,8 +875,11 @@ async function loadMarketDistribution() {
         const kalshi = data.kalshi;
         const total = data.total;
 
-        // Sort by total (largest first)
-        const indices = categories.map((_, i) => i);
+        // Filter out "Not Political" and sort by total (largest first)
+        const indices = categories
+            .map((cat, i) => ({ cat, i }))
+            .filter(({ cat }) => cat !== 'Not Political')
+            .map(({ i }) => i);
         indices.sort((a, b) => total[b] - total[a]);
 
         const pmTrace = {
@@ -2076,6 +2082,18 @@ function renderLiquidityCategory(metric) {
     if (!liquidityCategoryData) return;
     const data = liquidityCategoryData;
 
+    // Filter out "Not Political" category
+    const validIndices = data.categories
+        .map((cat, i) => ({ cat, i }))
+        .filter(({ cat }) => cat !== 'Not Political')
+        .map(({ i }) => i);
+
+    const filteredCategories = validIndices.map(i => data.categories[i]);
+    const filteredPmSpread = validIndices.map(i => data.polymarket.spread[i]);
+    const filteredPmDepth = validIndices.map(i => data.polymarket.depth[i]);
+    const filteredKalshiSpread = validIndices.map(i => data.kalshi.spread[i]);
+    const filteredKalshiDepth = validIndices.map(i => data.kalshi.depth[i]);
+
     const isSpread = metric === 'spread';
     const title = document.getElementById('liquidity-category-title');
     const desc = document.getElementById('liquidity-category-desc');
@@ -2086,8 +2104,8 @@ function renderLiquidityCategory(metric) {
         : 'Median total depth (contracts) by political category. Higher depth means more liquidity available at posted prices.';
 
     const pmTrace = {
-        y: data.categories,
-        x: isSpread ? data.polymarket.spread : data.polymarket.depth,
+        y: filteredCategories,
+        x: isSpread ? filteredPmSpread : filteredPmDepth,
         name: 'Polymarket',
         type: 'bar',
         orientation: 'h',
@@ -2096,8 +2114,8 @@ function renderLiquidityCategory(metric) {
     };
 
     const kalshiTrace = {
-        y: data.categories,
-        x: isSpread ? data.kalshi.spread : data.kalshi.depth,
+        y: filteredCategories,
+        x: isSpread ? filteredKalshiSpread : filteredKalshiDepth,
         name: 'Kalshi',
         type: 'bar',
         orientation: 'h',
