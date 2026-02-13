@@ -414,7 +414,7 @@
 
         // Determine tier and fragility - use static cost if available
         const tier = liveData?.price_tier || 0;
-        const staticCostF = (e || m)?.cost_to_move_5c;
+        const staticCostF = e?.cost_to_move_5c;
         const liveCostF = liveData?.robustness?.cost_to_move_5c;
         const effectiveCostF = (staticCostF && (!liveCostF || staticCostF > liveCostF)) ? staticCostF : liveCostF;
         const isFragile = !effectiveCostF || effectiveCostF < 10000;
@@ -475,7 +475,7 @@
         // Reportability - prefer static cost from reportable_markets.json over live data
         let reportBadgeHtml = '';
         let reportDetailHtml = '';
-        const staticCostR = (e || m)?.cost_to_move_5c;
+        const staticCostR = e?.cost_to_move_5c;
         const liveCostR = liveData?.robustness?.cost_to_move_5c;
         const costR = (staticCostR && (!liveCostR || staticCostR > liveCostR)) ? staticCostR : liveCostR;
         if (costR !== null && costR !== undefined) {
@@ -554,7 +554,7 @@
 
         // Determine tier and fragility - use static cost if available
         const tier = liveData?.price_tier || 0;
-        const staticCostF = (e || m)?.cost_to_move_5c;
+        const staticCostF = m?.cost_to_move_5c;
         const liveCostF = liveData?.robustness?.cost_to_move_5c;
         const effectiveCostF = (staticCostF && (!liveCostF || staticCostF > liveCostF)) ? staticCostF : liveCostF;
         const isFragile = !effectiveCostF || effectiveCostF < 10000;
@@ -594,7 +594,7 @@
         // Reportability - prefer static cost from reportable_markets.json over live data
         let reportBadgeHtml = '';
         let reportDetailHtml = '';
-        const staticCostR = (e || m)?.cost_to_move_5c;
+        const staticCostR = m?.cost_to_move_5c;
         const liveCostR = liveData?.robustness?.cost_to_move_5c;
         const costR = (staticCostR && (!liveCostR || staticCostR > liveCostR)) ? staticCostR : liveCostR;
         if (costR !== null && costR !== undefined) {
