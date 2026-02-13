@@ -209,11 +209,15 @@
         card.classList.remove('tier-1', 'tier-2', 'tier-3', 'tier-4');
         card.classList.add(`tier-${tier}`);
 
-        // Update reportability
+        // Update reportability - but don't downgrade if we have static cost from reportable_markets.json
         const reportabilityContainer = card.querySelector('.card-reportability');
-        if (reportabilityContainer && data.robustness) {
-            const cost = data.robustness.cost_to_move_5c;
-            const label = data.robustness.reportability;
+        if (reportabilityContainer) {
+            // Use static cost_to_move_5c if available (from reportable_markets.json), else live data
+            const staticCost = market?.cost_to_move_5c;
+            const liveCost = data.robustness?.cost_to_move_5c;
+            // Prefer static cost (orderbook-based) over live if static is higher or live is null
+            const cost = (staticCost && (!liveCost || staticCost > liveCost)) ? staticCost : liveCost;
+            const label = cost !== null ? getReportabilityFromCost(cost) : 'fragile';
             let html = `<span class="report-badge ${label}">${label.charAt(0).toUpperCase() + label.slice(1)}</span>`;
             if (cost !== null) {
                 html += `<span class="report-detail"><strong>${formatReportabilityCost(cost)}</strong> to move 5¢</span>`;
@@ -236,8 +240,11 @@
             }
         }
 
-        // Add/remove fragile class
-        if (data.robustness?.reportability === 'fragile') {
+        // Add/remove fragile class - use same logic as reportability above
+        const staticCostForClass = market?.cost_to_move_5c;
+        const liveCostForClass = data.robustness?.cost_to_move_5c;
+        const effectiveCost = (staticCostForClass && (!liveCostForClass || staticCostForClass > liveCostForClass)) ? staticCostForClass : liveCostForClass;
+        if (!effectiveCost || effectiveCost < 10000) {
             card.classList.add('fragile');
         } else {
             card.classList.remove('fragile');
@@ -405,9 +412,12 @@
         // Use question as title, fall back to label
         const title = e.pm_question || e.k_question || e.label || 'Unknown market';
 
-        // Determine tier and fragility
+        // Determine tier and fragility - use static cost if available
         const tier = liveData?.price_tier || 0;
-        const isFragile = liveData?.robustness?.reportability === 'fragile';
+        const staticCostF = (e || m)?.cost_to_move_5c;
+        const liveCostF = liveData?.robustness?.cost_to_move_5c;
+        const effectiveCostF = (staticCostF && (!liveCostF || staticCostF > liveCostF)) ? staticCostF : liveCostF;
+        const isFragile = !effectiveCostF || effectiveCostF < 10000;
         let cardClass = 'market-card';
         if (isFragile) cardClass += ' fragile';
         if (tier > 0) cardClass += ` tier-${tier}`;
@@ -462,16 +472,19 @@
         const pmValHtml = e.has_pm ? `<div class="plat-val">${formatPrice(pmSpot)}</div>` : '<div class="plat-none">No market</div>';
         const kValHtml = e.has_k ? `<div class="plat-val">${formatPrice(kSpot)}</div>` : '<div class="plat-none">No market</div>';
 
-        // Reportability
+        // Reportability - prefer static cost from reportable_markets.json over live data
         let reportBadgeHtml = '';
         let reportDetailHtml = '';
-        if (liveData?.robustness) {
-            const label = liveData.robustness.reportability;
-            const cost = liveData.robustness.cost_to_move_5c;
-            reportBadgeHtml = `<span class="report-badge ${label}">${label.charAt(0).toUpperCase() + label.slice(1)}</span>`;
-            if (cost !== null) {
-                reportDetailHtml = `<span class="report-detail"><strong>${formatReportabilityCost(cost)}</strong> to move 5¢</span>`;
-            }
+        const staticCostR = (e || m)?.cost_to_move_5c;
+        const liveCostR = liveData?.robustness?.cost_to_move_5c;
+        const costR = (staticCostR && (!liveCostR || staticCostR > liveCostR)) ? staticCostR : liveCostR;
+        if (costR !== null && costR !== undefined) {
+            const labelR = getReportabilityFromCost(costR);
+            reportBadgeHtml = `<span class="report-badge ${labelR}">${labelR.charAt(0).toUpperCase() + labelR.slice(1)}</span>`;
+            reportDetailHtml = `<span class="report-detail"><strong>${formatReportabilityCost(costR)}</strong> to move 5¢</span>`;
+        } else if (liveData?.robustness) {
+            const labelR = liveData.robustness.reportability || 'fragile';
+            reportBadgeHtml = `<span class="report-badge ${labelR}">${labelR.charAt(0).toUpperCase() + labelR.slice(1)}</span>`;
         }
 
         // Divergence flag in meta
@@ -539,9 +552,12 @@
             }
         }
 
-        // Determine tier and fragility
+        // Determine tier and fragility - use static cost if available
         const tier = liveData?.price_tier || 0;
-        const isFragile = liveData?.robustness?.reportability === 'fragile';
+        const staticCostF = (e || m)?.cost_to_move_5c;
+        const liveCostF = liveData?.robustness?.cost_to_move_5c;
+        const effectiveCostF = (staticCostF && (!liveCostF || staticCostF > liveCostF)) ? staticCostF : liveCostF;
+        const isFragile = !effectiveCostF || effectiveCostF < 10000;
         let cardClass = 'market-card';
         if (isFragile) cardClass += ' fragile';
         if (tier > 0) cardClass += ` tier-${tier}`;
@@ -575,16 +591,19 @@
         const pmValHtml = isPM ? `<div class="plat-val">${formatPrice(spotPrice)}</div>` : '<div class="plat-none">No market</div>';
         const kValHtml = !isPM ? `<div class="plat-val">${formatPrice(spotPrice)}</div>` : '<div class="plat-none">No market</div>';
 
-        // Reportability
+        // Reportability - prefer static cost from reportable_markets.json over live data
         let reportBadgeHtml = '';
         let reportDetailHtml = '';
-        if (liveData?.robustness) {
-            const label = liveData.robustness.reportability;
-            const cost = liveData.robustness.cost_to_move_5c;
-            reportBadgeHtml = `<span class="report-badge ${label}">${label.charAt(0).toUpperCase() + label.slice(1)}</span>`;
-            if (cost !== null) {
-                reportDetailHtml = `<span class="report-detail"><strong>${formatReportabilityCost(cost)}</strong> to move 5¢</span>`;
-            }
+        const staticCostR = (e || m)?.cost_to_move_5c;
+        const liveCostR = liveData?.robustness?.cost_to_move_5c;
+        const costR = (staticCostR && (!liveCostR || staticCostR > liveCostR)) ? staticCostR : liveCostR;
+        if (costR !== null && costR !== undefined) {
+            const labelR = getReportabilityFromCost(costR);
+            reportBadgeHtml = `<span class="report-badge ${labelR}">${labelR.charAt(0).toUpperCase() + labelR.slice(1)}</span>`;
+            reportDetailHtml = `<span class="report-detail"><strong>${formatReportabilityCost(costR)}</strong> to move 5¢</span>`;
+        } else if (liveData?.robustness) {
+            const labelR = liveData.robustness.reportability || 'fragile';
+            reportBadgeHtml = `<span class="report-badge ${labelR}">${labelR.charAt(0).toUpperCase() + labelR.slice(1)}</span>`;
         }
 
         return `
