@@ -14,11 +14,7 @@
     "Judicial",
     "Regulatory",
     "Crisis Emergency",
-    "State Local",
-    "Candidacy Announcement",
-    "Not Political",
-    "Not Political",
-    "Partisan Control"
+    "State Local"
   ],
   "polymarket": [
     7312,
@@ -35,11 +31,7 @@
     377,
     170,
     83,
-    46,
-    0,
-    44,
-    15,
-    11
+    46
   ],
   "kalshi": [
     3774,
@@ -56,11 +48,7 @@
     209,
     123,
     16,
-    27,
-    61,
-    16,
-    3,
-    6
+    27
   ],
   "total": [
     11086,
@@ -77,10 +65,6 @@
     586,
     293,
     99,
-    73,
-    61,
-    60,
-    18,
-    17
+    73
   ]
 }
