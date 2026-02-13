@@ -427,9 +427,12 @@ a:hover {
     50% { opacity: 0.5; }
 }
 
-/* Inline stat numbers in prose (bold, same font as surrounding text) */
+/* Inline stat numbers in prose (bold with subtle background) */
 .stat-num {
     font-weight: 700;
+    background: var(--gray-100);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 /* Live Data Section */
