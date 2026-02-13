@@ -11,6 +11,7 @@
     let monitorData = null;
     let allMarkets = [];
     let filteredMarkets = [];
+    let reportableMarkets = [];  // Robust + caution markets from reportable_markets.json
     let currentView = 'biggest_moves';
     let displayCount = 8;
     const CARDS_PER_PAGE = 8;
@@ -977,6 +978,11 @@
                 });
                 sorted.sort((a, b) => (b.spread || 0) - (a.spread || 0));
                 break;
+            case 'reportable':
+                // Use the pre-loaded reportable markets (robust + caution)
+                // Already sorted by cost descending from the server
+                sorted = reportableMarkets;
+                break;
         }
 
         return sorted;
@@ -1025,6 +1031,7 @@
         const movesCount = document.getElementById('tab-count-moves');
         const volumeCount = document.getElementById('tab-count-volume');
         const divergencesCount = document.getElementById('tab-count-divergences');
+        const reportableCount = document.getElementById('tab-count-reportable');
 
         const MIN_VOLUME_FOR_MOVES = 10000;
         const withChange = filteredMarkets.filter(m => {
@@ -1040,6 +1047,7 @@
         if (movesCount) movesCount.textContent = withChange.length;
         if (volumeCount) volumeCount.textContent = withVolume.length;
         if (divergencesCount) divergencesCount.textContent = divergences.length;
+        if (reportableCount) reportableCount.textContent = reportableMarkets.length;
     }
 
     function updateMarketCount() {
@@ -1120,6 +1128,21 @@
 
             allMarkets = monitorData.elections || monitorData.markets || [];
             filteredMarkets = [...allMarkets];
+
+            // Load reportable markets (robust + caution)
+            try {
+                const reportableResponse = await fetch('data/reportable_markets.json');
+                if (reportableResponse.ok) {
+                    const reportableData = await reportableResponse.json();
+                    // Combine robust and caution markets
+                    reportableMarkets = [
+                        ...(reportableData.robust || []),
+                        ...(reportableData.caution || [])
+                    ];
+                }
+            } catch (e) {
+                console.warn('Could not load reportable markets:', e);
+            }
 
             populateCategoryFilter();
             applyFilters();

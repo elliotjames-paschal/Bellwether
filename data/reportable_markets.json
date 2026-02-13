@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-02-12T16:30:00.000000",
+  "robust": [
+    {
+      "key": "pm_warsh_fed_chair",
+      "label": "Will Trump next nominate Kevin Warsh as Fed Chair?",
+      "cost_to_move_5c": 892920,
+      "pm_token_id": null,
+      "k_ticker": null,
+      "category": "2. MONETARY_POLICY",
+      "category_display": "Monetary Policy",
+      "total_volume": null
+    },
+    {
+      "key": "pm_fed_rates_no_change",
+      "label": "Will there be no change in Fed interest rates after the March meeting?",
+      "cost_to_move_5c": 800174,
+      "pm_token_id": null,
+      "k_ticker": null,
+      "category": "2. MONETARY_POLICY",
+      "category_display": "Monetary Policy",
+      "total_volume": null
+    },
+    {
+      "key": "pm_warsh_fed_chair_2",
+      "label": "Will Trump nominate Kevin Warsh as the next Fed chair?",
+      "cost_to_move_5c": 274750,
+      "pm_token_id": null,
+      "k_ticker": null,
+      "category": "2. MONETARY_POLICY",
+      "category_display": "Monetary Policy",
+      "total_volume": null
+    },
+    {
+      "key": "pm_russia_ukraine_ceasefire",
+      "label": "Russia x Ukraine ceasefire by end of 2026?",
+      "cost_to_move_5c": 152275,
+      "pm_token_id": null,
+      "k_ticker": null,
+      "category": "6. INTERNATIONAL",
+      "category_display": "International",
+      "total_volume": null
+    }
+  ],
+  "caution": []
+}
