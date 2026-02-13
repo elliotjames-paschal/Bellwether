@@ -1923,7 +1923,7 @@
                     Bellwether Market Monitor${searchTerm ? ': "' + searchTerm + '"' : ''}
                 </div>
                 <div style="font-size: 12px; color: #6b7280;">
-                    ${viewName} · ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · bellwether.hoover.org
+                    ${viewName} · ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · bellwether.stanford.edu
                 </div>
             `;
             exportWrapper.appendChild(header);
