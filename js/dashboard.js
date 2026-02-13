@@ -1922,26 +1922,42 @@ async function downloadChartPNG(chartId) {
         return;
     }
 
+    // Find the parent chart-card to include the title
+    const chartCard = chartEl.closest('.chart-card');
+
+    if (!chartCard && typeof html2canvas === 'undefined') {
+        showToast('Export not available');
+        return;
+    }
+
     try {
         let dataUrl;
 
-        // Check if it's a Plotly chart
-        if (chartEl._fullLayout) {
+        // Use html2canvas to capture the full card with title
+        if (typeof html2canvas !== 'undefined' && chartCard) {
+            // Temporarily hide the share button during capture
+            const shareBtn = chartCard.querySelector('.chart-share-btn');
+            if (shareBtn) shareBtn.style.visibility = 'hidden';
+
+            const canvas = await html2canvas(chartCard, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true
+            });
+            dataUrl = canvas.toDataURL('image/png');
+
+            // Restore share button
+            if (shareBtn) shareBtn.style.visibility = '';
+        }
+        // Fallback to Plotly export (without title)
+        else if (chartEl._fullLayout) {
             dataUrl = await Plotly.toImage(chartId, {
                 format: 'png',
                 width: 1200,
                 height: 800,
-                scale: 2 // High resolution
+                scale: 2
             });
-        }
-        // Otherwise use html2canvas for HTML elements (tables, etc.)
-        else if (typeof html2canvas !== 'undefined') {
-            const canvas = await html2canvas(chartEl, {
-                scale: 2,
-                backgroundColor: '#ffffff',
-                logging: false
-            });
-            dataUrl = canvas.toDataURL('image/png');
         } else {
             showToast('Export not available');
             return;

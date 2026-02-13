@@ -1,21 +1,17 @@
 {
-  "generated_at": "2026-02-12T17:54:17.700015",
+  "generated_at": "2026-02-12T19:50:29.699201",
   "robust": [
     {
-      "key": "kalshi_KXFEDCHAIRNOM-29-KW",
-      "cost_to_move_5c": 835714.71
+      "key": "polymarket_will-there-be-no-change-in-fed-interest-rates-after-the-march-2026-meeting",
+      "cost_to_move_5c": 813076.68
     },
     {
-      "key": "polymarket_will-there-be-no-change-in-fed-interest-rates-after-the-march-2026-meeting",
-      "cost_to_move_5c": 805031.72
+      "key": "kalshi_KXFEDCHAIRNOM-29-KW",
+      "cost_to_move_5c": 788090.5
     },
     {
       "key": "kalshi_KXFEDCHAIRNOM-29-JS",
-      "cost_to_move_5c": 357248.71
-    },
-    {
-      "key": "kalshi_KXPRESNOMR-28-JDV",
-      "cost_to_move_5c": 296488.15
+      "cost_to_move_5c": 375462.25
     },
     {
       "key": "polymarket_will-israel-strike-lebanon-on-february-12-2026",
@@ -23,7 +19,11 @@
     },
     {
       "key": "polymarket_572469",
-      "cost_to_move_5c": 267621.96
+      "cost_to_move_5c": 269741.94
+    },
+    {
+      "key": "polymarket_will-trump-say-biden-or-obama-3-times-during-epa-announcement",
+      "cost_to_move_5c": 230654.11
     },
     {
       "key": "polymarket_will-trump-say-china-or-russia-or-canada-5-times-during-epa-announcement",
@@ -38,74 +38,70 @@
       "cost_to_move_5c": 170025.62
     },
     {
-      "key": "kalshi_KXPRESNOMR-28-MR",
-      "cost_to_move_5c": 154902.92
-    },
-    {
       "key": "polymarket_567687",
-      "cost_to_move_5c": 150760.19
-    },
-    {
-      "key": "kalshi_KXPRESNOMR-28-DJT",
-      "cost_to_move_5c": 135030.18
+      "cost_to_move_5c": 148316.81
     },
     {
       "key": "polymarket_another-us-government-shutdown-by-february-14",
-      "cost_to_move_5c": 102472.02
+      "cost_to_move_5c": 137994.95
     }
   ],
   "caution": [
     {
       "key": "polymarket_will-the-fed-decrease-interest-rates-by-25-bps-after-the-march-2026-meeting",
-      "cost_to_move_5c": 70245.17
+      "cost_to_move_5c": 74256.28
     },
     {
       "key": "Japan|Prime Minister|Japan|2026|False",
-      "cost_to_move_5c": 65463.83
+      "cost_to_move_5c": 63212.74
     },
     {
       "key": "polymarket_will-sanae-takaichi-be-the-prime-minister-of-japan-as-a-result-of-the-2026-snap-election",
-      "cost_to_move_5c": 65463.83
+      "cost_to_move_5c": 63208.55
     },
     {
       "key": "kalshi_CONTROLH-2026-R",
-      "cost_to_move_5c": 62940.67
+      "cost_to_move_5c": 62834.2
     },
     {
       "key": "polymarket_572473",
-      "cost_to_move_5c": 57386.6
+      "cost_to_move_5c": 55220.53
     },
     {
       "key": "polymarket_561229",
-      "cost_to_move_5c": 53899.78
+      "cost_to_move_5c": 53212.1
     },
     {
       "key": "polymarket_565064",
-      "cost_to_move_5c": 51499.88
+      "cost_to_move_5c": 46906.25
     },
     {
-      "key": "polymarket_will-trump-acquire-greenland-before-2027",
-      "cost_to_move_5c": 43830.85
-    },
-    {
-      "key": "polymarket_us-strikes-iran-by-february-28-2026-227-967-547-688-589-491-592",
-      "cost_to_move_5c": 42543.44
+      "key": "polymarket_562802",
+      "cost_to_move_5c": 45449.71
     },
     {
       "key": "kalshi_CONTROLS-2026-R",
       "cost_to_move_5c": 41248.68
     },
     {
-      "key": "kalshi_KXPRESNOMR-28-STE",
-      "cost_to_move_5c": 38003.04
+      "key": "polymarket_will-trump-acquire-greenland-before-2027",
+      "cost_to_move_5c": 41191.22
     },
     {
       "key": "polymarket_567621",
-      "cost_to_move_5c": 37591.38
+      "cost_to_move_5c": 38622.18
+    },
+    {
+      "key": "polymarket_khamenei-out-as-supreme-leader-of-iran-by-march-31",
+      "cost_to_move_5c": 37288.94
     },
     {
       "key": "kalshi_KXFEDCHAIRNOM-29-RREI",
       "cost_to_move_5c": 37232.85
+    },
+    {
+      "key": "kalshi_KXFEDCHAIRNOM-29-SMIR",
+      "cost_to_move_5c": 36043.91
     },
     {
       "key": "Japan|Parliament|Japan|2026|False",
@@ -116,52 +112,40 @@
       "cost_to_move_5c": 35920.87
     },
     {
-      "key": "kalshi_KXFEDCHAIRNOM-29-SMIR",
-      "cost_to_move_5c": 35863.91
-    },
-    {
       "key": "kalshi_KXFEDCHAIRNOM-29-KH",
-      "cost_to_move_5c": 35130.28
+      "cost_to_move_5c": 35315.8
     },
     {
       "key": "polymarket_561829",
-      "cost_to_move_5c": 34600.07
-    },
-    {
-      "key": "polymarket_khamenei-out-as-supreme-leader-of-iran-by-march-31",
-      "cost_to_move_5c": 34166.98
+      "cost_to_move_5c": 34480.7
     },
     {
       "key": "kalshi_KXFEDCHAIRNOM-29-MBOW",
-      "cost_to_move_5c": 33446.71
-    },
-    {
-      "key": "kalshi_KXFEDCHAIRNOM-29-LLOG",
-      "cost_to_move_5c": 32719.71
+      "cost_to_move_5c": 33533.2
     },
     {
       "key": "kalshi_KXPRESNOMD-28-GW",
-      "cost_to_move_5c": 32503.05
+      "cost_to_move_5c": 32495.61
     },
     {
       "key": "polymarket_khamenei-out-as-supreme-leader-of-iran-by-february-28",
-      "cost_to_move_5c": 31900.06
-    },
-    {
-      "key": "kalshi_KXFEDCHAIRNOM-29-RP",
-      "cost_to_move_5c": 31188.14
+      "cost_to_move_5c": 31849.32
     },
     {
       "key": "kalshi_KXFEDCHAIRNOM-29-SBES",
-      "cost_to_move_5c": 30123.0
+      "cost_to_move_5c": 30031.05
     },
     {
       "key": "polymarket_561230",
-      "cost_to_move_5c": 30026.56
+      "cost_to_move_5c": 29703.44
     },
     {
       "key": "kalshi_KXFEDCHAIRNOM-29-CWAL",
-      "cost_to_move_5c": 29049.64
+      "cost_to_move_5c": 29276.08
+    },
+    {
+      "key": "polymarket_us-strikes-iran-by-march-31-2026-393-221-132-633-215-592-866-184-321-377-931-222-297-655-719-935",
+      "cost_to_move_5c": 28905.24
     },
     {
       "key": "kalshi_KXPRESNOMD-28-RGAL",
@@ -169,127 +153,99 @@
     },
     {
       "key": "kalshi_KXPRESPERSON-28-AOCA",
-      "cost_to_move_5c": 28545.03
+      "cost_to_move_5c": 28542.35
+    },
+    {
+      "key": "polymarket_559652",
+      "cost_to_move_5c": 28490.44
     },
     {
       "key": "kalshi_KXPRESNOMD-28-ZMAM",
       "cost_to_move_5c": 28437.9
     },
     {
-      "key": "polymarket_559652",
-      "cost_to_move_5c": 27893.38
-    },
-    {
       "key": "polymarket_559653",
-      "cost_to_move_5c": 27278.3
+      "cost_to_move_5c": 27262.09
     },
     {
       "key": "polymarket_559654",
-      "cost_to_move_5c": 26809.73
+      "cost_to_move_5c": 26715.8
     },
     {
       "key": "polymarket_561974",
-      "cost_to_move_5c": 24573.9
+      "cost_to_move_5c": 24605.27
     },
     {
       "key": "kalshi_KXPRESNOMD-28-SAS",
       "cost_to_move_5c": 24154.62
     },
     {
-      "key": "kalshi_KXFEDCHAIRNOM-29-PJEF",
-      "cost_to_move_5c": 23550.11
-    },
-    {
-      "key": "polymarket_559655",
-      "cost_to_move_5c": 23497.83
+      "key": "United States|President|United States|2028|True|Republican",
+      "cost_to_move_5c": 23943.97
     },
     {
       "key": "kalshi_KXFEDCHAIRNOM-29-LK",
-      "cost_to_move_5c": 23423.56
-    },
-    {
-      "key": "polymarket_us-strikes-iran-by-june-30-2026-699-664-723-485-753-218-567-164-387-443-377-384-159-973-494-631",
-      "cost_to_move_5c": 23157.55
+      "cost_to_move_5c": 23603.56
     },
     {
       "key": "polymarket_russia-x-ukraine-ceasefire-by-june-30-2026",
-      "cost_to_move_5c": 23087.57
+      "cost_to_move_5c": 23506.14
     },
     {
-      "key": "polymarket_will-seguro-win-all-of-portugals-districts",
-      "cost_to_move_5c": 22901.75
-    },
-    {
-      "key": "polymarket_khamenei-out-as-supreme-leader-of-iran-by-june-30-747",
-      "cost_to_move_5c": 22886.39
+      "key": "polymarket_559655",
+      "cost_to_move_5c": 23379.86
     },
     {
       "key": "kalshi_KXPRESPERSON-28-JVAN",
-      "cost_to_move_5c": 22811.94
+      "cost_to_move_5c": 22975.66
     },
     {
-      "key": "kalshi_KXFED-26MAR-T2.75",
-      "cost_to_move_5c": 22670.93
+      "key": "polymarket_will-seguro-win-all-of-portugals-districts",
+      "cost_to_move_5c": 22875.42
     },
     {
-      "key": "kalshi_KXFEDCHAIRNOM-29-DMAL",
-      "cost_to_move_5c": 22343.63
+      "key": "polymarket_khamenei-out-as-supreme-leader-of-iran-by-june-30-747",
+      "cost_to_move_5c": 22362.24
     },
     {
-      "key": "United States|President|United States|2028|True|Republican",
-      "cost_to_move_5c": 22328.55
-    },
-    {
-      "key": "kalshi_KXPRESNOMD-28-GN",
-      "cost_to_move_5c": 21633.74
+      "key": "kalshi_KXPRESNOMR-28-JDV",
+      "cost_to_move_5c": 22275.93
     },
     {
       "key": "kalshi_CONTROLS-2026-D",
       "cost_to_move_5c": 21602.38
     },
     {
-      "key": "kalshi_KXFEDCHAIRNOM-29-BPUL",
-      "cost_to_move_5c": 21587.59
-    },
-    {
-      "key": "polymarket_562802",
-      "cost_to_move_5c": 21546.41
+      "key": "polymarket_us-strikes-iran-by-june-30-2026-699-664-723-485-753-218-567-164-387-443-377-384-159-973-494-631",
+      "cost_to_move_5c": 21542.9
     },
     {
       "key": "kalshi_KXPRESNOMD-28-CMUR",
       "cost_to_move_5c": 21197.23
     },
     {
+      "key": "polymarket_billionaire-one-time-wealth-tax-passes-in-california-election-2026",
+      "cost_to_move_5c": 20737.47
+    },
+    {
       "key": "polymarket_will-kim-kardashian-win-the-2028-democratic-presidential-nomination",
-      "cost_to_move_5c": 20548.61
+      "cost_to_move_5c": 20510.23
+    },
+    {
+      "key": "kalshi_KXPRESNOMD-28-GN",
+      "cost_to_move_5c": 20423.54
     },
     {
       "key": "polymarket_561231",
-      "cost_to_move_5c": 20318.22
-    },
-    {
-      "key": "kalshi_KXFEDCHAIRNOM-29-HLUT",
-      "cost_to_move_5c": 20268.39
-    },
-    {
-      "key": "kalshi_KXFEDCHAIRNOM-29-JBUL",
-      "cost_to_move_5c": 20055.0
-    },
-    {
-      "key": "polymarket_us-strikes-iran-by-march-31-2026-393-221-132-633-215-592-866-184-321-377-931-222-297-655-719-935",
-      "cost_to_move_5c": 20035.51
+      "cost_to_move_5c": 20359.99
     },
     {
       "key": "kalshi_KXPRESNOMD-28-PB",
       "cost_to_move_5c": 19942.09
     },
     {
-      "key": "polymarket_billionaire-one-time-wealth-tax-passes-in-california-election-2026",
-      "cost_to_move_5c": 19602.06
-    },
-    {
       "key": "polymarket_559658",
-      "cost_to_move_5c": 19576.54
+      "cost_to_move_5c": 19641.91
     },
     {
       "key": "polymarket_will-the-fed-cutpausepause-in-the-next-three-decisions-decjanmar",
@@ -300,60 +256,56 @@
       "cost_to_move_5c": 19305.54
     },
     {
-      "key": "kalshi_KXPRESNOMD-28-JOSS",
-      "cost_to_move_5c": 18879.61
-    },
-    {
       "key": "kalshi_KXPRESPARTY-2028-D",
       "cost_to_move_5c": 18874.37
     },
     {
-      "key": "kalshi_KXFEDCHAIRNOM-29-MSUM",
-      "cost_to_move_5c": 18529.82
-    },
-    {
-      "key": "kalshi_KXFEDCHAIRNOM-29-DZER",
-      "cost_to_move_5c": 18118.2
+      "key": "kalshi_KXPRESNOMD-28-JOSS",
+      "cost_to_move_5c": 18727.64
     },
     {
       "key": "kalshi_KXPRESNOMD-28-DJOH",
-      "cost_to_move_5c": 17949.08
+      "cost_to_move_5c": 17999.08
     },
     {
       "key": "polymarket_will-the-fed-increase-interest-rates-by-25-bps-after-the-march-2026-meeting",
-      "cost_to_move_5c": 17547.45
+      "cost_to_move_5c": 17518.43
     },
     {
       "key": "kalshi_KXPRESNOMR-28-TC",
       "cost_to_move_5c": 17276.44
     },
     {
-      "key": "kalshi_KXPRESNOMD-28-GR",
-      "cost_to_move_5c": 16891.29
-    },
-    {
-      "key": "kalshi_KXPRESNOMD-28-HBID",
-      "cost_to_move_5c": 16866.92
-    },
-    {
-      "key": "polymarket_will-russia-capture-kostyantynivka-by-december-31-2026-936-942",
-      "cost_to_move_5c": 16807.75
-    },
-    {
-      "key": "polymarket_will-t-lm-be-the-next-president-of-vietnam",
-      "cost_to_move_5c": 16785.24
+      "key": "kalshi_KXPRESNOMR-28-DJT",
+      "cost_to_move_5c": 17235.46
     },
     {
       "key": "polymarket_549874",
-      "cost_to_move_5c": 16749.21
+      "cost_to_move_5c": 17135.73
+    },
+    {
+      "key": "kalshi_KXPRESNOMD-28-GR",
+      "cost_to_move_5c": 16941.29
+    },
+    {
+      "key": "kalshi_KXPRESNOMD-28-HBID",
+      "cost_to_move_5c": 16916.92
+    },
+    {
+      "key": "polymarket_will-t-lm-be-the-next-president-of-vietnam",
+      "cost_to_move_5c": 16561.58
+    },
+    {
+      "key": "polymarket_567561",
+      "cost_to_move_5c": 16505.58
     },
     {
       "key": "kalshi_KXPRESNOMD-28-WM",
-      "cost_to_move_5c": 16346.54
+      "cost_to_move_5c": 16337.34
     },
     {
       "key": "polymarket_559662",
-      "cost_to_move_5c": 16242.53
+      "cost_to_move_5c": 16239.11
     },
     {
       "key": "kalshi_KXPRESNOMD-28-RW",
@@ -361,19 +313,23 @@
     },
     {
       "key": "polymarket_will-the-us-confirm-that-aliens-exist-before-2027",
-      "cost_to_move_5c": 16136.16
+      "cost_to_move_5c": 15978.66
     },
     {
       "key": "polymarket_trump-out-as-president-before-2027",
-      "cost_to_move_5c": 15994.66
+      "cost_to_move_5c": 15959.54
     },
     {
       "key": "kalshi_KXLEADERSOUT-27JAN01-AKHAIRA",
       "cost_to_move_5c": 15736.47
     },
     {
+      "key": "polymarket_us-strikes-iran-by-february-28-2026-227-967-547-688-589-491-592",
+      "cost_to_move_5c": 15703.55
+    },
+    {
       "key": "kalshi_KXPRESNOMD-28-MO",
-      "cost_to_move_5c": 15633.91
+      "cost_to_move_5c": 15632.98
     },
     {
       "key": "kalshi_KXPRESNOMR-28-DJTJR",
@@ -384,24 +340,24 @@
       "cost_to_move_5c": 15527.29
     },
     {
-      "key": "kalshi_KXSENATETXD-26-JCRO",
-      "cost_to_move_5c": 15180.54
-    },
-    {
       "key": "kalshi_KXPRESNOMD-28-MC",
       "cost_to_move_5c": 14821.56
     },
     {
       "key": "kalshi_KXPRESNOMD-28-AB",
-      "cost_to_move_5c": 14771.32
+      "cost_to_move_5c": 14768.36
     },
     {
       "key": "polymarket_559683",
-      "cost_to_move_5c": 14682.58
+      "cost_to_move_5c": 14674.88
     },
     {
-      "key": "polymarket_567561",
-      "cost_to_move_5c": 14600.03
+      "key": "kalshi_KXPRESNOMR-28-STE",
+      "cost_to_move_5c": 14653.02
+    },
+    {
+      "key": "United States|House and Senate Control|United States|2027|False",
+      "cost_to_move_5c": 14579.43
     },
     {
       "key": "kalshi_KXBALANCEPOWERCOMBO-27FEB-DR",
@@ -409,15 +365,7 @@
     },
     {
       "key": "kalshi_KXPRESNOMD-28-RKHA",
-      "cost_to_move_5c": 13975.59
-    },
-    {
-      "key": "United States|President|United States|2028|False",
-      "cost_to_move_5c": 13838.81
-    },
-    {
-      "key": "polymarket_565065",
-      "cost_to_move_5c": 13838.81
+      "cost_to_move_5c": 13970.76
     },
     {
       "key": "kalshi_KXPRESNOMD-28-REMA",
@@ -425,7 +373,7 @@
     },
     {
       "key": "polymarket_khamenei-out-as-supreme-leader-of-iran-by-december-31-2026",
-      "cost_to_move_5c": 13681.55
+      "cost_to_move_5c": 13469.84
     },
     {
       "key": "polymarket_572481",
@@ -433,7 +381,7 @@
     },
     {
       "key": "polymarket_559679",
-      "cost_to_move_5c": 13089.88
+      "cost_to_move_5c": 13093.91
     },
     {
       "key": "kalshi_KXPRESPERSON-28-PBUT",
@@ -445,39 +393,43 @@
     },
     {
       "key": "polymarket_559688",
-      "cost_to_move_5c": 12922.82
+      "cost_to_move_5c": 12841.28
     },
     {
       "key": "polymarket_559681",
-      "cost_to_move_5c": 12850.37
+      "cost_to_move_5c": 12802.38
+    },
+    {
+      "key": "kalshi_KXPRESNOMD-28-JAM",
+      "cost_to_move_5c": 12708.22
     },
     {
       "key": "kalshi_KXPRESPERSON-28-GNEWS",
       "cost_to_move_5c": 12669.11
     },
     {
-      "key": "kalshi_KXPRESNOMD-28-JAM",
-      "cost_to_move_5c": 12658.22
+      "key": "kalshi_KXPRESNOMR-28-RFK",
+      "cost_to_move_5c": 12575.27
     },
     {
       "key": "kalshi_KXPRESNOMD-28-JS",
-      "cost_to_move_5c": 12655.95
+      "cost_to_move_5c": 12525.45
     },
     {
-      "key": "kalshi_KXPRESNOMR-28-RFK",
-      "cost_to_move_5c": 12576.23
+      "key": "polymarket_561248",
+      "cost_to_move_5c": 12518.83
     },
     {
       "key": "kalshi_KXPRESNOMD-28-TW",
       "cost_to_move_5c": 12348.89
     },
     {
-      "key": "polymarket_561248",
-      "cost_to_move_5c": 12305.39
+      "key": "United States|President|United States|2028|False",
+      "cost_to_move_5c": 12295.0
     },
     {
-      "key": "polymarket_559680",
-      "cost_to_move_5c": 12238.47
+      "key": "polymarket_565065",
+      "cost_to_move_5c": 12295.0
     },
     {
       "key": "kalshi_KXPRESNOMD-28-HCLI",
@@ -485,11 +437,11 @@
     },
     {
       "key": "polymarket_559677",
-      "cost_to_move_5c": 12040.21
+      "cost_to_move_5c": 12020.18
     },
     {
       "key": "polymarket_559667",
-      "cost_to_move_5c": 11924.68
+      "cost_to_move_5c": 11926.68
     },
     {
       "key": "kalshi_KXPRESPARTY-2028-R",
@@ -497,39 +449,39 @@
     },
     {
       "key": "polymarket_559678",
-      "cost_to_move_5c": 11769.5
+      "cost_to_move_5c": 11761.62
     },
     {
       "key": "polymarket_559676",
-      "cost_to_move_5c": 11766.38
+      "cost_to_move_5c": 11697.81
     },
     {
       "key": "kalshi_KXPORTUGALPRESR1-26JAN18-ASEG",
       "cost_to_move_5c": 11631.65
     },
     {
+      "key": "polymarket_559680",
+      "cost_to_move_5c": 11577.19
+    },
+    {
       "key": "polymarket_559651",
-      "cost_to_move_5c": 11453.5
+      "cost_to_move_5c": 11452.96
+    },
+    {
+      "key": "polymarket_will-jon-ossoff-win-the-2028-us-presidential-election",
+      "cost_to_move_5c": 11379.87
     },
     {
       "key": "kalshi_KXPRESNOMD-28-AOC",
-      "cost_to_move_5c": 11317.04
+      "cost_to_move_5c": 11308.08
     },
     {
       "key": "polymarket_559660",
-      "cost_to_move_5c": 11145.03
-    },
-    {
-      "key": "polymarket_us-strikes-iran-by-february-20-2026",
-      "cost_to_move_5c": 11045.14
+      "cost_to_move_5c": 11159.85
     },
     {
       "key": "polymarket_will-laura-virginia-fernndez-delgado-win-the-first-round-by-at-least-6",
       "cost_to_move_5c": 10952.9
-    },
-    {
-      "key": "polymarket_will-kim-kardashian-win-the-2028-us-presidential-election",
-      "cost_to_move_5c": 10889.42
     },
     {
       "key": "kalshi_KXPRESNOMD-28-BOBA",
@@ -544,8 +496,8 @@
       "cost_to_move_5c": 10727.67
     },
     {
-      "key": "polymarket_will-the-iranian-regime-fall-by-the-end-of-2026",
-      "cost_to_move_5c": 10579.04
+      "key": "polymarket_will-kim-kardashian-win-the-2028-us-presidential-election",
+      "cost_to_move_5c": 10525.05
     },
     {
       "key": "polymarket_561246",
@@ -553,19 +505,23 @@
     },
     {
       "key": "polymarket_572478",
-      "cost_to_move_5c": 10457.01
+      "cost_to_move_5c": 10428.78
+    },
+    {
+      "key": "polymarket_561251",
+      "cost_to_move_5c": 10392.95
     },
     {
       "key": "polymarket_will-jasmine-crockett-win-the-2028-democratic-presidential-nomination",
-      "cost_to_move_5c": 10411.54
+      "cost_to_move_5c": 10351.51
     },
     {
       "key": "kalshi_KXBALANCEPOWERCOMBO-27FEB-DD",
       "cost_to_move_5c": 10325.84
     },
     {
-      "key": "polymarket_will-the-us-not-strike-iran-by-february-28-2026",
-      "cost_to_move_5c": 10038.97
+      "key": "polymarket_will-the-iranian-regime-fall-by-the-end-of-2026",
+      "cost_to_move_5c": 10278.11
     },
     {
       "key": "polymarket_will-the-carolina-hurricanes-win-the-metropolitan-division-123",
