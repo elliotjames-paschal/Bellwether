@@ -1275,14 +1275,15 @@
                 }
             }
 
-            // Robust percentage from monitor_summary.json
+            // Reportable percentage from monitor_summary.json (robust + caution)
             try {
                 const monitorResponse = await fetch('data/monitor_summary.json');
                 if (monitorResponse.ok) {
                     const monitor = await monitorResponse.json();
                     const robustPctEl = document.getElementById('hero-robust-pct');
                     if (robustPctEl && monitor.total_assessed > 0) {
-                        const pct = (monitor.robust_count / monitor.total_assessed * 100).toFixed(1) + '%';
+                        const reportableCount = (monitor.robust_count || 0) + (monitor.caution_count || 0);
+                        const pct = (reportableCount / monitor.total_assessed * 100).toFixed(1) + '%';
                         robustPctEl.textContent = pct;
                     }
                 }

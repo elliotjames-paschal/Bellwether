@@ -427,11 +427,11 @@ a:hover {
     50% { opacity: 0.5; }
 }
 
-/* Inline stat numbers in prose (bold with subtle background) */
+/* Inline stat numbers in prose (bold with subtle background matching globe) */
 .stat-num {
     font-weight: 700;
-    background: var(--gray-100);
-    padding: 2px 6px;
+    background: #b5cde2;
+    padding: 1px 4px;
     border-radius: 4px;
 }
 
