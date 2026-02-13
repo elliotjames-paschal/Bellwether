@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Does Liquidity Predict Accuracy? - Bellwether</title>
+    <title>How We Built a Trustworthy Price - Bellwether</title>
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/styles.css?v=20260211a">
+    <link rel="stylesheet" href="../../css/styles.css?v=20260212a">
     <style>
         .article-header {
             max-width: 720px;
@@ -78,8 +78,27 @@
             margin-top: 48px;
             margin-bottom: 16px;
         }
+        .article-content h3 {
+            font-size: 1.25rem;
+            margin-top: 32px;
+            margin-bottom: 12px;
+        }
         .article-content a {
             color: var(--pm-color);
+        }
+        .article-content ul, .article-content ol {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--gray-700);
+            margin-bottom: 24px;
+            padding-left: 24px;
+        }
+        .article-content li {
+            margin-bottom: 8px;
+        }
+        .article-content ul ul {
+            margin-top: 8px;
+            margin-bottom: 8px;
         }
         .back-link {
             display: inline-flex;
@@ -129,6 +148,28 @@
             margin: 24px 0;
             font-size: 0.875rem;
             color: var(--gray-600);
+        }
+        .formula {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 1.125rem;
+        }
+        .references {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .references h2 {
+            margin-top: 0;
+        }
+        .references p {
+            font-size: 1rem;
+            margin-bottom: 12px;
         }
         @media (max-width: 600px) {
             .article-title {
@@ -183,9 +224,9 @@
             </a>
 
             <div class="article-meta">February 2026</div>
-            <h1 class="article-title">Does Liquidity Predict Accuracy?</h1>
+            <h1 class="article-title">How We Built a Trustworthy Price</h1>
             <p class="article-subtitle">
-                Tight spreads and deep order books feel trustworthy. We tested whether they actually predict better forecasts.
+                Volume-weighted averaging and manipulation resistance scoring for prediction market prices.
             </p>
 
             <div class="article-author">
@@ -200,28 +241,190 @@
         <div class="article-content">
 
             <p>
-                A market with a 1-cent spread and $50,000 of depth feels more trustworthy than one with a 10-cent spread and $500 of depth. But does liquidity actually predict whether the price is more accurate?
+                There's a growing problem: media outlets increasingly cite prediction market prices as fact. A CNN chyron reading "markets give Ukraine ceasefire 18% odds" treats the number as authoritative. But from which platform? Measured when? And could someone with a few thousand dollars have moved it minutes before the screenshot? (<a href="https://andyhall.substack.com/p/when-predictions-become-news">Read: When Predictions Become News &rarr;</a>)
             </p>
 
             <p>
-                We tested this using orderbook data from ~3,000 resolved markets on Polymarket and Kalshi. The answer is no. Markets with tighter spreads are not systematically more accurate than markets with wider spreads. Depth shows even less signal.
+                Bellwether addresses this with two features: a robust composite price and a manipulation resistance score for every market we track. But we didn't start there.
             </p>
 
-            <h2>Prior Research</h2>
+            <h2>Where We Started: Does Liquidity Predict Accuracy?</h2>
 
             <p>
-                This null result has precedent. <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=929916">Tetlock (2008)</a> found similar patterns in TradeSports: liquidity doesn't improve calibration and may actually <em>worsen</em> forecasting resolution. The mechanism is that na&iuml;ve limit order traders subsidize informed flow without contributing information&mdash;more liquidity means more noise traders alongside informed ones, leaving the signal-to-noise ratio roughly constant.
+                The natural first instinct was to use liquidity as a quality signal. A market with a 1-cent spread and $50,000 of depth feels more trustworthy than one with a 10-cent spread and $500 of depth. If that intuition held, you could just weight prices by liquidity and report the deepest markets with the most confidence.
             </p>
 
             <p>
-                At the macro level, <a href="https://osf.io/preprints/socarx/d5yx2">Clinton and Huang (2025)</a> found that PredictIt&mdash;with an $850 position cap&mdash;outperformed the far more liquid Polymarket in forecasting the 2024 election, suggesting forecast quality depends on trader diversity, not capital depth.
+                We tested this using order book data from roughly 3,000 resolved markets across Polymarket and Kalshi. The answer is no. Markets with tighter spreads are not systematically more accurate than markets with wider spreads. Depth shows even less signal. We tested this multiple ways&mdash;cross-sectional, time series, conditional on price range. The null held everywhere.
             </p>
-
-            <h2>Implications</h2>
 
             <p>
-                Don't discount a market just because it has wide spreads or shallow depth. Don't weight prices by liquidity when aggregating forecasts. The midpoint price already incorporates whatever information the market has. Observable orderbook features add nothing predictive beyond it.
+                This has precedent. <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=929916">Tetlock (2008)</a> found the same pattern in TradeSports: liquidity doesn't improve calibration and may actually worsen forecasting resolution. The mechanism is that na&iuml;ve limit order traders subsidize informed flow without contributing information&mdash;more liquidity means more noise traders alongside informed ones, leaving the signal-to-noise ratio roughly constant. <a href="https://osf.io/preprints/socarx/d5yx2">Clinton and Huang (2025)</a> showed that PredictIt, with an $850 position cap, outperformed the far more liquid Polymarket in forecasting the 2024 election. Forecast quality depends on trader diversity, not capital depth.
             </p>
+
+            <p>
+                So liquidity doesn't predict whether a price is right. But it does predict whether a price is resistant to being pushed. A thin market can still be accurate&mdash;the handful of informed traders who show up may price the event correctly. But that same thin market can be moved by anyone with a few thousand dollars. The problem isn't that thin markets are wrong. It's that you can't tell whether they're wrong or whether someone pushed them.
+            </p>
+
+            <p>
+                That distinction&mdash;between accuracy and integrity&mdash;is what led us to the two features below.
+            </p>
+
+            <h2>Why Not Just Use the Spot Price?</h2>
+
+            <p>
+                The simplest approach&mdash;take the current price from Polymarket or Kalshi and report it&mdash;has two problems.
+            </p>
+
+            <p>
+                First, the spot price is a single point in time. It reflects the last trade or the current midpoint, which can be moved temporarily by one large order. A manipulator buys aggressively, the price spikes, a journalist screenshots it, and the damage is done even if the price reverts minutes later.
+            </p>
+
+            <p>
+                Second, many political events are traded on both platforms, and the prices don't always agree. If Polymarket says 58% and Kalshi says 35%, which number goes on air? Picking one is arbitrary. Averaging them ignores that one might have ten times the trading activity of the other.
+            </p>
+
+            <h2>The Bellwether Price: Volume-Weighted Average Price</h2>
+
+            <p>
+                We compute a volume-weighted average price (VWAP) across all transactions on all platforms over a rolling window.
+            </p>
+
+            <p>
+                VWAP is not new. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001902">Duffie and Dworczak (2021)</a> proved it is the optimal linear unbiased benchmark when agents have incentives to manipulate&mdash;the same framework developed for LIBOR reform after the rate-fixing scandals. The intuition: every transaction is weighted by its dollar size, so small manipulative trades are diluted by the weight of normal trading activity.
+            </p>
+
+            <h3>How It Works</h3>
+
+            <p>
+                Take every trade that occurred in the window&mdash;regardless of which platform it happened on. Each trade has a price (between 0 and 1, representing a probability) and a size (number of contracts). The VWAP is:
+            </p>
+
+            <div class="formula">
+                &Sigma;(price &times; size) / &Sigma;(size)
+            </div>
+
+            <p>
+                That's it. If 40,000 contracts traded on Polymarket at prices around 58&cent; and 5,000 contracts traded on Kalshi at prices around 35&cent;, the Polymarket activity dominates the average&mdash;not because we chose Polymarket, but because more money moved there. The market with more informed trading activity naturally gets more weight.
+            </p>
+
+            <h3>Cross-Platform Pooling</h3>
+
+            <p>
+                For markets that exist on both Polymarket and Kalshi, we pool all transactions into a single VWAP. This is the core of the approach: the two platforms become one combined transaction stream. Both are binary contracts that pay $1 if the event occurs and $0 otherwise, so prices are directly comparable.
+            </p>
+
+            <p>
+                This does two things. It increases the number of transactions in the benchmark, which raises the cost of distortion. And it means manipulation on one platform is diluted by honest trading on the other&mdash;a manipulator would need to sustain large trades across both exchanges simultaneously to move the Bellwether Price.
+            </p>
+
+            <p>
+                For markets that exist on only one platform, the VWAP uses that platform's transactions alone. The card labels this explicitly: <em>6h VWAP across platforms</em> vs. <em>6h VWAP &middot; single platform</em>.
+            </p>
+
+            <h3>The Fallback Cascade</h3>
+
+            <p>
+                Not every market trades constantly. A major US election market might see thousands of trades per hour. A Colombian presidential election market might see three trades in a day. The VWAP needs enough transactions to be meaningful, so we use an expanding window:
+            </p>
+
+            <p>
+                <strong>Tier 1 &mdash; 6-hour VWAP.</strong> The default. If there are sufficient trades (10+) in the last 6 hours, use this window. It balances responsiveness to new information against manipulation resistance. Label: <em>6h VWAP</em>.
+            </p>
+
+            <p>
+                <strong>Tier 2 &mdash; 12-hour, then 24-hour VWAP.</strong> If fewer than 10 trades occurred in the last 6 hours, expand to 12 hours. Still insufficient? Expand to 24 hours. The wider window captures more transactions but is slower to reflect genuine price changes. A manipulation that happened 18 hours ago is still in the average. Label: <em>12h VWAP</em> or <em>24h VWAP</em>. Reportability is automatically downgraded by one tier.
+            </p>
+
+            <p>
+                <strong>Tier 3 &mdash; Order book midpoint.</strong> If no trades occurred even in 24 hours but resting orders exist on the book, use the midpoint of the best bid and best ask: (best_bid + best_ask) / 2. This isn't transaction-validated&mdash;nobody has tested this price with real money&mdash;but it represents where buyers and sellers currently stand. Label: <em>Order book midpoint</em>. Reportability capped at Caution.
+            </p>
+
+            <p>
+                <strong>Tier 4 &mdash; Stale.</strong> No trades, no live order book. Display the last available VWAP with a timestamp. Label: <em>Last VWAP (stale)</em>. Automatically Fragile. The number is there for reference but it carries almost no informational weight.
+            </p>
+
+            <p>
+                The method label updates dynamically on every card. A viewer always sees how the number was computed&mdash;because a 31% from 6-hour VWAP across 50,000 trades and a 31% from a stale midpoint are completely different claims.
+            </p>
+
+            <h2>The Robustness Score: Cost to Manipulate</h2>
+
+            <p>
+                The VWAP protects the Bellwether Price from manipulation. The robustness score measures how vulnerable the platform prices feeding into it are.
+            </p>
+
+            <p>
+                For each platform trading a market, we simulate market orders of increasing size against the live order book&mdash;walking through resting limit orders to compute the dollar cost required to move the spot price by 5 cents. The market's overall robustness is the minimum cost across platforms, because a manipulator only needs to move the cheapest one to generate a misleading headline.
+            </p>
+
+            <p>
+                The robustness score is based purely on order book depth&mdash;it answers one question: "How much would it cost to push this price?" It does not factor in how recently the market traded. Staleness and manipulability are different risks. A market with a $500K-deep order book that hasn't traded in 8 hours isn't fragile&mdash;nobody can push it, the book is thick, but the last price discovery was a while ago. That's a different concern than a market that traded 30 seconds ago but costs $800 to move.
+            </p>
+
+            <h3>Reportability Labels</h3>
+
+            <p>
+                The final label on each card combines both signals:
+            </p>
+
+            <p>
+                The robustness tier is set by order book depth alone:
+            </p>
+
+            <ul>
+                <li><strong>Reportable</strong> (&ge;$100K to move 5&cent;): Would require institutional capital to distort.</li>
+                <li><strong>Caution</strong> ($10K&ndash;$100K): Movable by a motivated individual.</li>
+                <li><strong>Fragile</strong> (&lt;$10K): Trivially manipulable.</li>
+            </ul>
+
+            <p>
+                The staleness cap limits how high the label can go based on the VWAP window:
+            </p>
+
+            <ul>
+                <li>6-hour VWAP: no cap (can be Reportable)</li>
+                <li>12-hour or 24-hour VWAP: capped at Caution</li>
+                <li>Order book midpoint or stale: capped at Fragile</li>
+            </ul>
+
+            <p>
+                The final label is whichever is lower. A deep market on a 24-hour window gets Caution&mdash;the depth is real, but the price hasn't been tested by recent trading. A thin market on a 6-hour window gets Fragile&mdash;recent trades exist, but the book is shallow. The method label on each card (<em>6h VWAP</em>, <em>24h VWAP</em>, <em>Order book midpoint</em>) makes both dimensions visible, so a viewer can see why a market received its rating.
+            </p>
+
+            <h2>Why Both Features Matter</h2>
+
+            <p>
+                The two defenses are complementary.
+            </p>
+
+            <p>
+                The VWAP absorbs manipulation after it happens&mdash;a burst of distorted trades gets diluted across hours of normal activity. The robustness score warns you before it happens&mdash;telling you how cheap it would be to try.
+            </p>
+
+            <p>
+                A market can have high robustness but a wide VWAP window, meaning the book is deep but nobody's traded recently&mdash;the price is hard to push but may be stale. Or a market can have a tight VWAP window but low robustness, meaning trades are flowing but the book is thin&mdash;fresh price discovery, but vulnerable to a sudden shove. The reportability label reflects the worse of the two, and the method label on the card tells you which dimension is the constraint.
+            </p>
+
+            <div class="references">
+                <h2>References</h2>
+
+                <p>
+                    Clinton, J. and Huang, J. (2025). <a href="https://osf.io/preprints/socarx/d5yx2">Comparing prediction market forecasts of the 2024 US presidential election</a>.
+                </p>
+
+                <p>
+                    Duffie, D. and Dworczak, P. (2021). <a href="https://www.sciencedirect.com/science/article/abs/pii/S0304405X21001902">Robust benchmark design</a>. <em>Journal of Financial Economics</em>, 142(2), 775&ndash;802.
+                </p>
+
+                <p>
+                    Hall, A.B. (2025). <a href="https://andyhall.substack.com/p/when-predictions-become-news">When predictions become news</a>.
+                </p>
+
+                <p>
+                    Tetlock, P.C. (2008). <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=929916">Liquidity and prediction market informational efficiency</a>. Working Paper.
+                </p>
+            </div>
 
         </div>
     </article>
