@@ -1990,6 +1990,26 @@ a:hover {
     border-color: var(--gray-400);
 }
 
+.monitor-export-btn {
+    height: 42px;
+    width: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.monitor-export-btn:hover {
+    border-color: var(--gray-400);
+    color: var(--gray-700);
+}
+
 .monitor-tabs {
     display: flex;
     gap: 0;

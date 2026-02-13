@@ -1239,6 +1239,10 @@
         // Initialize review mode
         initReviewMode();
 
+        // Initialize export button
+        const exportBtn = document.getElementById('export-monitor-btn');
+        if (exportBtn) exportBtn.addEventListener('click', exportMonitorAsPng);
+
         // Load hero stats
         loadFindings();
 
@@ -1866,6 +1870,82 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             }).catch(err => console.error('Failed to submit to Google Sheet:', err));
+        }
+    }
+
+    async function exportMonitorAsPng() {
+        if (typeof html2canvas === 'undefined') {
+            showToast('Export not available');
+            return;
+        }
+
+        const cardsContainer = document.getElementById('monitor-cards');
+        if (!cardsContainer || cardsContainer.children.length === 0) {
+            showToast('No markets to export');
+            return;
+        }
+
+        showToast('Preparing export...');
+
+        try {
+            // Create a wrapper with branding for the export
+            const exportWrapper = document.createElement('div');
+            exportWrapper.style.cssText = 'background: #f9fafb; padding: 24px; display: inline-block;';
+
+            // Add header with search context
+            const searchInput = document.getElementById('filter-search');
+            const searchTerm = searchInput?.value?.trim();
+            const activeTab = document.querySelector('.monitor-tab.active');
+            const viewName = activeTab?.textContent?.trim()?.split(/\s+/)[0] || 'Markets';
+
+            const header = document.createElement('div');
+            header.style.cssText = 'margin-bottom: 16px; font-family: "Source Serif 4", Georgia, serif;';
+            header.innerHTML = `
+                <div style="font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 4px;">
+                    Bellwether Market Monitor${searchTerm ? ': "' + searchTerm + '"' : ''}
+                </div>
+                <div style="font-size: 12px; color: #6b7280;">
+                    ${viewName} · ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · bellwether.hoover.org
+                </div>
+            `;
+            exportWrapper.appendChild(header);
+
+            // Clone the cards container
+            const cardsClone = cardsContainer.cloneNode(true);
+            cardsClone.style.cssText = 'display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 700px;';
+
+            // Limit to 8 cards for a nice 4x2 grid
+            const cards = cardsClone.querySelectorAll('.market-card');
+            cards.forEach((card, i) => {
+                if (i >= 8) card.remove();
+                else {
+                    // Remove any selection checkboxes
+                    const checkbox = card.querySelector('.review-checkbox');
+                    if (checkbox) checkbox.remove();
+                }
+            });
+
+            exportWrapper.appendChild(cardsClone);
+            document.body.appendChild(exportWrapper);
+
+            const canvas = await html2canvas(exportWrapper, {
+                backgroundColor: '#f9fafb',
+                scale: 2,
+                logging: false
+            });
+
+            document.body.removeChild(exportWrapper);
+
+            // Download
+            const link = document.createElement('a');
+            link.download = `bellwether-monitor${searchTerm ? '-' + searchTerm.replace(/\s+/g, '-').toLowerCase() : ''}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            showToast('Exported!');
+        } catch (e) {
+            console.error('Export failed:', e);
+            showToast('Export failed');
         }
     }
 
