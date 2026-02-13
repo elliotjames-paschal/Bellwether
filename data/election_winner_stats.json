@@ -1,9 +1,9 @@
 {
   "all_elections": {
     "polymarket": {
-      "n": 100,
-      "brier": 0.0956,
-      "accuracy": 0.85
+      "n": 99,
+      "brier": 0.0895,
+      "accuracy": 0.8586
     },
     "kalshi": {
       "n": 102,
@@ -23,9 +23,9 @@
       "accuracy": 0.8732
     },
     "combined": {
-      "n": 68,
-      "brier": 0.1113,
-      "accuracy": 0.8529
+      "n": 70,
+      "brier": 0.1136,
+      "accuracy": 0.8429
     }
   },
   "head_to_head": {

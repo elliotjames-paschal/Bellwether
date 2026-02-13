@@ -17,42 +17,42 @@
         "count": 9
       },
       {
-        "predicted": 0.1663,
-        "actual": 0.2222,
+        "predicted": 0.1728,
+        "actual": 0.1111,
         "count": 9
       },
       {
-        "predicted": 0.3126,
-        "actual": 0.3333,
+        "predicted": 0.3393,
+        "actual": 0.4444,
         "count": 9
       },
       {
-        "predicted": 0.5064,
-        "actual": 0.5556,
+        "predicted": 0.519,
+        "actual": 0.4444,
         "count": 9
       },
       {
-        "predicted": 0.6367,
-        "actual": 0.8889,
+        "predicted": 0.6579,
+        "actual": 1.0,
         "count": 9
       },
       {
-        "predicted": 0.8327,
+        "predicted": 0.8477,
         "actual": 0.7778,
         "count": 9
       },
       {
-        "predicted": 0.9587,
+        "predicted": 0.9668,
         "actual": 1.0,
         "count": 9
       },
       {
-        "predicted": 0.9901,
+        "predicted": 0.9912,
         "actual": 1.0,
-        "count": 12
+        "count": 11
       }
     ],
-    "n_elections": 93
+    "n_elections": 92
   },
   "kalshi": {
     "bins": [
