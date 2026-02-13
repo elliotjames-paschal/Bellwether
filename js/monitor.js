@@ -1873,6 +1873,24 @@
         }
     }
 
+    // Convert image URL to base64 via proxy
+    async function imageToBase64(url) {
+        try {
+            // Use a CORS proxy to fetch the image
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+            const response = await fetch(proxyUrl);
+            const blob = await response.blob();
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(blob);
+            });
+        } catch (e) {
+            return null;
+        }
+    }
+
     async function exportMonitorAsPng() {
         if (typeof html2canvas === 'undefined') {
             showToast('Export not available');
@@ -1916,17 +1934,35 @@
 
             // Limit to 8 cards for a nice 4x2 grid
             const cards = cardsClone.querySelectorAll('.market-card');
+            const imagePromises = [];
+
             cards.forEach((card, i) => {
-                if (i >= 8) card.remove();
-                else {
+                if (i >= 8) {
+                    card.remove();
+                } else {
                     // Remove any selection checkboxes
                     const checkbox = card.querySelector('.review-checkbox');
                     if (checkbox) checkbox.remove();
-                    // Remove external images (CORS issues with html2canvas)
-                    const images = card.querySelectorAll('.card-market-img');
-                    images.forEach(img => img.remove());
+
+                    // Convert external images to base64
+                    const imgs = card.querySelectorAll('img');
+                    imgs.forEach(img => {
+                        if (img.src && img.src.startsWith('http')) {
+                            const promise = imageToBase64(img.src).then(base64 => {
+                                if (base64) {
+                                    img.src = base64;
+                                } else {
+                                    img.remove();
+                                }
+                            });
+                            imagePromises.push(promise);
+                        }
+                    });
                 }
             });
+
+            // Wait for all images to convert
+            await Promise.all(imagePromises);
 
             exportWrapper.appendChild(cardsClone);
             document.body.appendChild(exportWrapper);
