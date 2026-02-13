@@ -1922,6 +1922,9 @@
                     // Remove any selection checkboxes
                     const checkbox = card.querySelector('.review-checkbox');
                     if (checkbox) checkbox.remove();
+                    // Remove external images (CORS issues with html2canvas)
+                    const images = card.querySelectorAll('.card-market-img');
+                    images.forEach(img => img.remove());
                 }
             });
 
