@@ -200,7 +200,7 @@
                 methodEl.textContent = data.price_label || 'Price';
             } else {
                 // No price available
-                methodEl.textContent = 'No data';
+                methodEl.textContent = 'No recent trades';
             }
         }
 
