@@ -427,10 +427,9 @@ a:hover {
     50% { opacity: 0.5; }
 }
 
-/* Inline stat numbers (IBM Plex Mono) */
+/* Inline stat numbers in prose (bold, same font as surrounding text) */
 .stat-num {
-    font-family: var(--font-mono);
-    font-weight: 500;
+    font-weight: 700;
 }
 
 /* Live Data Section */
