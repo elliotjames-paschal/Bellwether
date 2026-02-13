@@ -2367,9 +2367,9 @@ a.price-box.clickable:hover {
     color: #92400e;
 }
 
-/* Tier 3: Orderbook midpoint - visually warn */
+/* Tier 3: Orderbook midpoint - slightly dimmed */
 .market-card.tier-3 {
-    border-left: 3px solid #fbbf24;
+    /* Relies on dimmed text styling below */
 }
 
 .market-card.tier-3 .card-price-method {
