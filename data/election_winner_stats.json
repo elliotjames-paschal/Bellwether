@@ -14,26 +14,26 @@
   "shared_elections": {
     "polymarket": {
       "n": 70,
-      "brier": 0.119,
-      "accuracy": 0.8028
+      "brier": 0.1104,
+      "accuracy": 0.8143
     },
     "kalshi": {
       "n": 70,
-      "brier": 0.1108,
-      "accuracy": 0.8732
+      "brier": 0.1107,
+      "accuracy": 0.8714
     },
     "combined": {
-      "n": 69,
-      "brier": 0.1136,
+      "n": 70,
+      "brier": 0.1106,
       "accuracy": 0.8429
     }
   },
   "head_to_head": {
     "n_shared": 70,
-    "correlation": 0.8175,
+    "correlation": 0.9524,
     "pm_wins": 40,
     "kalshi_wins": 30,
     "ties": 0,
-    "p_value": 0.5238
+    "p_value": 0.3222
   }
 }
