@@ -1873,18 +1873,35 @@
         }
     }
 
-    // Convert image URL to base64 via proxy
-    async function imageToBase64(url) {
+    // Convert image URL to base64 via proxy, cropping to square
+    async function imageToBase64(url, size = 88) {
         try {
             // Use a CORS proxy to fetch the image
             const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
             const response = await fetch(proxyUrl);
             const blob = await response.blob();
+
+            // Load image and crop to square
             return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = () => resolve(null);
-                reader.readAsDataURL(blob);
+                const img = new Image();
+                img.onload = () => {
+                    // Create canvas for cropped square image
+                    const canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+
+                    // Calculate crop dimensions (center crop to square)
+                    const minDim = Math.min(img.width, img.height);
+                    const sx = (img.width - minDim) / 2;
+                    const sy = (img.height - minDim) / 2;
+
+                    // Draw cropped and scaled image
+                    ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+                img.onerror = () => resolve(null);
+                img.src = URL.createObjectURL(blob);
             });
         } catch (e) {
             return null;
