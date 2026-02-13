@@ -1944,13 +1944,15 @@
                     const checkbox = card.querySelector('.review-checkbox');
                     if (checkbox) checkbox.remove();
 
-                    // Convert external images to base64
+                    // Convert external images to base64 and fix aspect ratio
                     const imgs = card.querySelectorAll('img');
                     imgs.forEach(img => {
                         if (img.src && img.src.startsWith('http')) {
                             const promise = imageToBase64(img.src).then(base64 => {
                                 if (base64) {
                                     img.src = base64;
+                                    // Ensure proper sizing and aspect ratio
+                                    img.style.cssText = 'width: 44px; height: 44px; object-fit: cover; border-radius: 6px;';
                                 } else {
                                     img.remove();
                                 }
@@ -1958,6 +1960,12 @@
                             imagePromises.push(promise);
                         }
                     });
+
+                    // Also style the image container
+                    const imgContainer = card.querySelector('.card-market-img');
+                    if (imgContainer) {
+                        imgContainer.style.cssText = 'width: 44px; height: 44px; border-radius: 6px; flex-shrink: 0; overflow: hidden;';
+                    }
                 }
             });
 
