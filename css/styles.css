@@ -430,7 +430,7 @@ a:hover {
 /* Inline stat numbers in prose (bold with subtle background matching globe) */
 .stat-num {
     font-weight: 700;
-    background: #b5cde2;
+    background: #c5ddf5;
     padding: 1px 4px;
     border-radius: 4px;
 }
