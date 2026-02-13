@@ -1936,8 +1936,8 @@ async function downloadChartPNG(chartId) {
         // Use html2canvas to capture the full card with title
         if (typeof html2canvas !== 'undefined' && chartCard) {
             // Temporarily hide the share button during capture
-            const shareBtn = chartCard.querySelector('.chart-share-btn');
-            if (shareBtn) shareBtn.style.visibility = 'hidden';
+            const shareContainer = chartCard.querySelector('.share-container');
+            if (shareContainer) shareContainer.style.visibility = 'hidden';
 
             const canvas = await html2canvas(chartCard, {
                 scale: 2,
@@ -1948,7 +1948,7 @@ async function downloadChartPNG(chartId) {
             dataUrl = canvas.toDataURL('image/png');
 
             // Restore share button
-            if (shareBtn) shareBtn.style.visibility = '';
+            if (shareContainer) shareContainer.style.visibility = '';
         }
         // Fallback to Plotly export (without title)
         else if (chartEl._fullLayout) {
