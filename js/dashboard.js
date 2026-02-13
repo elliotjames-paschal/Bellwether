@@ -1917,18 +1917,35 @@ async function downloadChartPNG(chartId) {
     const meta = CHART_META[chartId] || { title: 'Chart' };
     const chartEl = document.getElementById(chartId);
 
-    if (!chartEl || !chartEl._fullLayout) {
+    if (!chartEl) {
         showToast('Chart not ready for export');
         return;
     }
 
     try {
-        const dataUrl = await Plotly.toImage(chartId, {
-            format: 'png',
-            width: 1200,
-            height: 800,
-            scale: 2 // High resolution
-        });
+        let dataUrl;
+
+        // Check if it's a Plotly chart
+        if (chartEl._fullLayout) {
+            dataUrl = await Plotly.toImage(chartId, {
+                format: 'png',
+                width: 1200,
+                height: 800,
+                scale: 2 // High resolution
+            });
+        }
+        // Otherwise use html2canvas for HTML elements (tables, etc.)
+        else if (typeof html2canvas !== 'undefined') {
+            const canvas = await html2canvas(chartEl, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false
+            });
+            dataUrl = canvas.toDataURL('image/png');
+        } else {
+            showToast('Export not available');
+            return;
+        }
 
         // Create download link
         const link = document.createElement('a');
