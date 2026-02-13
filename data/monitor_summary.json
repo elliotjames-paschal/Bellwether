@@ -1,7 +1,7 @@
 {
   "total_assessed": 10122,
-  "robust_count": 12,
-  "caution_count": 121,
-  "fragile_count": 9989,
-  "generated_at": "2026-02-12T16:54:59.898001"
+  "robust_count": 13,
+  "caution_count": 129,
+  "fragile_count": 9980,
+  "generated_at": "2026-02-12T17:54:17.698572"
 }

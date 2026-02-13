@@ -1129,16 +1129,24 @@
             allMarkets = monitorData.elections || monitorData.markets || [];
             filteredMarkets = [...allMarkets];
 
-            // Load reportable markets (robust + caution)
+            // Load reportable markets (robust + caution) - just keys, look up from allMarkets
             try {
                 const reportableResponse = await fetch('data/reportable_markets.json?v=' + Date.now());
                 if (reportableResponse.ok) {
                     const reportableData = await reportableResponse.json();
-                    // Combine robust and caution markets
-                    reportableMarkets = [
-                        ...(reportableData.robust || []),
-                        ...(reportableData.caution || [])
-                    ];
+                    // Build map of key -> cost_to_move_5c
+                    const costMap = {};
+                    for (const m of (reportableData.robust || [])) {
+                        costMap[m.key] = m.cost_to_move_5c;
+                    }
+                    for (const m of (reportableData.caution || [])) {
+                        costMap[m.key] = m.cost_to_move_5c;
+                    }
+                    // Look up full market data from allMarkets
+                    reportableMarkets = allMarkets
+                        .filter(m => m.key in costMap)
+                        .map(m => ({ ...m, cost_to_move_5c: costMap[m.key] }))
+                        .sort((a, b) => b.cost_to_move_5c - a.cost_to_move_5c);
                 }
             } catch (e) {
                 console.warn('Could not load reportable markets:', e);
