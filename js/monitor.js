@@ -1131,7 +1131,7 @@
 
             // Load reportable markets (robust + caution)
             try {
-                const reportableResponse = await fetch('data/reportable_markets.json');
+                const reportableResponse = await fetch('data/reportable_markets.json?v=' + Date.now());
                 if (reportableResponse.ok) {
                     const reportableData = await reportableResponse.json();
                     // Combine robust and caution markets
