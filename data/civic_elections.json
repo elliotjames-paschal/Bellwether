@@ -1,12 +1,22 @@
 {
-  "generated_at": "2026-02-16T16:31:57.708759",
+  "generated_at": "2026-02-17T15:30:36.917624",
   "elections": [
     {
       "id": "11142",
       "name": "Wisconsin Spring Primary Election",
       "electionDay": "2026-02-17",
-      "daysUntil": 1,
+      "daysUntil": 0,
       "state": "WI",
+      "contests": [],
+      "matchedMarketCount": 0,
+      "matchedMarkets": []
+    },
+    {
+      "id": "11157",
+      "name": "Pennsylvania Special Election - State House District 22 and State House District 42",
+      "electionDay": "2026-02-24",
+      "daysUntil": 7,
+      "state": "PA",
       "contests": [],
       "matchedMarketCount": 0,
       "matchedMarkets": []
@@ -15,7 +25,7 @@
       "id": "9453",
       "name": "Texas Republican Primary Election",
       "electionDay": "2026-03-03",
-      "daysUntil": 15,
+      "daysUntil": 14,
       "state": "TX",
       "contests": [],
       "matchedMarketCount": 0,
@@ -25,7 +35,7 @@
       "id": "11199",
       "name": "Texas Democratic Primary Election",
       "electionDay": "2026-03-03",
-      "daysUntil": 15,
+      "daysUntil": 14,
       "state": "TX",
       "contests": [],
       "matchedMarketCount": 0,
