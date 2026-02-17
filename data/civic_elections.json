@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-02-13T16:33:10.717126",
+  "generated_at": "2026-02-16T16:31:57.708759",
   "elections": [
     {
       "id": "11142",
       "name": "Wisconsin Spring Primary Election",
       "electionDay": "2026-02-17",
-      "daysUntil": 4,
+      "daysUntil": 1,
       "state": "WI",
       "contests": [],
       "matchedMarketCount": 0,
@@ -15,7 +15,7 @@
       "id": "9453",
       "name": "Texas Republican Primary Election",
       "electionDay": "2026-03-03",
-      "daysUntil": 18,
+      "daysUntil": 15,
       "state": "TX",
       "contests": [],
       "matchedMarketCount": 0,
@@ -25,7 +25,7 @@
       "id": "11199",
       "name": "Texas Democratic Primary Election",
       "electionDay": "2026-03-03",
-      "daysUntil": 18,
+      "daysUntil": 15,
       "state": "TX",
       "contests": [],
       "matchedMarketCount": 0,
