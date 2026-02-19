@@ -213,7 +213,6 @@
                     <button class="glossary-toggle-btn active" onclick="switchGlossary('master', this)">Master</button>
                     <button class="glossary-toggle-btn" onclick="switchGlossary('prices', this)">Prices</button>
                     <button class="glossary-toggle-btn" onclick="switchGlossary('liquidity', this)">Liquidity</button>
-                    <button class="glossary-toggle-btn" onclick="switchGlossary('trades', this)">Trades</button>
                 </div>
 
                 <!-- Master Dataset Glossary -->
@@ -304,7 +303,7 @@
                 <!-- Prices Dataset Glossary -->
                 <div class="glossary-content" id="glossary-prices" style="display: none;">
                     <p style="color: var(--gray-600); margin: 0 0 24px;">
-                        <strong>price_histories.parquet</strong> — Hourly price observations for all tracked markets. Approximately 12M+ rows.
+                        <strong>price_histories.parquet</strong> — Daily price observations for all tracked markets at multiple time horizons before resolution.
                     </p>
 
                     <h3 style="margin: 24px 0 16px;">Price Observation Fields</h3>
@@ -313,36 +312,36 @@
                             <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="field-name">token_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Market identifier — joins to pm_token_id_yes/no or ticker in master file</td></tr>
+                            <tr><td><span class="field-name">market_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Market identifier — joins to market_id in master file</td></tr>
+                            <tr><td><span class="field-name">token_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Token identifier (Polymarket) or ticker (Kalshi)</td></tr>
                             <tr><td><span class="field-name">platform</span></td><td><span class="field-type">string</span></td><td class="field-description">Source platform: "polymarket" or "kalshi"</td></tr>
-                            <tr><td><span class="field-name">timestamp</span></td><td><span class="field-type">datetime</span></td><td class="field-description">Price observation time (UTC), hourly granularity</td></tr>
-                            <tr><td><span class="field-name">price</span></td><td><span class="field-type">float</span></td><td class="field-description">Market price (0-1), interpretable as probability</td></tr>
+                            <tr><td><span class="field-name">days_before_event</span></td><td><span class="field-type">int</span></td><td class="field-description">Days before resolution (60, 30, 14, 7, 3, 1)</td></tr>
+                            <tr><td><span class="field-name">prediction_price</span></td><td><span class="field-type">float</span></td><td class="field-description">Market price (0-1), interpretable as probability</td></tr>
+                            <tr><td><span class="field-name">reference_datetime</span></td><td><span class="field-type">datetime</span></td><td class="field-description">Price observation time (UTC)</td></tr>
                         </tbody>
                     </table>
 
-                    <h3 style="margin: 32px 0 16px;">OHLCV Fields (when available)</h3>
+                    <h3 style="margin: 32px 0 16px;">Accuracy Fields</h3>
                     <table class="glossary-table">
                         <thead>
                             <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="field-name">open</span></td><td><span class="field-type">float</span></td><td class="field-description">Opening price for the period</td></tr>
-                            <tr><td><span class="field-name">high</span></td><td><span class="field-type">float</span></td><td class="field-description">Highest price during the period</td></tr>
-                            <tr><td><span class="field-name">low</span></td><td><span class="field-type">float</span></td><td class="field-description">Lowest price during the period</td></tr>
-                            <tr><td><span class="field-name">close</span></td><td><span class="field-type">float</span></td><td class="field-description">Closing price for the period</td></tr>
-                            <tr><td><span class="field-name">volume</span></td><td><span class="field-type">float</span></td><td class="field-description">Trading volume during the period (USD)</td></tr>
+                            <tr><td><span class="field-name">actual_outcome</span></td><td><span class="field-type">float</span></td><td class="field-description">Resolution outcome (1.0 = Yes, 0.0 = No)</td></tr>
+                            <tr><td><span class="field-name">brier_score</span></td><td><span class="field-type">float</span></td><td class="field-description">Brier score: (prediction - outcome)²</td></tr>
+                            <tr><td><span class="field-name">prediction_error</span></td><td><span class="field-type">float</span></td><td class="field-description">Signed prediction error (prediction - outcome)</td></tr>
                         </tbody>
                     </table>
 
-                    <h3 style="margin: 32px 0 16px;">Derived Fields</h3>
+                    <h3 style="margin: 32px 0 16px;">Market Context</h3>
                     <table class="glossary-table">
                         <thead>
                             <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="field-name">price_change_1h</span></td><td><span class="field-type">float</span></td><td class="field-description">Price change from previous hour</td></tr>
-                            <tr><td><span class="field-name">price_change_24h</span></td><td><span class="field-type">float</span></td><td class="field-description">Price change from 24 hours ago</td></tr>
-                            <tr><td><span class="field-name">volatility_24h</span></td><td><span class="field-type">float</span></td><td class="field-description">Rolling 24-hour price volatility (std dev)</td></tr>
+                            <tr><td><span class="field-name">category</span></td><td><span class="field-type">string</span></td><td class="field-description">Political category of the market</td></tr>
+                            <tr><td><span class="field-name">election_type</span></td><td><span class="field-type">string</span></td><td class="field-description">Type of election (if electoral market)</td></tr>
+                            <tr><td><span class="field-name">trading_close_time</span></td><td><span class="field-type">datetime</span></td><td class="field-description">When trading closed</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -413,56 +412,6 @@
                     </table>
                 </div>
 
-                <!-- Trades Dataset Glossary -->
-                <div class="glossary-content" id="glossary-trades" style="display: none;">
-                    <p style="color: var(--gray-600); margin: 0 0 24px;">
-                        <strong>trades.parquet</strong> — Individual trade-level data. Available for Polymarket markets only.
-                    </p>
-
-                    <h3 style="margin: 24px 0 16px;">Trade Fields</h3>
-                    <table class="glossary-table">
-                        <thead>
-                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><span class="field-name">trade_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Unique trade identifier (transaction hash)</td></tr>
-                            <tr><td><span class="field-name">token_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Token being traded (YES or NO outcome)</td></tr>
-                            <tr><td><span class="field-name">market_id</span></td><td><span class="field-type">string</span></td><td class="field-description">Market identifier (condition_id)</td></tr>
-                            <tr><td><span class="field-name">timestamp</span></td><td><span class="field-type">datetime</span></td><td class="field-description">Trade execution time (UTC)</td></tr>
-                            <tr><td><span class="field-name">price</span></td><td><span class="field-type">float</span></td><td class="field-description">Execution price (0-1)</td></tr>
-                            <tr><td><span class="field-name">size</span></td><td><span class="field-type">float</span></td><td class="field-description">Trade size in shares/contracts</td></tr>
-                            <tr><td><span class="field-name">side</span></td><td><span class="field-type">string</span></td><td class="field-description">Trade direction: "buy" or "sell"</td></tr>
-                        </tbody>
-                    </table>
-
-                    <h3 style="margin: 32px 0 16px;">Trader Fields</h3>
-                    <table class="glossary-table">
-                        <thead>
-                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><span class="field-name">maker_address</span></td><td><span class="field-type">string</span></td><td class="field-description">Wallet address of the maker (liquidity provider)</td></tr>
-                            <tr><td><span class="field-name">taker_address</span></td><td><span class="field-type">string</span></td><td class="field-description">Wallet address of the taker (market order)</td></tr>
-                            <tr><td><span class="field-name">fee_amount</span></td><td><span class="field-type">float</span></td><td class="field-description">Trading fee paid (USDC)</td></tr>
-                        </tbody>
-                    </table>
-
-                    <h3 style="margin: 32px 0 16px;">Derived Trader Metrics</h3>
-                    <table class="glossary-table">
-                        <thead>
-                            <tr><th style="width: 200px;">Field</th><th style="width: 100px;">Type</th><th>Description</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><span class="field-name">trader_volume_usd</span></td><td><span class="field-type">float</span></td><td class="field-description">Cumulative trading volume by this trader</td></tr>
-                            <tr><td><span class="field-name">trader_n_trades</span></td><td><span class="field-type">int</span></td><td class="field-description">Number of trades by this trader</td></tr>
-                            <tr><td><span class="field-name">trader_pnl</span></td><td><span class="field-type">float</span></td><td class="field-description">Realized profit/loss for this trader (when available)</td></tr>
-                        </tbody>
-                    </table>
-
-                    <p style="color: var(--gray-500); margin-top: 24px; font-size: 0.875rem;">
-                        <em>Note: Trade-level data is sourced from Polymarket's on-chain settlement. Kalshi trade data is not publicly available.</em>
-                    </p>
-                </div>
             </div>
 
             <div class="glossary-section" style="margin-top: 64px;">
@@ -639,7 +588,7 @@
             document.getElementById('glossary-' + dataset).style.display = 'block';
 
             // Hide others
-            ['master', 'prices', 'liquidity', 'trades'].forEach(d => {
+            ['master', 'prices', 'liquidity'].forEach(d => {
                 if (d !== dataset) {
                     document.getElementById('glossary-' + d).style.display = 'none';
                 }
