@@ -1,16 +1,16 @@
 {
-  "last_updated": "2026-02-17T15:17:14.713329",
-  "total_markets": 33754,
-  "polymarket_markets": 21154,
+  "last_updated": "2026-02-19T13:33:51.148376",
+  "total_markets": 33936,
+  "polymarket_markets": 21336,
   "kalshi_markets": 12600,
-  "resolved_markets": 23984,
-  "price_observations": 1181629,
-  "polymarket_brier": 0.092,
+  "resolved_markets": 24117,
+  "price_observations": 1190713,
+  "polymarket_brier": 0.0921,
   "kalshi_brier": 0.0736,
   "combined_brier": 0.0883,
-  "electoral_markets": 11188,
-  "unique_elections": 1841,
+  "electoral_markets": 11239,
+  "unique_elections": 1854,
   "overlapping_elections": 330,
   "directional_accuracy": 88.6,
-  "accuracy_markets": 21512
+  "accuracy_markets": 21602
 }
